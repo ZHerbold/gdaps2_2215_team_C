@@ -7,7 +7,7 @@ _This README contains basic information about the project and its artifacts. If 
 - Miguel Aldana
 - Matt Spring
 - Zander Herbold
-- Davin Howarth
+- MEMBER4
 - MEMBER5
 
 ## Repo Organization
