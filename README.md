@@ -6,7 +6,7 @@ _This README contains basic information about the project and its artifacts. If 
 ## Team Members
 - Miguel Aldana
 - Matt Spring
-- MEMBER3
+- Zander Herbold
 - MEMBER4
 - MEMBER5
 
