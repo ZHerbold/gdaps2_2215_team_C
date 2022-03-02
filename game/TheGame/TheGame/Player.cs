@@ -24,17 +24,6 @@ namespace TheGame
         PlayerState state;
 
         // Properties ---------------------------------------------------------
-        public int X
-        {
-            get { return this.position.X; }
-            set { this.position.X = value; }
-        }
-        public int Y
-        {
-            get { return this.position.Y; }
-            set { this.position.Y = value; }
-        }
-
         public PlayerState State
         {
             get { return state; }

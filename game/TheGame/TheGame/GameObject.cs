@@ -9,12 +9,12 @@ namespace TheGame
 {
     abstract class GameObject
     {
-        // Fields
+        // Fields -------------------------------------------------------------
         // Have a protected access modifier so that children may access
         protected int health;
         protected Rectangle position;
 
-        // Properties
+        // Properties ---------------------------------------------------------
         public int Health
         {
             get { return health; }
@@ -34,20 +34,25 @@ namespace TheGame
             }
         }
 
-        // Get-only for the position of our game objects
-        public Rectangle Position
+        public int X
         {
-            get { return position; }
+            get { return this.position.X; }
+            set { this.position.X = value; }
+        }
+        public int Y
+        {
+            get { return this.position.Y; }
+            set { this.position.Y = value; }
         }
 
-        // Constructor
+        // Constructor --------------------------------------------------------
         public GameObject(int health, Rectangle position)
         {
             this.health = health;
             this.position = position;
         }
 
-        // Methods
+        // Methods ------------------------------------------------------------
         public void Update()
         {
 
