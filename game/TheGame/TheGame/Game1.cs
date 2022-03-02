@@ -2,11 +2,19 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-//
 namespace TheGame
 {
     public class Game1 : Game
     {
+        enum GameState
+        {
+            MainMenu,
+            EndlessWave, // Only Enless Mode for S2 Skeleton
+            Dialogue,
+            Shop,
+            GameOver
+        }
+        
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
