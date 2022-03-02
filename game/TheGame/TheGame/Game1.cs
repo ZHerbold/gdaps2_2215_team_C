@@ -21,6 +21,14 @@ namespace TheGame
 
         // Fields
         private Player player;
+        private int playerIHealth; // initial player health, raised via shop
+
+        // Constants
+        private const int enemyIHealth = 1; // initial enemy health        
+        private const int windowWidth = 1280;
+        private const int windowHeight = 720;
+        // If we have time, implement resolution choices in settings
+        // But not for S2 skeleton
 
         public Game1()
         {
@@ -32,6 +40,12 @@ namespace TheGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+
+
+            // Set the window size
+            _graphics.PreferredBackBufferWidth = windowWidth;
+            _graphics.PreferredBackBufferHeight = windowHeight;
+            _graphics.ApplyChanges();
 
             base.Initialize();
         }
@@ -55,7 +69,7 @@ namespace TheGame
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 
