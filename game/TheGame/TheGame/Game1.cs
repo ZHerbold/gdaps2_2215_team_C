@@ -9,10 +9,11 @@ namespace TheGame
         enum GameState
         {
             MainMenu,
+            Settings,
+            GameOver,
             EndlessWave, // Only Enless Mode for S2 Skeleton
-            Dialogue,
-            Shop,
-            GameOver
+            DialogueBox,
+            Shop
         }
         
         private GraphicsDeviceManager _graphics;
