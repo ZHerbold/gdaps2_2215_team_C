@@ -8,24 +8,49 @@ namespace TheGame
     enum PlayerState
     {
         FaceUp,
+        WalkUp,
         FaceDown,
+        WalkDown,
         FaceLeft,
-        FaceRight
+        WalkLeft,
+        FaceRight,
+        WalkRight
     }
 
     class Player : GameObject
     {
-        // Fields
+        // Fields--------------------------------------------------------------
         private int gold;
+        PlayerState state;
 
-        // Constructor
-        public Player(int gold, int health, Rectangle position) : 
+        // Properties ---------------------------------------------------------
+        public int X
+        {
+            get { return this.position.X; }
+            set { this.position.X = value; }
+        }
+        public int Y
+        {
+            get { return this.position.Y; }
+            set { this.position.Y = value; }
+        }
+
+        public PlayerState State
+        {
+            get { return state; }
+            set { state = value; }
+        }
+
+        // Constructor --------------------------------------------------------
+        public Player(int health, Rectangle position, int gold, 
+            PlayerState startingState) : 
             base(health, position)
         {
             this.gold = gold;
+            this.state = startingState;
         }
 
-        // Methods
+        // Methods ------------------------------------------------------------
         // TakeDamage override that draws depleted heart or etc.
         // ONE FOR EACH ATTACK TYPE, only 2 for now
         /// <summary>

@@ -19,6 +19,9 @@ namespace TheGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        // Fields
+        private Player player;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
