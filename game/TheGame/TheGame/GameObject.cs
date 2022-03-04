@@ -12,7 +12,10 @@ namespace TheGame
         // Fields -------------------------------------------------------------
         // Have a protected access modifier so that children may access
         protected int health;
-        protected Rectangle position;
+        //changed position to a float since having it as a rectange would be hindering since player has constant 
+        //dimensions for frames to work (see PE mario walk if you dont understand)
+        protected Vector2 position;
+        protected Texture2D image;
 
         // Properties ---------------------------------------------------------
         public int Health
@@ -34,29 +37,33 @@ namespace TheGame
             }
         }
 
-        public int X
+        //changed position to a float since having it as a rectange would be hindering since player has constant 
+        //dimensions for frames to work (see PE mario walk if you dont understand)
+        public float X
         {
             get { return this.position.X; }
             set { this.position.X = value; }
         }
-        public int Y
+        public float Y
         {
             get { return this.position.Y; }
             set { this.position.Y = value; }
         }
 
         // Constructor --------------------------------------------------------
-        public GameObject(int health, Rectangle position)
+        public GameObject(int health, Vector2 position, Texture2D image)
         {
             this.health = health;
             this.position = position;
+            this.image = image;
         }
 
         // Methods ------------------------------------------------------------
-        public void Update()
-        {
+        //abstract update method for child classes to use
+        public abstract void Update(GameTime gameTime);
 
-        }
+        //draw method so the child classes can draw easily.
+        
 
         /// <summary>
         /// Subtract an object's health when it is hit by an attack 

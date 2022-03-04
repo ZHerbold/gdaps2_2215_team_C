@@ -6,6 +6,7 @@ namespace TheGame
 {
     public class Game1 : Game
     {
+
         enum GameState
         {
             MainMenu,
@@ -19,9 +20,19 @@ namespace TheGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        // Fields
+        // Fields -----------------------------------------------------------
+        
+        //Player Fields
         private Player player;
         private int playerIHealth; // initial player health, raised via shop
+        private Texture2D playerImage;
+        private Vector2 playerPos;
+        private int gold;
+
+        //Background fields;
+        private Texture2D background;
+        private Vector2 backgroundPos;
+
 
         // Constants
         private const int enemyIHealth = 1; // initial enemy health        
@@ -54,6 +65,17 @@ namespace TheGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            //Player Content
+            playerImage = Content.Load<Texture2D>("Game Stuff");
+            playerPos = new Vector2((GraphicsDevice.Viewport.Width / 2) - 125 , (GraphicsDevice.Viewport.Height / 2) - 95);
+            gold = 0;
+
+            //Background Content
+            background = Content.Load<Texture2D>("Background With Portal");
+            backgroundPos = new Vector2(0, -17);
+
+            player = new Player(playerIHealth, playerPos, playerImage, gold, PlayerState.FaceRight);
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -62,7 +84,40 @@ namespace TheGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            //gets the keyboard state
+            KeyboardState kbState = Keyboard.GetState();
+            
+            //Background movement code. we dont need it right now since the size is pretty good, but when we make the map bigger, we'll want it to 
+            //move with the player.
+            /*
+            if (kbState.IsKeyDown(Keys.A))
+            {
+                backgroundPos.X+=3;
+            }
+            if (kbState.IsKeyDown(Keys.D))
+            {
+                backgroundPos.X-=3;
+            }
+            if (kbState.IsKeyDown(Keys.W))
+            {
+                backgroundPos.Y+=3;
+            }
+            if (kbState.IsKeyDown(Keys.S))
+            {
+                backgroundPos.Y-=3;
+            }
+            */
+
+            //Background code (since it probably doesnt need a class)
+
+
+
+            //calls player update.
+            player.Update(gameTime);
+
+
+
+
 
             base.Update(gameTime);
         }
@@ -70,9 +125,15 @@ namespace TheGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
+            _spriteBatch.Begin();
 
-            // TODO: Add your drawing code here
+            //Draw stuff for the background
+            _spriteBatch.Draw(background, backgroundPos, null, Color.White, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 1);
 
+            //drawing for the player
+            player.Draw(_spriteBatch);
+
+            _spriteBatch.End();
             base.Draw(gameTime);
         }
     }
