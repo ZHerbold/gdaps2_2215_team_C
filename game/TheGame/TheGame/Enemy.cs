@@ -27,9 +27,14 @@ namespace TheGame
         EnemyState state = EnemyState.FaceLeft;
         private float XSpeed = 1.7f;
         private float YSpeed = 1.7f;
-        private Player player;
+        private Player player;                  // Used for chasing player
+        bool sameXPlane = false;                // Used to stop model from jiggling when on the same X plane
+        bool sameYPlane = false;                // Used to stop model from jiggling when on the same Y plane
+
+        // Frame dimentions
         private int frameWidth = 50;
         private int frameHeight = 128;
+        
 
         // Animation
         //int frame;
@@ -106,28 +111,48 @@ namespace TheGame
         /// <summary>
         /// Gets the distance betweent the enemy and the player and goes towards the player
         /// </summary>
+        /// FIXME: Right and down dont work correctly if you stop movement when they are on the same plane
         public void Chase()
         {
-            X += XSpeed;
-            Y += YSpeed;
+            if (!sameYPlane)
+            {
+                Y += YSpeed;
+            }
+            if (!sameXPlane)
+            {
+                X += XSpeed;
+            }
+            
             float distanceX = player.X - (X - 30);
             float distanceY = player.Y - (Y + frameHeight/2);
             if (distanceX > 0 && XSpeed < 0)
             {
                 XSpeed *= -1;
+                sameXPlane = false;
             }
             if (distanceX < 0 && XSpeed > 0)
             {
                 XSpeed *= -1;
+                sameXPlane = false;
             }
+            //if (distanceX < 1 && distanceX > 0)
+            //{
+            //    sameXPlane = true;
+            //}
             if (distanceY > 0 && YSpeed < 0)
             {
                 YSpeed *= -1;
+                sameYPlane = false;
             }
             if (distanceY < 0 && YSpeed > 0)
             {
                 YSpeed *= -1;
+                sameYPlane = false;
             }
+            //if (distanceY < 2 && distanceY > 0)
+            //{
+            //    sameYPlane = true;
+            //}
         }
 
         public void DrawWalking(SpriteEffects flipSprite, SpriteBatch sprite)
