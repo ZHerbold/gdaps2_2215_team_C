@@ -29,6 +29,11 @@ namespace TheGame
         private Vector2 playerPos;
         private int gold;
 
+        //Enemy Fields
+        private Enemy enemy;
+        private Texture2D enemyImage;
+        private Vector2 enemyPos;
+
         //Background fields;
         private Texture2D background;
         private Vector2 backgroundPos;
@@ -70,11 +75,16 @@ namespace TheGame
             playerPos = new Vector2((GraphicsDevice.Viewport.Width / 2) - 125 , (GraphicsDevice.Viewport.Height / 2) - 95);
             gold = 0;
 
+            //Enemy Content
+            enemyImage = Content.Load<Texture2D>("Melee Enemy");
+            enemyPos = new Vector2(900, 300);
+
             //Background Content
             background = Content.Load<Texture2D>("Background With Portal");
             backgroundPos = new Vector2(0, -17);
 
             player = new Player(playerIHealth, playerPos, playerImage, gold, PlayerState.FaceRight);
+            enemy = new Enemy(enemyIHealth, enemyPos, enemyImage, player);
 
             // TODO: use this.Content to load your game content here
         }
@@ -115,6 +125,9 @@ namespace TheGame
             //calls player update.
             player.Update(gameTime);
 
+            //calls enemy update
+            enemy.Update(gameTime);
+
 
 
 
@@ -132,6 +145,9 @@ namespace TheGame
 
             //drawing for the player
             player.Draw(_spriteBatch);
+
+            //drawing for the enemy
+            enemy.Draw(_spriteBatch);
 
             _spriteBatch.End();
             base.Draw(gameTime);
