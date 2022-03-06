@@ -37,6 +37,13 @@
 /processorParam:TextureFormat=Color
 /build:Background With Portal.png
 
+#begin Debug.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Debug.spritefont
+
 #begin Game Stuff.png
 /importer:TextureImporter
 /processor:TextureProcessor

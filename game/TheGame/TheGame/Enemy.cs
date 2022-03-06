@@ -25,11 +25,13 @@ namespace TheGame
 
         // Fields???
         EnemyState state = EnemyState.FaceLeft;
-        private float XSpeed = 1.7f;
-        private float YSpeed = 1.7f;
+        private float XSpeed = 2f;
+        private float YSpeed = 2f;
         private Player player;                  // Used for chasing player
         bool sameXPlane = false;                // Used to stop model from jiggling when on the same X plane
         bool sameYPlane = false;                // Used to stop model from jiggling when on the same Y plane
+        private float distanceX;
+        private float distanceY;
 
         // Frame dimentions
         private int frameWidth = 50;
@@ -80,8 +82,15 @@ namespace TheGame
         }
 
         //we'll eventually need drawing for the enemy to call in Game1
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, SpriteFont debug)
         {
+            spriteBatch.DrawString(debug, String.Format(
+                "X distance: {0}\n" +
+                "Y distance: {1}\n" +
+                "Same X plane: {2}\n" +
+                "Same Y plane: {3}"
+                , distanceX, distanceY, sameXPlane, sameYPlane)
+                , new Vector2(10, 10), Color.White);
             switch (state)
             {
                 case EnemyState.FaceUp:
@@ -122,9 +131,10 @@ namespace TheGame
             {
                 X += XSpeed;
             }
-            
-            float distanceX = player.X - (X - 30);
-            float distanceY = player.Y - (Y + frameHeight/2);
+
+            distanceX = player.X - (X - 30);
+            distanceY = player.Y - (Y + frameHeight / 2);
+
             if (distanceX > 0 && XSpeed < 0)
             {
                 XSpeed *= -1;
@@ -135,10 +145,10 @@ namespace TheGame
                 XSpeed *= -1;
                 sameXPlane = false;
             }
-            //if (distanceX < 1 && distanceX > 0)
-            //{
-            //    sameXPlane = true;
-            //}
+            if (distanceX < 1.5 && distanceX > -1.5)
+            {
+                sameXPlane = true;
+            }
             if (distanceY > 0 && YSpeed < 0)
             {
                 YSpeed *= -1;
@@ -149,10 +159,10 @@ namespace TheGame
                 YSpeed *= -1;
                 sameYPlane = false;
             }
-            //if (distanceY < 2 && distanceY > 0)
-            //{
-            //    sameYPlane = true;
-            //}
+            if (distanceY < 2 && distanceY > 0)
+            {
+                sameYPlane = true;
+            }
         }
 
         public void DrawWalking(SpriteEffects flipSprite, SpriteBatch sprite)

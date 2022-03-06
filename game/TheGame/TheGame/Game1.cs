@@ -38,6 +38,8 @@ namespace TheGame
         private Texture2D background;
         private Vector2 backgroundPos;
 
+        //Debug
+        private SpriteFont debug;
 
         // Constants
         private const int enemyIHealth = 1; // initial enemy health        
@@ -86,7 +88,8 @@ namespace TheGame
             player = new Player(playerIHealth, playerPos, playerImage, gold, PlayerState.FaceRight);
             enemy = new Enemy(enemyIHealth, enemyPos, enemyImage, player);
 
-            // TODO: use this.Content to load your game content here
+            //Debug font
+            debug = Content.Load<SpriteFont>("Debug");
         }
 
         protected override void Update(GameTime gameTime)
@@ -147,7 +150,9 @@ namespace TheGame
             player.Draw(_spriteBatch);
 
             //drawing for the enemy
-            enemy.Draw(_spriteBatch);
+            enemy.Draw(_spriteBatch, debug);
+
+            //
 
             _spriteBatch.End();
             base.Draw(gameTime);
