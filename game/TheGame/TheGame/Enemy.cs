@@ -25,11 +25,7 @@ namespace TheGame
 
         // Fields???
         EnemyState state = EnemyState.FaceLeft;
-        private float XSpeed = 2f;
-        private float YSpeed = 2f;
         private Player player;                  // Used for chasing player
-        bool sameXPlane = false;                // Used to stop model from jiggling when on the same X plane
-        bool sameYPlane = false;                // Used to stop model from jiggling when on the same Y plane
         private float distanceX;
         private float distanceY;
 
@@ -86,10 +82,8 @@ namespace TheGame
         {
             spriteBatch.DrawString(debug, String.Format(
                 "X distance: {0}\n" +
-                "Y distance: {1}\n" +
-                "Same X plane: {2}\n" +
-                "Same Y plane: {3}"
-                , distanceX, distanceY, sameXPlane, sameYPlane)
+                "Y distance: {1}\n"
+                , distanceX, distanceY)
                 , new Vector2(10, 10), Color.White);
             switch (state)
             {
@@ -120,48 +114,29 @@ namespace TheGame
         /// <summary>
         /// Gets the distance betweent the enemy and the player and goes towards the player
         /// </summary>
-        /// FIXME: Right and down dont work correctly if you stop movement when they are on the same plane
         public void Chase()
         {
-            if (!sameYPlane)
-            {
-                Y += YSpeed;
-            }
-            if (!sameXPlane)
-            {
-                X += XSpeed;
-            }
-
+            // Get the distance between the player and enemy on both planes
             distanceX = player.X - (X - 30);
             distanceY = player.Y - (Y + frameHeight / 2);
+            float speed = 2f;
 
-            if (distanceX > 0 && XSpeed < 0)
+            // Make the enemy move in the coresponding direction towards the player for both planes
+            if (distanceX > 2)
             {
-                XSpeed *= -1;
-                sameXPlane = false;
+                X += speed;
             }
-            if (distanceX < 0 && XSpeed > 0)
+            if (distanceX < -2)
             {
-                XSpeed *= -1;
-                sameXPlane = false;
+                X += speed * -1;
             }
-            if (distanceX < 1.5 && distanceX > -1.5)
+            if (distanceY > 2)
             {
-                sameXPlane = true;
+                Y += speed;
             }
-            if (distanceY > 0 && YSpeed < 0)
+            if (distanceY < -2)
             {
-                YSpeed *= -1;
-                sameYPlane = false;
-            }
-            if (distanceY < 0 && YSpeed > 0)
-            {
-                YSpeed *= -1;
-                sameYPlane = false;
-            }
-            if (distanceY < 2 && distanceY > 0)
-            {
-                sameYPlane = true;
+                Y += speed * -1;
             }
         }
 
