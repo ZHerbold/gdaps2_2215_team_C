@@ -49,7 +49,11 @@ namespace TheGame
             get { return this.position.Y; }
             set { this.position.Y = value; }
         }
-
+        public Vector2 Position
+        {
+            get { return position; }
+            set { position = value; }
+        }
         // Constructor --------------------------------------------------------
         public GameObject(int health, Vector2 position, Texture2D image)
         {

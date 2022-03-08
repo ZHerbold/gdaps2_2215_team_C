@@ -28,6 +28,9 @@ namespace TheGame
         private Player player;                  // Used for chasing player
         private float distanceX;
         private float distanceY;
+        private Vector2 distance;
+        private Vector2 direction;
+        
 
         // Frame dimentions
         private int frameWidth = 50;
@@ -117,27 +120,47 @@ namespace TheGame
         public void Chase()
         {
             // Get the distance between the player and enemy on both planes
-            distanceX = player.X - (X - 30);
-            distanceY = player.Y - (Y + frameHeight / 2);
-            float speed = 2f;
+            //distanceX = player.X - (X - 30);
+            //distanceY = player.Y - (Y + frameHeight / 2);
+
+            float followDistance = 25f;     // How close the enemy will get to the player before stopping
+            float speed = 2.3f;             // Speed the enemy moves towards the player
+
+            // get distance between enemy and player
+            distance = player.Position - Position;
+            
+            // get the angle and direction between the enemy and player
+            float angle = MathF.Atan2(distance.Y, distance.X);
+            direction = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+            
+            //Get the current distance between the player and enemy
+            float currentDistance = Vector2.Distance(position, player.Position);
+
+            // Move the enemy towards the player
+            if (currentDistance > followDistance)
+            {
+                //float t = MathHelper.Min(MathF.Abs(currentDistance - followDistance), speed);
+                Vector2 velocity = direction * speed;
+                Position += velocity;
+            }
 
             // Make the enemy move in the coresponding direction towards the player for both planes
-            if (distanceX > 2)
-            {
-                X += speed;
-            }
-            if (distanceX < -2)
-            {
-                X += speed * -1;
-            }
-            if (distanceY > 2)
-            {
-                Y += speed;
-            }
-            if (distanceY < -2)
-            {
-                Y += speed * -1;
-            }
+            //if (distanceX > 2)
+            //{
+            //    X += speed;
+            //}
+            //if (distanceX < -2)
+            //{
+            //    X += speed * -1;
+            //}
+            //if (distanceY > 2)
+            //{
+            //    Y += speed;
+            //}
+            //if (distanceY < -2)
+            //{
+            //    Y += speed * -1;
+            //}
         }
 
         public void DrawWalking(SpriteEffects flipSprite, SpriteBatch sprite)
