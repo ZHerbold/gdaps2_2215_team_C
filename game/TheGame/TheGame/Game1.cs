@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace TheGame
 {
@@ -23,7 +24,7 @@ namespace TheGame
         
         //Player Fields
         private Player player;
-        private int playerIHealth; // initial player health, raised via shop
+        private int playerIHealth;      // initial player health, raised via shop
         private Texture2D playerImage;
         private Vector2 playerPos;
         private int gold;
@@ -32,6 +33,7 @@ namespace TheGame
         private Enemy enemy;
         private Texture2D enemyImage;
         private Vector2 enemyPos;
+        private List<Enemy> enemies;
 
         //Background fields;
         private Texture2D background;
@@ -57,7 +59,8 @@ namespace TheGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            // Initialize list of enemies
+            enemies = new List<Enemy>();
 
             // Set the window size
             _graphics.PreferredBackBufferWidth = windowWidth;
