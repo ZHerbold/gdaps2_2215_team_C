@@ -104,10 +104,10 @@ namespace TheGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            enemy.UpdateAnimation(gameTime);
+
             //gets the keyboard state
             KeyboardState kbState = Keyboard.GetState();
-
-            enemy.UpdateAnimation(gameTime);
             
             //Background movement code. we dont need it right now since the size is pretty good, but when we make the map bigger, we'll want it to 
             //move with the player.
@@ -139,10 +139,6 @@ namespace TheGame
 
             //calls enemy update
             enemy.Update(gameTime);
-
-
-
-
 
             base.Update(gameTime);
         }

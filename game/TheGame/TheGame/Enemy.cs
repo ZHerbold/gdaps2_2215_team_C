@@ -24,6 +24,8 @@ namespace TheGame
         private Player player;      // Used for chasing player
         private float distanceX;
         private float distanceY;
+        private float followDistance;
+        private float currentDistance;
         private Vector2 distance;
         private Vector2 direction;
 
@@ -86,20 +88,27 @@ namespace TheGame
         public override void Update(GameTime gameTime)
         {
             Chase();
-            switch (state)
+
+            // If the skeleton is not moving, draw it standing
+            if (currentDistance < followDistance && 
+                (player.Position.X < this.position.X))
             {
-                case EnemyState.FaceLeft:
-                    break;
-                case EnemyState.FaceRight:
-                    break;
-                case EnemyState.WalkLeft:
-                    break;
-                case EnemyState.WalkRight:
-                    break;
-                case EnemyState.Attack:
-                    break;
-                default:
-                    break;
+                state = EnemyState.FaceLeft;
+            }
+            else if (currentDistance < followDistance &&
+                (player.Position.X > this.position.X))
+            {
+                state = EnemyState.FaceRight;
+            }
+
+            // Change state depending on which direction the skeleton is facing
+            else if (player.Position.X < this.position.X)
+            {
+                state = EnemyState.WalkLeft;
+            }
+            else if (player.Position.X > this.position.X)
+            {
+                state = EnemyState.WalkRight;
             }
         }
 
@@ -115,11 +124,11 @@ namespace TheGame
             switch (state)
             {
                 case EnemyState.FaceLeft:
-                    DrawWalking(SpriteEffects.FlipHorizontally, spriteBatch);
+                    DrawStanding(SpriteEffects.FlipHorizontally, spriteBatch);
                     break;
 
                 case EnemyState.FaceRight:
-                    DrawWalking(SpriteEffects.None, spriteBatch);
+                    DrawStanding(SpriteEffects.None, spriteBatch);
                     break;
 
                 case EnemyState.WalkLeft:
@@ -136,6 +145,50 @@ namespace TheGame
         }
 
         /// <summary>
+        /// Draws the enemy standing still
+        /// </summary>
+        public void DrawStanding(SpriteEffects flipSprite, SpriteBatch sprite)
+        {
+            sprite.Draw(
+                image, 
+                position, 
+                new Rectangle(
+                    0,
+                    0,
+                    frameWidth,
+                    frameHeight), 
+                Color.White, 
+                0, 
+                Vector2.Zero, 
+                2f, 
+                flipSprite, 
+                0);
+        }
+
+        /// <summary>
+        /// Draws the enemy's walk cycle
+        /// </summary>
+        /// <param name="flipSprite"></param>
+        /// <param name="sprite"></param>
+        public void DrawWalking(SpriteEffects flipSprite, SpriteBatch sprite)
+        {
+            sprite.Draw(
+                image,
+                position,
+                new Rectangle(
+                    EnemyOffsetX,
+                    (frame * frameHeight) + 1,
+                    frameWidth,
+                    frameHeight),   //cropping the image to a certain size and place (USE THIS FOR ANIMATION WITH THE SPRITE SHEET)
+                Color.White,            //Color
+                0,                      //amount of rotation (we dont need most likely
+                Vector2.Zero,           //axis on which it rotates (""      "")
+                2f,                     //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
+                flipSprite,             //sprite effect
+                0);                     //layer, make sure it is above the background
+        }
+
+        /// <summary>
         /// Gets the distance betweent the enemy and the player and goes towards the player
         /// </summary>
         public void Chase()
@@ -144,7 +197,7 @@ namespace TheGame
             //distanceX = player.X - (X - 30);
             //distanceY = player.Y - (Y + frameHeight / 2);
 
-            float followDistance = 25f;     // How close the enemy will get to the player before stopping
+            followDistance = 25f;     // How close the enemy will get to the player before stopping
             float speed = 2.3f;             // Speed the enemy moves towards the player
 
             // get distance between enemy and player
@@ -155,7 +208,7 @@ namespace TheGame
             direction = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
             
             //Get the current distance between the player and enemy
-            float currentDistance = Vector2.Distance(position, player.Position);
+            currentDistance = Vector2.Distance(position, player.Position);
 
             // Move the enemy towards the player
             if (currentDistance > followDistance)
@@ -182,24 +235,6 @@ namespace TheGame
             //{
             //    Y += speed * -1;
             //}
-        }
-
-        public void DrawWalking(SpriteEffects flipSprite, SpriteBatch sprite)
-        {
-            sprite.Draw(
-                image, 
-                position,
-                new Rectangle(
-                    EnemyOffsetX,
-                    (frame * frameHeight) + 1, 
-                    frameWidth, 
-                    frameHeight),   //cropping the image to a certain size and place (USE THIS FOR ANIMATION WITH THE SPRITE SHEET)
-                Color.White,            //Color
-                0,                      //amount of rotation (we dont need most likely
-                Vector2.Zero,           //axis on which it rotates (""      "")
-                2f,                     //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
-                flipSprite,             //sprite effect
-                0);                     //layer, make sure it is above the background
         }
 
         public void Die()
