@@ -39,6 +39,11 @@ namespace TheGame
             set { state = value; }
         }
 
+        public int Gold
+        {
+            get { return gold; }
+            set { gold = value; }
+        }
         // Constructor --------------------------------------------------------
         public Player(int health, Vector2 position, Texture2D image, int gold, 
             PlayerState startingState) : 

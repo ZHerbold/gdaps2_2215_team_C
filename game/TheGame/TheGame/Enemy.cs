@@ -25,11 +25,12 @@ namespace TheGame
 
         // Fields???
         EnemyState state = EnemyState.FaceLeft;
-        private Player player;                  // Used for chasing player
+        private Player player;                  // Used for chasing player and giving gold on death
         private float distanceX;
         private float distanceY;
         private Vector2 distance;
         private Vector2 direction;
+        private bool isDead;
         
 
         // Frame dimentions
@@ -46,6 +47,12 @@ namespace TheGame
         //// Constants for animation
         //const int WalkCountFrame = 6;
         //const int EnemyOffsetX = 
+
+        // Properties
+        public bool IsDead
+        {
+            get { return isDead; }
+        }
 
         // Constructor
         public Enemy(int health, Vector2 position, Texture2D image, Player player) : base(health, position, image)
@@ -119,10 +126,15 @@ namespace TheGame
         /// </summary>
         public void Chase()
         {
-            // Get the distance between the player and enemy on both planes
-            //distanceX = player.X - (X - 30);
-            //distanceY = player.Y - (Y + frameHeight / 2);
+            /*
+             * OPTION 1: always follows player in a full 360 degree motion
+             * OPTION 2: Follows player only in one X/Y plane at a time
+            */
 
+            // Get the distance between the player and enemy on both planes
+            distanceX = player.X - (X - 30);
+            distanceY = player.Y - (Y + frameHeight / 2);
+            
             float followDistance = 25f;     // How close the enemy will get to the player before stopping
             float speed = 2.3f;             // Speed the enemy moves towards the player
 
@@ -135,7 +147,7 @@ namespace TheGame
             
             //Get the current distance between the player and enemy
             float currentDistance = Vector2.Distance(position, player.Position);
-
+            
             // Move the enemy towards the player
             if (currentDistance > followDistance)
             {
@@ -143,24 +155,29 @@ namespace TheGame
                 Vector2 velocity = direction * speed;
                 Position += velocity;
             }
+            
+            // Only move the enemy in one direction
+            // FIXME: change y-speed variable name, when the distances are the same enemy moves diagonally
+            /*
+            float spewd = 2.3f;
+            if (distanceX < -2)
+            {
+                speed *= -1;
+            }
+            if (distanceY < -2)
+            {
+                spewd *= -1;
+            }
+            if (Math.Abs(distanceX) >= Math.Abs(distanceY))
+            {
+                X += speed;
+            }
+            if (Math.Abs(distanceY) > Math.Abs(distanceX))
+            {
+                Y += spewd;
+            }
+            */
 
-            // Make the enemy move in the coresponding direction towards the player for both planes
-            //if (distanceX > 2)
-            //{
-            //    X += speed;
-            //}
-            //if (distanceX < -2)
-            //{
-            //    X += speed * -1;
-            //}
-            //if (distanceY > 2)
-            //{
-            //    Y += speed;
-            //}
-            //if (distanceY < -2)
-            //{
-            //    Y += speed * -1;
-            //}
         }
 
         public void DrawWalking(SpriteEffects flipSprite, SpriteBatch sprite)
@@ -176,9 +193,10 @@ namespace TheGame
             0);                                                 //layer, make sure it is above the background
         }
 
-            public void Die()
+        public void Die()
         {
-            // Give the player gold
+            isDead = true;
+            player.Gold += 5;
             // Remove the enemy from the game
         }
     }
