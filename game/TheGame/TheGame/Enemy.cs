@@ -9,8 +9,6 @@ namespace TheGame
     // Works while we only have 1 enemy type
     enum EnemyState
     {
-        FaceUp,
-        FaceDown,
         FaceLeft,
         FaceRight,
         WalkLeft,
@@ -21,50 +19,75 @@ namespace TheGame
 
     class Enemy : GameObject
     {
-        // FOR THE SKELETON WE ONLY HAVE 1 TYPE OF ENEMY
-
-        // Fields???
-        EnemyState state = EnemyState.FaceLeft;
-        private Player player;                  // Used for chasing player
+        // Fields
+        EnemyState state;
+        private Player player;      // Used for chasing player
         private float distanceX;
         private float distanceY;
         private Vector2 distance;
         private Vector2 direction;
-        
-
-        // Frame dimentions
-        private int frameWidth = 50;
-        private int frameHeight = 128;
-        
 
         // Animation
-        //int frame;
-        //double timeCounter;
-        //double fps;
-        //double timePerFrame;
-        //
-        //// Constants for animation
-        //const int WalkCountFrame = 6;
-        //const int EnemyOffsetX = 
+        private int frame;
+        private double timeCounter;
+        private double fps;
+        private double timePerFrame;
+
+        // Constants for animation
+        private const int spriteSheetWidth = 768;
+        private const int spriteSheetHeight = 576;
+        private const int WalkFrameCount = 5;
+        private const int EnemyOffsetX = (spriteSheetWidth / 6)*5;
+
+        // Frame dimentions
+        private const int frameWidth = spriteSheetWidth / 6;
+        private const int frameHeight = spriteSheetHeight / 6;
 
         // Constructor
         public Enemy(int health, Vector2 position, Texture2D image, Player player) : base(health, position, image)
         {            
             this.player = player;
+
+            // Initialize
+            fps = 10.0;                     // Will cycle through 10 walk frames per second
+            timePerFrame = 1.0 / fps;       // The amount of time in a single walk image
         }
 
         // Methods
         //override method to call when update is called in game1
         //PUT CODE YOU WANT TO CALL DURING THE GAME HERE
+
+        /// <summary>
+        /// Update the skeleton's animations as needed
+        /// </summary>
+        /// <param name="gameTime"></param>
+        public void UpdateAnimation(GameTime gameTime)
+        {
+            // Time passed
+            timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
+
+            // If enough time has passed:
+            //      Adjust the frame to the next image
+            //      Check the bounds - have we reached the end of walk cycle?
+            //      Back to 1 (since 0 is the "standing" frame)
+            //      Remove the time we "used" - don't reset to 0
+            // This keeps the time passed 
+            if (timeCounter >= timePerFrame)
+            {
+                frame += 1;                     
+
+                if (frame > WalkFrameCount)     
+                    frame = 1;
+
+                timeCounter -= timePerFrame;     
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             Chase();
             switch (state)
             {
-                case EnemyState.FaceUp:
-                    break;
-                case EnemyState.FaceDown:
-                    break;
                 case EnemyState.FaceLeft:
                     break;
                 case EnemyState.FaceRight:
@@ -81,38 +104,36 @@ namespace TheGame
         }
 
         //we'll eventually need drawing for the enemy to call in Game1
-        public void Draw(SpriteBatch spriteBatch, SpriteFont debug)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(debug, String.Format(
-                "X distance: {0}\n" +
-                "Y distance: {1}\n"
-                , distanceX, distanceY)
-                , new Vector2(10, 10), Color.White);
+            //spriteBatch.DrawString(debug, String.Format(
+            //    "X distance: {0}\n" +
+            //    "Y distance: {1}\n"
+            //    , distanceX, distanceY)
+            //    , new Vector2(10, 10), Color.White);
+
             switch (state)
             {
-                case EnemyState.FaceUp:
-                    DrawWalking(SpriteEffects.None, spriteBatch);
-                    break;
-                case EnemyState.FaceDown:
-                    DrawWalking(SpriteEffects.None, spriteBatch);
-                    break;
                 case EnemyState.FaceLeft:
-                    DrawWalking(SpriteEffects.None, spriteBatch);
+                    DrawWalking(SpriteEffects.FlipHorizontally, spriteBatch);
                     break;
+
                 case EnemyState.FaceRight:
                     DrawWalking(SpriteEffects.None, spriteBatch);
                     break;
+
                 case EnemyState.WalkLeft:
-                    DrawWalking(SpriteEffects.None, spriteBatch);
+                    DrawWalking(SpriteEffects.FlipHorizontally, spriteBatch);
                     break;
+
                 case EnemyState.WalkRight:
                     DrawWalking(SpriteEffects.None, spriteBatch);
                     break;
+
                 default:
                     break;
             }
         }
-
 
         /// <summary>
         /// Gets the distance betweent the enemy and the player and goes towards the player
@@ -165,18 +186,23 @@ namespace TheGame
 
         public void DrawWalking(SpriteEffects flipSprite, SpriteBatch sprite)
         {
-            sprite.Draw(image,                                  //the actual image
-            position,                                           //where it is
-            new Rectangle(0, 0, frameWidth, frameHeight),       //cropping the image to a certain size and place (USE THIS FOR ANIMATION WITH THE SPRITE SHEET)
-            Color.White,                                        //Color
-            0,                                                  //amount of rotation (we dont need most likely
-            Vector2.Zero,                                       //axis on which it rotates (""      "")
-            2f,                                                 //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
-            flipSprite,                                         //sprite effect
-            0);                                                 //layer, make sure it is above the background
+            sprite.Draw(
+                image, 
+                position,
+                new Rectangle(
+                    EnemyOffsetX,
+                    (frame * frameHeight) + 1, 
+                    frameWidth, 
+                    frameHeight),   //cropping the image to a certain size and place (USE THIS FOR ANIMATION WITH THE SPRITE SHEET)
+                Color.White,            //Color
+                0,                      //amount of rotation (we dont need most likely
+                Vector2.Zero,           //axis on which it rotates (""      "")
+                2f,                     //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
+                flipSprite,             //sprite effect
+                0);                     //layer, make sure it is above the background
         }
 
-            public void Die()
+        public void Die()
         {
             // Give the player gold
             // Remove the enemy from the game

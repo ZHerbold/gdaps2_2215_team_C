@@ -6,7 +6,6 @@ namespace TheGame
 {
     public class Game1 : Game
     {
-
         enum GameState
         {
             MainMenu,
@@ -74,7 +73,9 @@ namespace TheGame
 
             //Player Content
             playerImage = Content.Load<Texture2D>("Game Stuff");
-            playerPos = new Vector2((GraphicsDevice.Viewport.Width / 2) - 125 , (GraphicsDevice.Viewport.Height / 2) - 95);
+            playerPos = new Vector2(
+                (GraphicsDevice.Viewport.Width / 2) - 125, 
+                (GraphicsDevice.Viewport.Height / 2) - 95);
             gold = 0;
 
             //Enemy Content
@@ -85,7 +86,13 @@ namespace TheGame
             background = Content.Load<Texture2D>("Background With Portal");
             backgroundPos = new Vector2(0, -17);
 
-            player = new Player(playerIHealth, playerPos, playerImage, gold, PlayerState.FaceRight);
+            player = new Player(
+                playerIHealth, 
+                playerPos, 
+                playerImage, 
+                gold, 
+                PlayerState.FaceRight);
+
             enemy = new Enemy(enemyIHealth, enemyPos, enemyImage, player);
 
             //Debug font
@@ -99,6 +106,8 @@ namespace TheGame
 
             //gets the keyboard state
             KeyboardState kbState = Keyboard.GetState();
+
+            enemy.UpdateAnimation(gameTime);
             
             //Background movement code. we dont need it right now since the size is pretty good, but when we make the map bigger, we'll want it to 
             //move with the player.
@@ -144,15 +153,22 @@ namespace TheGame
             _spriteBatch.Begin();
 
             //Draw stuff for the background
-            _spriteBatch.Draw(background, backgroundPos, null, Color.White, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 1);
+            _spriteBatch.Draw(
+                background, 
+                backgroundPos, 
+                null, 
+                Color.White, 
+                0f, 
+                new Vector2(0, 0), 
+                2f, 
+                SpriteEffects.None, 
+                1);
 
             //drawing for the player
             player.Draw(_spriteBatch);
 
             //drawing for the enemy
-            enemy.Draw(_spriteBatch, debug);
-
-            //
+            enemy.Draw(_spriteBatch);
 
             _spriteBatch.End();
             base.Draw(gameTime);
