@@ -21,7 +21,6 @@ namespace TheGame
         // Fields--------------------------------------------------------------
         private int gold;
         PlayerState state;
-        private bool faceRight;
         private KeyboardState prevKBstate;
 
         //The dimensions for each frame;
@@ -49,8 +48,6 @@ namespace TheGame
         {
             this.gold = gold;
             this.state = startingState;
-            faceRight = true;
-
         }
 
         // Methods ------------------------------------------------------------
@@ -69,71 +66,40 @@ namespace TheGame
                     }
             */
 
-            switch(State)
+            // ---- MOVE RIGHT ----
+            if (kbState.IsKeyDown(Keys.D))
             {
-                case PlayerState.FaceRight:
-                    faceRight = true;   //for sprite flipping purposes
-                    if(kbState.IsKeyDown(Keys.D))
-                    {
-                        State = PlayerState.WalkRight;
-                    }
-                    if(kbState.IsKeyDown(Keys.A))
-                    {
-                        State = PlayerState.FaceLeft;
-                    }
-                    break;
+                State = PlayerState.WalkRight;
+                position.X += movement; //movement in the direction specified
+            }
+            // ---- MOVE LEFT ----
+            if (kbState.IsKeyDown(Keys.A))
+            {
+                State = PlayerState.WalkLeft;
+                position.X -= movement;
+            }
+            // ---- MOVE UP ----
+            if (kbState.IsKeyDown(Keys.W))
+            {
+                position.Y -= movement;
+            }
+            // ---- DOWN ----
+            if (kbState.IsKeyDown(Keys.S))
+            {
+                position.Y += movement;
+            }
 
-                case PlayerState.FaceLeft:
-                    faceRight = false;  //for sprite flipping purposes
-                    if (kbState.IsKeyDown(Keys.D))
-                    {
-                        State = PlayerState.FaceRight;
-                    }
-                    if (kbState.IsKeyDown(Keys.A))
-                    {
-                        State = PlayerState.WalkLeft;
-                    }
-                    break;
-
-                case PlayerState.WalkRight:
-                    position.X += movement; //movement in the direction specified
-
-                    //adds diagonal movement and prevents "moon walking"
-                    if (kbState.IsKeyDown(Keys.W))
-                    {
-                        position.Y -= movement;
-                    }
-                    if (kbState.IsKeyDown(Keys.S))
-                    {
-                        position.Y += movement;
-                    }
-                    if (kbState.IsKeyUp(Keys.D) && prevKBstate.IsKeyDown(Keys.D))
-                    {
-                        State = PlayerState.FaceRight;
-                    }
-                    break;
-
-                case PlayerState.WalkLeft:
-                    position.X -= movement; //movement in the direction specified
-
-                    //adds diagonal movement and prevents "moon walking"
-                    if (kbState.IsKeyDown(Keys.W))
-                    {
-                        position.Y -= movement;
-                    }
-                    if (kbState.IsKeyDown(Keys.S))
-                    {
-                        position.Y += movement;
-                    }
-
-                    if (kbState.IsKeyUp(Keys.A) && prevKBstate.IsKeyDown(Keys.A))
-                    {
-                        State = PlayerState.FaceLeft;
-                    }
-                    break;
-
-                case PlayerState.Attack:    //Cant get here yet.
-                    break;
+            // ---- FACE RIGHT ----
+            if (kbState.IsKeyUp(Keys.D) && prevKBstate.IsKeyDown(Keys.D) && 
+                !kbState.IsKeyDown(Keys.A))
+            {
+                State = PlayerState.FaceRight;
+            }
+            // ---- FACE LEFT ----
+            else if (kbState.IsKeyUp(Keys.A) && prevKBstate.IsKeyDown(Keys.A) && 
+                !kbState.IsKeyDown(Keys.D))
+            {
+                State = PlayerState.FaceLeft;
             }
 
             prevKBstate = kbState;
