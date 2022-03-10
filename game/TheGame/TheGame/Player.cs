@@ -13,8 +13,6 @@ namespace TheGame
         FaceLeft,
         WalkRight,
         WalkLeft,
-        WalkUp,
-        WalkDown,
         Attack
     }
 
@@ -55,8 +53,6 @@ namespace TheGame
 
         }
 
-
-
         // Methods ------------------------------------------------------------
         //override method to call when update is called in game1
         //PUT CODE YOU WANT TO CALL DURING THE GAME HERE
@@ -72,6 +68,7 @@ namespace TheGame
                         State = PlayerState.;
                     }
             */
+
             switch(State)
             {
                 case PlayerState.FaceRight:
@@ -84,15 +81,8 @@ namespace TheGame
                     {
                         State = PlayerState.FaceLeft;
                     }
-                    if (kbState.IsKeyDown(Keys.W))
-                    {
-                        State = PlayerState.WalkUp;
-                    }
-                    if (kbState.IsKeyDown(Keys.S))
-                    {
-                        State = PlayerState.WalkDown;
-                    }
                     break;
+
                 case PlayerState.FaceLeft:
                     faceRight = false;  //for sprite flipping purposes
                     if (kbState.IsKeyDown(Keys.D))
@@ -103,15 +93,8 @@ namespace TheGame
                     {
                         State = PlayerState.WalkLeft;
                     }
-                    if (kbState.IsKeyDown(Keys.W))
-                    {
-                        State = PlayerState.WalkUp;
-                    }
-                    if (kbState.IsKeyDown(Keys.S))
-                    {
-                        State = PlayerState.WalkDown;
-                    }
                     break;
+
                 case PlayerState.WalkRight:
                     position.X += movement; //movement in the direction specified
 
@@ -124,12 +107,12 @@ namespace TheGame
                     {
                         position.Y += movement;
                     }
-
                     if (kbState.IsKeyUp(Keys.D) && prevKBstate.IsKeyDown(Keys.D))
                     {
                         State = PlayerState.FaceRight;
                     }
                     break;
+
                 case PlayerState.WalkLeft:
                     position.X -= movement; //movement in the direction specified
 
@@ -148,102 +131,33 @@ namespace TheGame
                         State = PlayerState.FaceLeft;
                     }
                     break;
-                case PlayerState.WalkUp:
-                    position.Y -= movement; //movement in the direction specified
 
-                    //adds diagonal movement and prevents "moon walking"
-                    if (kbState.IsKeyDown(Keys.D))
-                    {
-                        faceRight = true;
-                        position.X += movement;
-                    }
-                    if (kbState.IsKeyDown(Keys.A))
-                    {
-                        faceRight = false;
-                        position.X -= movement;
-                    }
-
-                    //checks to see if both buttons are not pressed
-                    if ((kbState.IsKeyUp(Keys.A) && prevKBstate.IsKeyDown(Keys.A)) || (kbState.IsKeyUp(Keys.W) && prevKBstate.IsKeyDown(Keys.W)) && !faceRight)
-                    {
-                        State = PlayerState.FaceLeft;
-                    }
-                    else if ((kbState.IsKeyUp(Keys.D) && prevKBstate.IsKeyDown(Keys.D)) || (kbState.IsKeyUp(Keys.W) && prevKBstate.IsKeyDown(Keys.W)) && faceRight)
-                    {
-                        State = PlayerState.FaceRight;
-                    }
-                    break;
-                case PlayerState.WalkDown:
-                    position.Y += movement; //movement in the direction specified
-
-                    //adds diagonal movement and prevents "moon walking"
-                    if (kbState.IsKeyDown(Keys.D))
-                    {
-                        faceRight = true;
-                        position.X += movement;
-                    }
-                    if (kbState.IsKeyDown(Keys.A))
-                    {
-                        faceRight = false;
-                        position.X -= movement;
-                    }
-
-                    //checks to see if both buttons are not pressed
-                    if ((kbState.IsKeyUp(Keys.A) && prevKBstate.IsKeyDown(Keys.A)) || (kbState.IsKeyUp(Keys.S) && prevKBstate.IsKeyDown(Keys.S)) && !faceRight)
-                    {
-                        State = PlayerState.FaceLeft;
-                    }
-                    else if ((kbState.IsKeyUp(Keys.D) && prevKBstate.IsKeyDown(Keys.D)) || (kbState.IsKeyUp(Keys.S) && prevKBstate.IsKeyDown(Keys.S)) && faceRight)
-                    {
-                        State = PlayerState.FaceRight;
-                    }
-                    break;
                 case PlayerState.Attack:    //Cant get here yet.
                     break;
             }
-
-
 
             prevKBstate = kbState;
         }
 
         //calls during draw method in Game1
         public void Draw(SpriteBatch spriteBatch)
-        {
-            
+        {            
             switch (State)
             {
                 case PlayerState.FaceRight:
                     DrawIdle(SpriteEffects.None, spriteBatch);
                     break;
+
                 case PlayerState.FaceLeft:
                     DrawIdle(SpriteEffects.FlipHorizontally, spriteBatch);
                     break;
+
                 case PlayerState.WalkRight:
                     DrawWalking(SpriteEffects.None, spriteBatch);
                     break;
+
                 case PlayerState.WalkLeft:
                     DrawWalking(SpriteEffects.FlipHorizontally, spriteBatch);
-                    break;
-                case PlayerState.WalkUp:
-                    if(faceRight) //uses this to keep the orrientation it last had
-                    {
-                        DrawWalking(SpriteEffects.None, spriteBatch);
-                    }
-                    else
-                    {
-                        DrawWalking(SpriteEffects.FlipHorizontally, spriteBatch);
-                    }
-                    break;
-                case PlayerState.WalkDown:
-                    if (faceRight)  //uses this to keep the orrientation it last had
-                    {
-                        DrawWalking(SpriteEffects.None, spriteBatch);
-                    }
-                    else
-                    {
-                        DrawWalking(SpriteEffects.FlipHorizontally, spriteBatch);
-                    }
                     break;
             }
         }
