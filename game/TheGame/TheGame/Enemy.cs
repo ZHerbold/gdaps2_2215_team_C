@@ -28,8 +28,7 @@ namespace TheGame
         private float currentDistance;
         private Vector2 distance;
         private Vector2 direction;
-        private bool isDead;
-        
+        private bool isDead;        
 
         // Animation
         private int frame;
@@ -46,9 +45,6 @@ namespace TheGame
         // Frame dimentions
         private const int frameWidth = spriteSheetWidth / 6;
         private const int frameHeight = spriteSheetHeight / 6;
-
-        private int frameWidth = 50;
-        private int frameHeight = 128;
 
         // Properties
         public bool IsDead
@@ -213,7 +209,7 @@ namespace TheGame
             distanceX = player.X - (X - 30);
             distanceY = player.Y - (Y + frameHeight / 2);
             
-            float followDistance = 25f;     // How close the enemy will get to the player before stopping
+            followDistance = 25f;     // How close the enemy will get to the player before stopping
             float speed = 2.3f;             // Speed the enemy moves towards the player
 
             // get distance between enemy and player
