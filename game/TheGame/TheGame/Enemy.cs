@@ -186,7 +186,7 @@ namespace TheGame
                     EnemyOffsetX,
                     (frame * frameHeight) + 1,
                     frameWidth,
-                    frameHeight),   //cropping the image to a certain size and place (USE THIS FOR ANIMATION WITH THE SPRITE SHEET)
+                    frameHeight),       //cropping the image to a certain size and place (USE THIS FOR ANIMATION WITH THE SPRITE SHEET)
                 Color.White,            //Color
                 0,                      //amount of rotation (we dont need most likely
                 Vector2.Zero,           //axis on which it rotates (""      "")
@@ -225,7 +225,7 @@ namespace TheGame
             // Move the enemy towards the player
             if (currentDistance > followDistance)
             {
-                //float t = MathHelper.Min(MathF.Abs(currentDistance - followDistance), speed);
+                float t = MathHelper.Min(MathF.Abs(currentDistance - followDistance), speed);
                 Vector2 velocity = direction * speed;
                 Position += velocity;
             }
