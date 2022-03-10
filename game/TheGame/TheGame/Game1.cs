@@ -108,6 +108,7 @@ namespace TheGame
                 Exit();
 
             enemy.UpdateAnimation(gameTime);
+            player.UpdateAnimation(gameTime);
 
             //gets the keyboard state
             KeyboardState kbState = Keyboard.GetState();

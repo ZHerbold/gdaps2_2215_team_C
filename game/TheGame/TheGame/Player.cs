@@ -24,10 +24,19 @@ namespace TheGame
         private KeyboardState prevKBstate;
 
         //The dimensions for each frame;
-        private const int frameWidth = 100;
-        private const int frameHeight = 55;
+        private const int FrameWidth = 100;
+        private const int FrameHeight = 55;
 
         private const int movement = 4;
+
+        // Animation
+        private const int WalkFrameCount = 7;
+        private const int PlayerWalkOffsetY = 55;
+
+        private int frame;
+        private double timeCounter;
+        private double fps;
+        private double timePerFrame;
 
         // Properties ---------------------------------------------------------
         public PlayerState State
@@ -48,11 +57,20 @@ namespace TheGame
         {
             this.gold = gold;
             this.state = startingState;
+
+            // Initialize
+            fps = 10.0;                     // Will cycle through 10 walk frames per second
+            timePerFrame = 1.0 / fps;       // The amount of time in a single walk image
         }
 
         // Methods ------------------------------------------------------------
         //override method to call when update is called in game1
         //PUT CODE YOU WANT TO CALL DURING THE GAME HERE
+
+        /// <summary>
+        /// Controls movement and FSM
+        /// </summary>
+        /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime)
         {
             //gets a keyboard state for controls
@@ -73,7 +91,7 @@ namespace TheGame
                 position.X += movement; //movement in the direction specified
             }
             // ---- MOVE LEFT ----
-            if (kbState.IsKeyDown(Keys.A))
+            else if (kbState.IsKeyDown(Keys.A))
             {
                 State = PlayerState.WalkLeft;
                 position.X -= movement;
@@ -82,22 +100,79 @@ namespace TheGame
             if (kbState.IsKeyDown(Keys.W))
             {
                 position.Y -= movement;
+
+                // Determine which direction to face when walking
+                if (prevKBstate.IsKeyDown(Keys.D) || 
+                    state == PlayerState.FaceRight)
+                {
+                    State = PlayerState.WalkRight;
+                }
+                else if (prevKBstate.IsKeyDown(Keys.A) || 
+                    state == PlayerState.FaceLeft)
+                {
+                    State = PlayerState.WalkLeft;
+                }
             }
-            // ---- DOWN ----
-            if (kbState.IsKeyDown(Keys.S))
+            // ---- MOVE DOWN ----
+            else if (kbState.IsKeyDown(Keys.S))
             {
                 position.Y += movement;
+
+                // Determine which direction to face when walking
+                if (prevKBstate.IsKeyDown(Keys.D) ||
+                    state == PlayerState.FaceRight)
+                {
+                    State = PlayerState.WalkRight;
+                }
+                else if (prevKBstate.IsKeyDown(Keys.A) ||
+                    state == PlayerState.FaceLeft)
+                {
+                    State = PlayerState.WalkLeft;
+                }
             }
 
             // ---- FACE RIGHT ----
-            if (kbState.IsKeyUp(Keys.D) && prevKBstate.IsKeyDown(Keys.D) && 
-                !kbState.IsKeyDown(Keys.A))
+            if (prevKBstate.IsKeyDown(Keys.D) && 
+                !kbState.IsKeyDown(Keys.D))
             {
                 State = PlayerState.FaceRight;
             }
+
             // ---- FACE LEFT ----
-            else if (kbState.IsKeyUp(Keys.A) && prevKBstate.IsKeyDown(Keys.A) && 
-                !kbState.IsKeyDown(Keys.D))
+            else if (prevKBstate.IsKeyDown(Keys.A) &&
+                !kbState.IsKeyDown(Keys.A))
+            {
+                State = PlayerState.FaceLeft;
+            }
+
+            // ---- FACE RIGHT ---- (AFTER WALKING UP)
+            else if (prevKBstate.IsKeyDown(Keys.W) &&
+                !kbState.IsKeyDown(Keys.W) &&
+                state == PlayerState.WalkRight)
+            {
+                State = PlayerState.FaceRight;
+            }
+
+            // ---- FACE LEFT ---- (AFTER WALKING UP)
+            else if (prevKBstate.IsKeyDown(Keys.W) &&
+                !kbState.IsKeyDown(Keys.W) &&
+                state == PlayerState.WalkLeft)
+            {
+                State = PlayerState.FaceLeft;
+            }
+
+            // ---- FACE RIGHT ---- (AFTER WALKING DOWN)
+            else if (prevKBstate.IsKeyDown(Keys.S) &&
+                !kbState.IsKeyDown(Keys.S) &&
+                state == PlayerState.WalkRight)
+            {
+                State = PlayerState.FaceRight;
+            }
+
+            // ---- FACE LEFT ---- (AFTER WALKING DOWN)
+            else if (prevKBstate.IsKeyDown(Keys.S) &&
+                !kbState.IsKeyDown(Keys.S) &&
+                state == PlayerState.WalkLeft)
             {
                 State = PlayerState.FaceLeft;
             }
@@ -105,7 +180,23 @@ namespace TheGame
             prevKBstate = kbState;
         }
 
-        //calls during draw method in Game1
+        public void UpdateAnimation(GameTime gameTime)
+        {
+            // Time passed
+            timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (timeCounter >= timePerFrame)
+            {
+                frame += 1;
+
+                if (frame > WalkFrameCount)
+                    frame = 0;
+
+                timeCounter -= timePerFrame;
+            }
+        }
+
+        // Calls during draw method in Game1
         public void Draw(SpriteBatch spriteBatch)
         {            
             switch (State)
@@ -130,21 +221,37 @@ namespace TheGame
 
         public void DrawIdle(SpriteEffects flipSprite, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(image,                                 //the actual image
-                position,                                           //where it is
-                new Rectangle(0, 0, frameWidth, frameHeight),       //cropping the image to a certain size and place (USE THIS FOR ANIMATION WITH THE SPRITE SHEET)
-                Color.White,                                        //Color
-                0,                                                  //amount of rotation (we dont need most likely
-                Vector2.Zero,                                       //axis on which it rotates (""      "")
-                2.5f,                                               //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
-                flipSprite,                                         //sprite effect
-                0);                                                 //layer, make sure it is above the background
+            spriteBatch.Draw(image,                               
+                position,  
+                new Rectangle(
+                    0, 
+                    0, 
+                    FrameWidth, 
+                    FrameHeight),
+                Color.White,                                       
+                0,                          
+                Vector2.Zero, 
+                2.5f,           //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
+                flipSprite,
+                0);             //layer, make sure it is above the background
         }
 
         public void DrawWalking(SpriteEffects flipSprite, SpriteBatch spriteBatch)
         {
-            //place holder for now, until animations are in place.
-            spriteBatch.Draw(image, position, new Rectangle(0, 0, frameWidth, frameHeight), Color.White, 0, Vector2.Zero, 2.5f, flipSprite, 0);
+            spriteBatch.Draw(
+                image, 
+                position, 
+                new Rectangle(
+                    (frame * FrameWidth), 
+                    PlayerWalkOffsetY, 
+                    FrameWidth, 
+                    FrameHeight), 
+                Color.White, 
+                0, 
+                Vector2.Zero, 
+                2.5f, 
+                flipSprite, 
+                0);
         }
 
         public void DrawAttack(SpriteEffects flipSprite, SpriteBatch spriteBatch)
