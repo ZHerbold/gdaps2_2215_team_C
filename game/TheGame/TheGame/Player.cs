@@ -31,7 +31,9 @@ namespace TheGame
 
         // Animation
         private const int WalkFrameCount = 7;
+        private const int AttackFrameCount = 7;
         private const int PlayerWalkOffsetY = 55;
+        private const int PlayerAttackOffsetY = 165;
 
         private int frame;
         private double timeCounter;
@@ -216,6 +218,10 @@ namespace TheGame
                 case PlayerState.WalkLeft:
                     DrawWalking(SpriteEffects.FlipHorizontally, spriteBatch);
                     break;
+
+                case PlayerState.Attack:
+                    DrawAttack(SpriteEffects.None, spriteBatch);
+                    break;
             }
         }
 
@@ -256,7 +262,20 @@ namespace TheGame
 
         public void DrawAttack(SpriteEffects flipSprite, SpriteBatch spriteBatch)
         {
-
+            spriteBatch.Draw(
+                image,
+                position,
+                new Rectangle(
+                    (frame * FrameWidth),
+                    PlayerAttackOffsetY,
+                    FrameWidth,
+                    FrameHeight),
+                Color.White,
+                0,
+                Vector2.Zero,
+                2.5f,
+                flipSprite,
+                0);
         }
 
         // TakeDamage override that draws depleted heart or etc.
