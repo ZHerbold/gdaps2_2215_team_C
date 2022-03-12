@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace TheGame
@@ -33,6 +34,7 @@ namespace TheGame
         private Enemy enemy;
         private Texture2D enemyImage;
         private Vector2 enemyPos;
+        private List<Rectangle> enemyPositions;
         private List<Enemy> enemies;
         private int enemyHealth;
 
@@ -45,6 +47,10 @@ namespace TheGame
 
         //Game info
         private int currentWave;
+        private Random rng;
+        private GameState currentState;
+        private KeyboardState currentKbState;
+        private KeyboardState previousKbState;
 
         // Constants
         private const int enemyIHealth = 1; // initial enemy health        
@@ -65,7 +71,10 @@ namespace TheGame
             // TODO: Add your initialization logic here
             // Initialize list of enemies, set wave count to 1 and enemy health to 1
             enemies = new List<Enemy>();
+            enemyPositions = new List<Rectangle>();
             currentWave = 1;
+            rng = new Random();
+            currentState = GameState.MainMenu;
 
             // Set the window size
             _graphics.PreferredBackBufferWidth = windowWidth;
@@ -113,8 +122,50 @@ namespace TheGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            enemy.UpdateAnimation(gameTime);
-            player.UpdateAnimation(gameTime);
+            
+            switch (currentState)
+            {
+                case GameState.MainMenu:
+                    currentKbState = Keyboard.GetState();
+                    if (SingleKeyPress(Keys.Enter, currentKbState))
+                    {
+                        currentState = GameState.EndlessWave;
+                    }
+                    break;
+                case GameState.Settings:
+                    break;
+                case GameState.GameOver:
+                    currentKbState = Keyboard.GetState();
+                    break;
+                case GameState.EndlessWave:
+                    currentKbState = Keyboard.GetState();
+
+                    if (enemies.Count == 0)
+                    {
+                        NextWave();
+                    }
+
+                    player.UpdateAnimation(gameTime);
+                    //calls player update.
+                    player.Update(gameTime);
+
+                    //calls enemy update
+                    for (int i = 0; i < enemies.Count; i++)
+                    {
+                        enemies[i].UpdateAnimation(gameTime);
+                        enemies[i].Update(gameTime);
+                    }
+                    //CheckCollision();
+                    break;
+                case GameState.DialogueBox:
+                    break;
+                case GameState.Shop:
+                    break;
+                default:
+                    break;
+            }
+
+            
 
             //gets the keyboard state
             KeyboardState kbState = Keyboard.GetState();
@@ -142,39 +193,62 @@ namespace TheGame
 
             //Background code (since it probably doesnt need a class)
 
-
-
-            //calls player update.
-            player.Update(gameTime);
-
-            //calls enemy update
-            enemy.Update(gameTime);
-
+            previousKbState = currentKbState;
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            
             GraphicsDevice.Clear(Color.Black);
             _spriteBatch.Begin();
 
-            //Draw stuff for the background
-            _spriteBatch.Draw(
-                background, 
-                backgroundPos, 
-                null, 
-                Color.White, 
-                0f, 
-                new Vector2(0, 0), 
-                2f, 
-                SpriteEffects.None, 
-                1);
+            switch (currentState)
+            {
+                case GameState.MainMenu:
+                    break;
+                case GameState.Settings:
+                    break;
+                case GameState.GameOver:
+                    break;
+                case GameState.EndlessWave:
+                    //Draw stuff for the background
+                    _spriteBatch.Draw(
+                        background,
+                        backgroundPos,
+                        null,
+                        Color.White,
+                        0f,
+                        new Vector2(0, 0),
+                        2f,
+                        SpriteEffects.None,
+                        1);
 
-            //drawing for the player
-            player.Draw(_spriteBatch);
+                    if (enemies.Count != 0)
+                    {
+                        _spriteBatch.DrawString(
+                        debug, String.Format("" +
+                        "Enemy distance: {0}", Vector2.Distance(enemies[0].Position, player.Position))
+                        , new Vector2(10, 10), Color.White);
+                    }
+                    
 
-            //drawing for the enemy
-            enemy.Draw(_spriteBatch);
+                    //drawing for the player
+                    player.Draw(_spriteBatch);
+
+                    //drawing for the enemy
+                    for (int i = 0; i < enemies.Count; i++)
+                    {
+                        enemies[i].Draw(_spriteBatch);
+                    }
+                    break;
+                case GameState.DialogueBox:
+                    break;
+                case GameState.Shop:
+                    break;
+                default:
+                    break;
+            }
 
             _spriteBatch.End();
             base.Draw(gameTime);
@@ -182,15 +256,45 @@ namespace TheGame
 
         public void NextWave()
         {
+            currentWave++;
+
             enemyHealth = currentWave * currentWave;
             if (enemies != null)
             {
                 enemies.Clear();
+                enemyPositions.Clear();
             }
             for (int i = 0; i < currentWave; i++)
             {
-                // FIXME: add enemy position
-                enemies.Add(new Enemy(enemyHealth,enemyPos ,enemyImage, player));
+                //enemyPositions.Add(new Rectangle(rng.Next(50, windowWidth - 50), rng.Next(50, windowWidth - 50), EnemyFrameWidth, EnemyFrameHeight));
+                enemies.Add(new Enemy(enemyHealth, new Vector2(rng.Next(50, windowWidth - 50), rng.Next(50, windowHeight - 50)), enemyImage, player)); 
+            }
+        }
+
+        public void CheckCollision()
+        {
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                if ((Vector2.Distance(enemies[i].Position, player.Position) < 25))
+                {
+                    enemies[i].Die();
+                    enemies.RemoveAt(i);
+                    //enemyPositions.RemoveAt(i);
+                }   
+            }
+            
+        }
+
+        public bool SingleKeyPress(Keys key, KeyboardState currentKbState)
+        {
+            if (true)
+            {
+                if (currentKbState.IsKeyDown(key) && previousKbState.IsKeyUp(key))
+                {
+                    return true;
+                }
+
+                return false;
             }
         }
     }

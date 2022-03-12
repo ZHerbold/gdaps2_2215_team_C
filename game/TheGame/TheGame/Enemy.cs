@@ -21,9 +21,7 @@ namespace TheGame
     {
         // Fields
         EnemyState state;
-        private Player player;      // Used for chasing player
-        private float distanceX;
-        private float distanceY;
+        private Player player;           // Used for chasing player
         private float followDistance;
         private float currentDistance;
         private Vector2 distance;
@@ -122,12 +120,6 @@ namespace TheGame
         //we'll eventually need drawing for the enemy to call in Game1
         public void Draw(SpriteBatch spriteBatch)
         {
-            //spriteBatch.DrawString(debug, String.Format(
-            //    "X distance: {0}\n" +
-            //    "Y distance: {1}\n"
-            //    , distanceX, distanceY)
-            //    , new Vector2(10, 10), Color.White);
-
             switch (state)
             {
                 case EnemyState.FaceLeft:
@@ -200,16 +192,8 @@ namespace TheGame
         /// </summary>
         public void Chase()
         {
-            /*
-             * OPTION 1: always follows player in a full 360 degree motion
-             * OPTION 2: Follows player only in one X/Y plane at a time
-            */
-
-            // Get the distance between the player and enemy on both planes
-            distanceX = player.X - (X - 30);
-            distanceY = player.Y - (Y + frameHeight / 2);
-            
-            followDistance = 25f;     // How close the enemy will get to the player before stopping
+            //FIXME: enemy goes to players back foot instead of middle of model
+            followDistance = 2f;            // How close the enemy will get to the player before stopping
             float speed = 2.3f;             // Speed the enemy moves towards the player
 
             // get distance between enemy and player
@@ -229,29 +213,6 @@ namespace TheGame
                 Vector2 velocity = direction * speed;
                 Position += velocity;
             }
-            
-            // Only move the enemy in one direction
-            // FIXME: change y-speed variable name, when the distances are the same enemy moves diagonally
-            /*
-            float spewd = 2.3f;
-            if (distanceX < -2)
-            {
-                speed *= -1;
-            }
-            if (distanceY < -2)
-            {
-                spewd *= -1;
-            }
-            if (Math.Abs(distanceX) >= Math.Abs(distanceY))
-            {
-                X += speed;
-            }
-            if (Math.Abs(distanceY) > Math.Abs(distanceX))
-            {
-                Y += spewd;
-            }
-            */
-
         }
 
         public void Die()
