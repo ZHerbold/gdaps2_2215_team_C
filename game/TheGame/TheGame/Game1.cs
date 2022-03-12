@@ -34,6 +34,7 @@ namespace TheGame
         private Texture2D enemyImage;
         private Vector2 enemyPos;
         private List<Enemy> enemies;
+        private int enemyHealth;
 
         //Background fields;
         private Texture2D background;
@@ -41,6 +42,9 @@ namespace TheGame
 
         //Debug
         private SpriteFont debug;
+
+        //Game info
+        private int currentWave;
 
         // Constants
         private const int enemyIHealth = 1; // initial enemy health        
@@ -59,13 +63,15 @@ namespace TheGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            // Initialize list of enemies
+            // Initialize list of enemies, set wave count to 1 and enemy health to 1
             enemies = new List<Enemy>();
+            currentWave = 1;
 
             // Set the window size
             _graphics.PreferredBackBufferWidth = windowWidth;
             _graphics.PreferredBackBufferHeight = windowHeight;
             _graphics.ApplyChanges();
+            enemyHealth = 1;
 
             base.Initialize();
         }
@@ -172,6 +178,20 @@ namespace TheGame
 
             _spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        public void NextWave()
+        {
+            enemyHealth = currentWave * currentWave;
+            if (enemies != null)
+            {
+                enemies.Clear();
+            }
+            for (int i = 0; i < currentWave; i++)
+            {
+                // FIXME: add enemy position
+                enemies.Add(new Enemy(enemyHealth,enemyPos ,enemyImage, player));
+            }
         }
     }
 }
