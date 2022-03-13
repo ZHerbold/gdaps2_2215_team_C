@@ -87,6 +87,13 @@
 /processorParam:TextureFormat=Color
 /build:heart.png
 
+#begin information.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:information.spritefont
+
 #begin Melee Enemy.png
 /importer:TextureImporter
 /processor:TextureProcessor

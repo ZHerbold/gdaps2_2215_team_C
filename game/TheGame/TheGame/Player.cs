@@ -54,6 +54,8 @@ namespace TheGame
             get { return gold; }
             set { gold = value; }
         }
+
+
         // Constructor --------------------------------------------------------
         public Player(int health, Vector2 position, Texture2D image, int gold, 
             PlayerState startingState) : 
@@ -284,11 +286,11 @@ namespace TheGame
         public void DrawIdle(SpriteEffects flipSprite, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(image,                               
-                position,  
+                position,
                 new Rectangle(
-                    0, 
-                    0, 
-                    FrameWidth, 
+                    0,
+                    0,
+                    FrameWidth,
                     FrameHeight),
                 Color.White,                                       
                 0,                          

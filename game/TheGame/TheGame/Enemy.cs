@@ -26,7 +26,7 @@ namespace TheGame
         private float currentDistance;
         private Vector2 distance;
         private Vector2 direction;
-        private bool isDead;        
+        private bool isDead;
 
         // Animation
         private int frame;
@@ -58,6 +58,8 @@ namespace TheGame
             // Initialize
             fps = 10.0;                     // Will cycle through 10 walk frames per second
             timePerFrame = 1.0 / fps;       // The amount of time in a single walk image
+
+            
         }
 
         // Methods
@@ -150,7 +152,7 @@ namespace TheGame
         {
             sprite.Draw(
                 image, 
-                position, 
+                position,
                 new Rectangle(
                     0,
                     0,

@@ -58,6 +58,7 @@ namespace TheGame
         private List<Texture2D> hearts;
         private Texture2D heart;
         private SpriteFont goldText;
+        private SpriteFont information;
 
         // Constants
         private const int enemyIHealth = 1; // initial enemy health        
@@ -127,6 +128,7 @@ namespace TheGame
             //}
             heart = Content.Load<Texture2D>("heart");
             goldText = Content.Load<SpriteFont>("gold");
+            information = Content.Load<SpriteFont>("information");
 
             //Debug font
             debug = Content.Load<SpriteFont>("Debug");
@@ -174,6 +176,11 @@ namespace TheGame
                         enemies[i].Update(gameTime);
                     }
                     CheckCollision();
+
+                    if (playerIHealth == 0)
+                    {
+                        currentState = GameState.GameOver;
+                    }
                     break;
 
                 case GameState.DialogueBox:
@@ -227,12 +234,27 @@ namespace TheGame
             switch (currentState)
             {
                 case GameState.MainMenu:
+                    _spriteBatch.DrawString(
+                        information,
+                        String.Format("" +
+                        "Welcome to GAME TITLE\n" +
+                        "Press 'Enter' to play\n" +
+                        "use 'wasd' to move and 'mouse1' to attack"),
+                        new Vector2(500, 500),
+                        Color.White);
                     break;
 
                 case GameState.Settings:
                     break;
 
                 case GameState.GameOver:
+                    _spriteBatch.DrawString(
+                        information,
+                        String.Format("" +
+                        "GAME OVER\n" +
+                        "Get better"),
+                        new Vector2(500, 500),
+                        Color.White);
                     break;
 
                 case GameState.EndlessWave:
@@ -329,6 +351,7 @@ namespace TheGame
             for (int i = 0; i < enemies.Count; i++)
             {
                 // If enemy hits player, knock the enemy back
+                //Vector2.Distance(enemies[i].Position, player.Position) < 25  -  leave this here for backup use
                 if (Vector2.Distance(enemies[i].Position, player.Position) < 25)
                 {
                     playerIHealth--;
