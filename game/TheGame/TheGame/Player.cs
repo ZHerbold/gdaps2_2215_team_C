@@ -299,7 +299,7 @@ namespace TheGame
                 image,
                 position,
                 new Rectangle(
-                    (frame * FrameWidth),
+                    (frame * FrameWidth) + 1,
                     PlayerAttackOffsetY,
                     FrameWidth,
                     FrameHeight),
