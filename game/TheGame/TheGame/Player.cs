@@ -13,7 +13,8 @@ namespace TheGame
         FaceLeft,
         WalkRight,
         WalkLeft,
-        Attack
+        AttackRight,
+        AttackLeft
     }
 
     class Player : GameObject
@@ -88,14 +89,34 @@ namespace TheGame
             */
 
             // Click to attack, holding m1 does nothing
+            // Clicking while attacking does nothing
             if (prevMState.LeftButton != ButtonState.Pressed && 
-                mState.LeftButton == ButtonState.Pressed)
+                mState.LeftButton == ButtonState.Pressed && 
+                state != PlayerState.AttackRight && 
+                state != PlayerState.AttackLeft)
             {
-                MeleeAttack();
+                // set initial animation marker
+                frame = 0;
+
+                // Attack in a direction dependent on previous state
+                // ---- RIGHT ATTACK ----
+                if (state == PlayerState.FaceRight ||
+                    state == PlayerState.WalkRight)
+                {
+                    state = PlayerState.AttackRight;
+                }
+
+                // ---- LEFT ATTACK ----
+                else if (state == PlayerState.FaceLeft ||
+                    state == PlayerState.WalkLeft)
+                {
+                    state = PlayerState.AttackLeft;
+                }
             }
 
             // Must finish an attack before moving again
-            if (state != PlayerState.Attack)
+            if (state != PlayerState.AttackRight || 
+                state != PlayerState.AttackLeft)
             {
                 // ---- MOVE RIGHT ----
                 if (kbState.IsKeyDown(Keys.D))
@@ -189,7 +210,25 @@ namespace TheGame
                 {
                     State = PlayerState.FaceLeft;
                 }
-            }            
+            }
+
+            // End attack animations on the last frame of them
+            switch (state)
+            {
+                case PlayerState.AttackRight:
+                    if (frame == AttackFrameCount)
+                    {
+                        state = PlayerState.FaceRight;
+                    }
+                    break;
+
+                case PlayerState.AttackLeft:
+                    if (frame == AttackFrameCount)
+                    {
+                        state = PlayerState.FaceLeft;
+                    }
+                    break;
+            }
 
             prevKBstate = kbState;
             prevMState = mState;
@@ -232,8 +271,12 @@ namespace TheGame
                     DrawWalking(SpriteEffects.FlipHorizontally, spriteBatch);
                     break;
 
-                case PlayerState.Attack:
+                case PlayerState.AttackRight:
                     DrawAttack(SpriteEffects.None, spriteBatch);
+                    break;
+
+                case PlayerState.AttackLeft:
+                    DrawAttack(SpriteEffects.FlipHorizontally, spriteBatch);
                     break;
             }
         }
@@ -325,7 +368,6 @@ namespace TheGame
         public void MeleeAttack()
         {
             base.Attack();
-            state = PlayerState.Attack;
         }
     }
 }
