@@ -22,6 +22,7 @@ namespace TheGame
         private int gold;
         PlayerState state;
         private KeyboardState prevKBstate;
+        private MouseState prevMState;
 
         //The dimensions for each frame;
         private const int FrameWidth = 100;
@@ -30,7 +31,7 @@ namespace TheGame
         private const int movement = 4;
 
         // Animation
-        private const int WalkFrameCount = 7;
+        private const int WalkFrameCount = 9;
         private const int AttackFrameCount = 7;
         private const int PlayerWalkOffsetY = 55;
         private const int PlayerAttackOffsetY = 165;
@@ -60,9 +61,8 @@ namespace TheGame
             this.gold = gold;
             this.state = startingState;
 
-            // Initialize
-            fps = 10.0;                     // Will cycle through 10 walk frames per second
-            timePerFrame = 1.0 / fps;       // The amount of time in a single walk image
+            fps = 10.0;
+            timePerFrame = 1.0 / fps;
         }
 
         // Methods ------------------------------------------------------------
@@ -77,6 +77,7 @@ namespace TheGame
         {
             //gets a keyboard state for controls
             KeyboardState kbState = Keyboard.GetState();
+            MouseState mState = Mouse.GetState();
 
             //Put FSM Logic for stats here HERE
             /* template
@@ -86,100 +87,112 @@ namespace TheGame
                     }
             */
 
-            // ---- MOVE RIGHT ----
-            if (kbState.IsKeyDown(Keys.D))
+            // Click to attack, holding m1 does nothing
+            if (prevMState.LeftButton != ButtonState.Pressed && 
+                mState.LeftButton == ButtonState.Pressed)
             {
-                State = PlayerState.WalkRight;
-                position.X += movement; //movement in the direction specified
+                MeleeAttack();
             }
-            // ---- MOVE LEFT ----
-            else if (kbState.IsKeyDown(Keys.A))
-            {
-                State = PlayerState.WalkLeft;
-                position.X -= movement;
-            }
-            // ---- MOVE UP ----
-            if (kbState.IsKeyDown(Keys.W))
-            {
-                position.Y -= movement;
 
-                // Determine which direction to face when walking
-                if (prevKBstate.IsKeyDown(Keys.D) || 
-                    state == PlayerState.FaceRight)
+            // Must finish an attack before moving again
+            if (state != PlayerState.Attack)
+            {
+                // ---- MOVE RIGHT ----
+                if (kbState.IsKeyDown(Keys.D))
                 {
                     State = PlayerState.WalkRight;
+                    position.X += movement; //movement in the direction specified
                 }
-                else if (prevKBstate.IsKeyDown(Keys.A) || 
-                    state == PlayerState.FaceLeft)
+                // ---- MOVE LEFT ----
+                else if (kbState.IsKeyDown(Keys.A))
                 {
                     State = PlayerState.WalkLeft;
+                    position.X -= movement;
                 }
-            }
-            // ---- MOVE DOWN ----
-            else if (kbState.IsKeyDown(Keys.S))
-            {
-                position.Y += movement;
-
-                // Determine which direction to face when walking
-                if (prevKBstate.IsKeyDown(Keys.D) ||
-                    state == PlayerState.FaceRight)
+                // ---- MOVE UP ----
+                if (kbState.IsKeyDown(Keys.W))
                 {
-                    State = PlayerState.WalkRight;
+                    position.Y -= movement;
+
+                    // Determine which direction to face when walking
+                    if (prevKBstate.IsKeyDown(Keys.D) ||
+                        state == PlayerState.FaceRight)
+                    {
+                        State = PlayerState.WalkRight;
+                    }
+                    else if (prevKBstate.IsKeyDown(Keys.A) ||
+                        state == PlayerState.FaceLeft)
+                    {
+                        State = PlayerState.WalkLeft;
+                    }
                 }
-                else if (prevKBstate.IsKeyDown(Keys.A) ||
-                    state == PlayerState.FaceLeft)
+                // ---- MOVE DOWN ----
+                else if (kbState.IsKeyDown(Keys.S))
                 {
-                    State = PlayerState.WalkLeft;
+                    position.Y += movement;
+
+                    // Determine which direction to face when walking
+                    if (prevKBstate.IsKeyDown(Keys.D) ||
+                        state == PlayerState.FaceRight)
+                    {
+                        State = PlayerState.WalkRight;
+                    }
+                    else if (prevKBstate.IsKeyDown(Keys.A) ||
+                        state == PlayerState.FaceLeft)
+                    {
+                        State = PlayerState.WalkLeft;
+                    }
                 }
-            }
 
-            // ---- FACE RIGHT ----
-            if (prevKBstate.IsKeyDown(Keys.D) && 
-                !kbState.IsKeyDown(Keys.D))
-            {
-                State = PlayerState.FaceRight;
-            }
+                // ---- FACE RIGHT ----
+                if (prevKBstate.IsKeyDown(Keys.D) &&
+                    !kbState.IsKeyDown(Keys.D))
+                {
+                    State = PlayerState.FaceRight;
+                }
 
-            // ---- FACE LEFT ----
-            else if (prevKBstate.IsKeyDown(Keys.A) &&
-                !kbState.IsKeyDown(Keys.A))
-            {
-                State = PlayerState.FaceLeft;
-            }
+                // ---- FACE LEFT ----
+                else if (prevKBstate.IsKeyDown(Keys.A) &&
+                    !kbState.IsKeyDown(Keys.A))
+                {
+                    State = PlayerState.FaceLeft;
+                }
 
-            // ---- FACE RIGHT ---- (AFTER WALKING UP)
-            else if (prevKBstate.IsKeyDown(Keys.W) &&
-                !kbState.IsKeyDown(Keys.W) &&
-                state == PlayerState.WalkRight)
-            {
-                State = PlayerState.FaceRight;
-            }
+                // ---- FACE RIGHT ---- (AFTER WALKING UP)
+                else if (prevKBstate.IsKeyDown(Keys.W) &&
+                    !kbState.IsKeyDown(Keys.W) &&
+                    state == PlayerState.WalkRight)
+                {
+                    State = PlayerState.FaceRight;
+                }
 
-            // ---- FACE LEFT ---- (AFTER WALKING UP)
-            else if (prevKBstate.IsKeyDown(Keys.W) &&
-                !kbState.IsKeyDown(Keys.W) &&
-                state == PlayerState.WalkLeft)
-            {
-                State = PlayerState.FaceLeft;
-            }
+                // ---- FACE LEFT ---- (AFTER WALKING UP)
+                else if (prevKBstate.IsKeyDown(Keys.W) &&
+                    !kbState.IsKeyDown(Keys.W) &&
+                    state == PlayerState.WalkLeft)
+                {
+                    State = PlayerState.FaceLeft;
+                }
 
-            // ---- FACE RIGHT ---- (AFTER WALKING DOWN)
-            else if (prevKBstate.IsKeyDown(Keys.S) &&
-                !kbState.IsKeyDown(Keys.S) &&
-                state == PlayerState.WalkRight)
-            {
-                State = PlayerState.FaceRight;
-            }
+                // ---- FACE RIGHT ---- (AFTER WALKING DOWN)
+                else if (prevKBstate.IsKeyDown(Keys.S) &&
+                    !kbState.IsKeyDown(Keys.S) &&
+                    state == PlayerState.WalkRight)
+                {
+                    State = PlayerState.FaceRight;
+                }
 
-            // ---- FACE LEFT ---- (AFTER WALKING DOWN)
-            else if (prevKBstate.IsKeyDown(Keys.S) &&
-                !kbState.IsKeyDown(Keys.S) &&
-                state == PlayerState.WalkLeft)
-            {
-                State = PlayerState.FaceLeft;
-            }
+                // ---- FACE LEFT ---- (AFTER WALKING DOWN)
+                else if (prevKBstate.IsKeyDown(Keys.S) &&
+                    !kbState.IsKeyDown(Keys.S) &&
+                    state == PlayerState.WalkLeft)
+                {
+                    State = PlayerState.FaceLeft;
+                }
+            }            
 
             prevKBstate = kbState;
+            prevMState = mState;
         }
 
         public void UpdateAnimation(GameTime gameTime)
@@ -244,20 +257,40 @@ namespace TheGame
 
         public void DrawWalking(SpriteEffects flipSprite, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(
-                image, 
-                position, 
-                new Rectangle(
-                    (frame * FrameWidth), 
-                    PlayerWalkOffsetY, 
-                    FrameWidth, 
-                    FrameHeight), 
-                Color.White, 
-                0, 
-                Vector2.Zero, 
-                2.5f, 
-                flipSprite, 
-                0);
+            if (frame < 7)
+            {
+                spriteBatch.Draw(
+                    image,
+                    position,
+                    new Rectangle(
+                        (frame * FrameWidth),
+                        PlayerWalkOffsetY,
+                        FrameWidth,
+                        FrameHeight),
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    2.5f,
+                    flipSprite,
+                    0);
+            }
+            else
+            {
+                spriteBatch.Draw(
+                    image,
+                    position,
+                    new Rectangle(
+                        (frame * FrameWidth),
+                        0,
+                        FrameWidth,
+                        FrameHeight),
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    2.5f,
+                    flipSprite,
+                    0);
+            }
         }
 
         public void DrawAttack(SpriteEffects flipSprite, SpriteBatch spriteBatch)
@@ -278,8 +311,6 @@ namespace TheGame
                 0);
         }
 
-        // TakeDamage override that draws depleted heart or etc.
-        // ONE FOR EACH ATTACK TYPE, only 2 for now
         /// <summary>
         /// Simulate a ranged attack
         /// </summary>
@@ -294,6 +325,7 @@ namespace TheGame
         public void MeleeAttack()
         {
             base.Attack();
+            state = PlayerState.Attack;
         }
     }
 }

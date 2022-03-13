@@ -132,11 +132,14 @@ namespace TheGame
                         currentState = GameState.EndlessWave;
                     }
                     break;
+
                 case GameState.Settings:
                     break;
+
                 case GameState.GameOver:
                     currentKbState = Keyboard.GetState();
                     break;
+
                 case GameState.EndlessWave:
                     currentKbState = Keyboard.GetState();
 
@@ -157,10 +160,13 @@ namespace TheGame
                     }
                     //CheckCollision();
                     break;
+
                 case GameState.DialogueBox:
                     break;
+
                 case GameState.Shop:
                     break;
+
                 default:
                     break;
             }
@@ -207,10 +213,13 @@ namespace TheGame
             {
                 case GameState.MainMenu:
                     break;
+
                 case GameState.Settings:
                     break;
+
                 case GameState.GameOver:
                     break;
+
                 case GameState.EndlessWave:
                     //Draw stuff for the background
                     _spriteBatch.Draw(
@@ -242,10 +251,13 @@ namespace TheGame
                         enemies[i].Draw(_spriteBatch);
                     }
                     break;
+
                 case GameState.DialogueBox:
                     break;
+
                 case GameState.Shop:
                     break;
+
                 default:
                     break;
             }
@@ -267,7 +279,14 @@ namespace TheGame
             for (int i = 0; i < currentWave; i++)
             {
                 //enemyPositions.Add(new Rectangle(rng.Next(50, windowWidth - 50), rng.Next(50, windowWidth - 50), EnemyFrameWidth, EnemyFrameHeight));
-                enemies.Add(new Enemy(enemyHealth, new Vector2(rng.Next(50, windowWidth - 50), rng.Next(50, windowHeight - 50)), enemyImage, player)); 
+                enemies.Add(
+                    new Enemy(
+                        enemyHealth, 
+                        new Vector2(
+                            rng.Next(50, windowWidth - 50), 
+                            rng.Next(50, windowHeight - 50)), 
+                        enemyImage, 
+                        player)); 
             }
         }
 
