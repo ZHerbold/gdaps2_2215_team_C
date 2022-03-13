@@ -25,7 +25,7 @@ namespace TheGame
         
         //Player Fields
         private Player player;
-        private int playerIHealth;      // initial player health, raised via shop
+        private int playerIHealth = 3;      // initial player health, raised via shop
         private Texture2D playerImage;
         private Vector2 playerPos;
         private int gold;
@@ -55,6 +55,9 @@ namespace TheGame
         private GameState currentState;
         private KeyboardState currentKbState;
         private KeyboardState previousKbState;
+        private List<Texture2D> hearts;
+        private Texture2D heart;
+        private SpriteFont goldText;
 
         // Constants
         private const int enemyIHealth = 1; // initial enemy health        
@@ -76,6 +79,7 @@ namespace TheGame
             // Initialize list of enemies, set wave count to 1 and enemy health to 1
             enemies = new List<Enemy>();
             enemyPositions = new List<Rectangle>();
+            hearts = new List<Texture2D>();
             currentWave = 1;
             rng = new Random();
             currentState = GameState.MainMenu;
@@ -116,6 +120,13 @@ namespace TheGame
                 PlayerState.FaceRight);
 
             enemy = new Enemy(enemyIHealth, enemyPos, enemyImage, player);
+
+            //for (int i = 0; i < playerIHealth; i++)
+            //{
+            //    hearts.Add(Content.Load<Texture2D>("heart"));
+            //}
+            heart = Content.Load<Texture2D>("heart");
+            goldText = Content.Load<SpriteFont>("gold");
 
             //Debug font
             debug = Content.Load<SpriteFont>("Debug");
@@ -242,7 +253,7 @@ namespace TheGame
                         _spriteBatch.DrawString(
                         debug, String.Format("" +
                         "Enemy distance: {0}", Vector2.Distance(enemies[0].Position, player.Position))
-                        , new Vector2(10, 10), Color.White);
+                        , new Vector2(10, 70), Color.White);
                     }
                     
 
@@ -254,6 +265,25 @@ namespace TheGame
                     {
                         enemies[i].Draw(_spriteBatch);
                     }
+
+                    if (playerIHealth > 0)
+                    {
+                        for (int i = 0; i < playerIHealth; i++)
+                        {
+                            _spriteBatch.Draw(
+                            heart,
+                            new Vector2(i * 40, 10),
+                            new Rectangle(0, 0, 16, 16),
+                            Color.White,
+                            0,
+                            Vector2.Zero,
+                            2,
+                            SpriteEffects.None,
+                            0);
+                        }
+                    }
+                    _spriteBatch.DrawString(goldText, String.Format("Gold: {0}", player.Gold), new Vector2(1, 50), Color.White);
+                    
                     break;
 
                 case GameState.DialogueBox:
@@ -301,6 +331,7 @@ namespace TheGame
                 // If enemy hits player, knock the enemy back
                 if (Vector2.Distance(enemies[i].Position, player.Position) < 25)
                 {
+                    playerIHealth--;
                     for (int j = 0; j < 50; j++)
                     {
                         enemies[i].Position += new Vector2(1,1);
