@@ -37,6 +37,10 @@ namespace TheGame
         private List<Rectangle> enemyPositions;
         private List<Enemy> enemies;
         private int enemyHealth;
+        //private const int spriteSheetWidth = 768;
+        //private const int spriteSheetHeight = 576;
+        //private const int EnemyFrameWidth = spriteSheetWidth / 6;
+        //private const int EnemyFrameHeight = spriteSheetHeight / 6;
 
         //Background fields;
         private Texture2D background;
@@ -158,7 +162,7 @@ namespace TheGame
                         enemies[i].UpdateAnimation(gameTime);
                         enemies[i].Update(gameTime);
                     }
-                    //CheckCollision();
+                    CheckCollision();
                     break;
 
                 case GameState.DialogueBox:
@@ -278,7 +282,6 @@ namespace TheGame
             }
             for (int i = 0; i < currentWave; i++)
             {
-                //enemyPositions.Add(new Rectangle(rng.Next(50, windowWidth - 50), rng.Next(50, windowWidth - 50), EnemyFrameWidth, EnemyFrameHeight));
                 enemies.Add(
                     new Enemy(
                         enemyHealth, 
@@ -286,7 +289,8 @@ namespace TheGame
                             rng.Next(50, windowWidth - 50), 
                             rng.Next(50, windowHeight - 50)), 
                         enemyImage, 
-                        player)); 
+                        player));
+                //enemyPositions.Add(new Rectangle((int)enemies[i].Position.X, (int)enemies[i].Position.Y, EnemyFrameWidth, EnemyFrameHeight));
             }
         }
 
@@ -294,10 +298,15 @@ namespace TheGame
         {
             for (int i = 0; i < enemies.Count; i++)
             {
-                if ((Vector2.Distance(enemies[i].Position, player.Position) < 25))
+                // If enemy hits player, knock the enemy back
+                if (Vector2.Distance(enemies[i].Position, player.Position) < 25)
                 {
-                    enemies[i].Die();
-                    enemies.RemoveAt(i);
+                    for (int j = 0; j < 50; j++)
+                    {
+                        enemies[i].Position += new Vector2(1,1);
+                    }
+                    //enemies[i].Die();
+                    //enemies.RemoveAt(i);
                     //enemyPositions.RemoveAt(i);
                 }   
             }
