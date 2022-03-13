@@ -31,7 +31,7 @@ namespace TheGame
         private const int movement = 4;
 
         // Animation
-        private const int WalkFrameCount = 9;
+        private const int WalkFrameCount = 7;
         private const int AttackFrameCount = 7;
         private const int PlayerWalkOffsetY = 55;
         private const int PlayerAttackOffsetY = 165;
@@ -257,7 +257,7 @@ namespace TheGame
 
         public void DrawWalking(SpriteEffects flipSprite, SpriteBatch spriteBatch)
         {
-            if (frame < 7)
+            if (frame < 8)
             {
                 spriteBatch.Draw(
                     image,
