@@ -177,7 +177,7 @@ namespace TheGame
                     }
                     CheckCollision();
 
-                    if (playerIHealth == 0)
+                    if (playerIHealth <= 0)
                     {
                         currentState = GameState.GameOver;
                     }
