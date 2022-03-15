@@ -142,6 +142,7 @@ namespace TheGame
             
             switch (currentState)
             {
+                // Main Menu GameState
                 case GameState.MainMenu:
                     currentKbState = Keyboard.GetState();
                     if (SingleKeyPress(Keys.Enter, currentKbState))
@@ -150,16 +151,20 @@ namespace TheGame
                     }
                     break;
 
+                // Settings (Not created yet)
                 case GameState.Settings:
                     break;
 
+                // Gameover GameState
                 case GameState.GameOver:
                     currentKbState = Keyboard.GetState();
                     break;
 
+                // Endless Wave Gamestate
                 case GameState.EndlessWave:
                     currentKbState = Keyboard.GetState();
 
+                    // Enemy count
                     if (enemies.Count == 0)
                     {
                         NextWave();
@@ -177,15 +182,18 @@ namespace TheGame
                     }
                     CheckCollision();
 
+                    // checks to see if the players health is zero
                     if (playerIHealth <= 0)
                     {
                         currentState = GameState.GameOver;
                     }
                     break;
 
+                // Dialogue Box Gamestate (Not coded yet)
                 case GameState.DialogueBox:
                     break;
 
+                // Shop GameState (Not coded yet)
                 case GameState.Shop:
                     break;
 
@@ -322,16 +330,19 @@ namespace TheGame
             base.Draw(gameTime);
         }
 
+        // The Next Wave method
         public void NextWave()
         {
             currentWave++;
 
             enemyHealth = currentWave * currentWave;
+            // Checks to see if there are any enemies within the enemies list
             if (enemies != null)
             {
                 enemies.Clear();
                 enemyPositions.Clear();
             }
+            // Creates the next wave of enemies
             for (int i = 0; i < currentWave; i++)
             {
                 enemies.Add(
@@ -346,6 +357,7 @@ namespace TheGame
             }
         }
 
+        // Collision method
         public void CheckCollision()
         {
             for (int i = 0; i < enemies.Count; i++)
@@ -367,6 +379,7 @@ namespace TheGame
             
         }
 
+        // Single key press method for any key
         public bool SingleKeyPress(Keys key, KeyboardState currentKbState)
         {
             if (true)
