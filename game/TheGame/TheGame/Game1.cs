@@ -14,8 +14,8 @@ namespace TheGame
             Settings,
             GameOver,
             EndlessWave, // Only Enless Mode for S2 Skeleton
-            DialogueBox,
-            Shop
+            DialogueBox, // For NPC
+            Shop         // For NPC
         }
         
         private GraphicsDeviceManager _graphics;
@@ -320,6 +320,7 @@ namespace TheGame
                     break;
 
                 case GameState.Shop:
+
                     break;
 
                 default:
