@@ -27,6 +27,8 @@ namespace TheGame
         private Vector2 distance;
         private Vector2 direction;
         private bool isDead;
+        private float distanceX;
+        private float distanceY;
 
         // Animation
         private int frame;
@@ -109,11 +111,11 @@ namespace TheGame
             }
 
             // Change state depending on which direction the skeleton is facing
-            else if (player.Position.X < this.position.X)
+            else if (player.Position.X < this.position.X + 100)
             {
                 state = EnemyState.WalkLeft;
             }
-            else if (player.Position.X > this.position.X)
+            else if (player.Position.X > this.position.X - 100)
             {
                 state = EnemyState.WalkRight;
             }
@@ -195,19 +197,20 @@ namespace TheGame
         public void Chase()
         {
             //FIXME: enemy goes to players back foot instead of middle of model
-            followDistance = 2f;            // How close the enemy will get to the player before stopping
+            followDistance = 0.5f;            // How close the enemy will get to the player before stopping
             float speed = 2.3f;             // Speed the enemy moves towards the player
-
+            
             // get distance between enemy and player
-            distance = player.Position - Position;
+            Vector2 newPos = new Vector2(X, Y+frameHeight/2);
+            distance = player.Position - newPos;
             
             // get the angle and direction between the enemy and player
             float angle = MathF.Atan2(distance.Y, distance.X);
             direction = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
             
             //Get the current distance between the player and enemy
-            currentDistance = Vector2.Distance(position, player.Position);
-
+            currentDistance = Vector2.Distance(player.Position, position);
+            
             // Move the enemy towards the player
             if (currentDistance > followDistance)
             {
@@ -215,6 +218,34 @@ namespace TheGame
                 Vector2 velocity = direction * speed;
                 Position += velocity;
             }
+
+            //float speed = 2.3f;
+            //distanceX = player.X - X;
+            //distanceY = player.Y - (Y + frameHeight / 2);
+            //
+            //    // Make the enemy move in the coresponding direction towards the player for both planes
+            //    if (distanceX > 2)
+            //    {
+            //        //sameXPlane = true;
+            //        X += speed;
+            //    }
+            //    if (distanceX < -2)
+            //    {
+            //        //YSpeed *= -1;
+            //        //sameYPlane = false;
+            //        X += speed * -1;
+            //    }
+            //    if (distanceY > 2)
+            //    {
+            //        //YSpeed *= -1;
+            //        //sameYPlane = false;
+            //        Y += speed;
+            //    }
+            //    if (distanceY < -2)
+            //    {
+            //        //sameYPlane = true;
+            //        Y += speed * -1;
+            //    }
         }
 
         public void Die()

@@ -295,7 +295,7 @@ namespace TheGame
                 Color.White,                                       
                 0,                          
                 Vector2.Zero, 
-                1.5f,           //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
+                2.5f,           //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
                 flipSprite,
                 0);             //layer, make sure it is above the background
         }
@@ -315,7 +315,7 @@ namespace TheGame
                     Color.White,
                     0,
                     Vector2.Zero,
-                    1.5f,
+                    2.5f,
                     flipSprite,
                     0);
             }
@@ -332,7 +332,7 @@ namespace TheGame
                     Color.White,
                     0,
                     Vector2.Zero,
-                    1.5f,
+                    2.5f,
                     flipSprite,
                     0);
             }

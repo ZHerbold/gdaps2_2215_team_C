@@ -29,6 +29,10 @@ namespace TheGame
         private Texture2D playerImage;
         private Vector2 playerPos;
         private int gold;
+        private Rectangle playerHitbox;
+        private List<Rectangle> enemyHitbox;
+        private const int PlayerFrameWidth = 100;
+        private const int PlayerFrameHeight = 55;
 
         //Enemy Fields
         private Enemy enemy;
@@ -37,10 +41,10 @@ namespace TheGame
         private List<Rectangle> enemyPositions;
         private List<Enemy> enemies;
         private int enemyHealth;
-        //private const int spriteSheetWidth = 768;
-        //private const int spriteSheetHeight = 576;
-        //private const int EnemyFrameWidth = spriteSheetWidth / 6;
-        //private const int EnemyFrameHeight = spriteSheetHeight / 6;
+        private const int spriteSheetWidth = 768;
+        private const int spriteSheetHeight = 576;
+        private const int EnemyFrameWidth = spriteSheetWidth / 6;
+        private const int EnemyFrameHeight = spriteSheetHeight / 6;
 
         //Background fields;
         private Texture2D background;
@@ -84,6 +88,8 @@ namespace TheGame
             currentWave = 1;
             rng = new Random();
             currentState = GameState.MainMenu;
+            enemyHitbox = new List<Rectangle>();
+            
 
             // Set the window size
             _graphics.PreferredBackBufferWidth = windowWidth;
@@ -130,6 +136,10 @@ namespace TheGame
             goldText = Content.Load<SpriteFont>("gold");
             information = Content.Load<SpriteFont>("information");
 
+            
+            
+
+
             //Debug font
             debug = Content.Load<SpriteFont>("Debug");
         }
@@ -139,6 +149,7 @@ namespace TheGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            
             
             switch (currentState)
             {
@@ -169,6 +180,17 @@ namespace TheGame
                     {
                         NextWave();
                     }
+
+                    playerHitbox = new Rectangle((int)player.Position.X + PlayerFrameWidth/2, (int)player.Position.Y + PlayerFrameHeight/2,
+                    PlayerFrameWidth, PlayerFrameHeight);
+
+                    for (int i = 0; i < enemyHitbox.Count; i++)
+                    {
+                        enemyHitbox[i] = new Rectangle((int)enemies[i].Position.X - EnemyFrameWidth / 2, (int)enemies[i].Position.Y - EnemyFrameHeight / 2,
+                                            EnemyFrameWidth, EnemyFrameHeight);
+
+                    }
+                    
 
                     player.UpdateAnimation(gameTime);
                     //calls player update.
@@ -282,7 +304,7 @@ namespace TheGame
                     {
                         _spriteBatch.DrawString(
                         debug, String.Format("" +
-                        "Enemy distance: {0}", Vector2.Distance(enemies[0].Position, player.Position))
+                        "Enemy distance: {0}", enemies[0].Position)
                         , new Vector2(10, 70), Color.White);
                     }
                     
@@ -294,6 +316,7 @@ namespace TheGame
                     for (int i = 0; i < enemies.Count; i++)
                     {
                         enemies[i].Draw(_spriteBatch);
+                        _spriteBatch.Draw(enemyImage, enemyHitbox[i], Color.Red);
                     }
 
                     if (playerIHealth > 0)
@@ -312,8 +335,14 @@ namespace TheGame
                             0);
                         }
                     }
-                    _spriteBatch.DrawString(goldText, String.Format("Gold: {0}", player.Gold), new Vector2(1, 50), Color.White);
-                    
+                    if (enemies.Count > 0)
+                    {
+                        _spriteBatch.DrawString(goldText, String.Format("Gold: {0}", enemyHitbox[0]), new Vector2(1, 50), Color.White);
+                    }
+                    _spriteBatch.Draw(playerImage, playerHitbox, Color.Red);
+
+
+
                     break;
 
                 case GameState.DialogueBox:
@@ -341,6 +370,7 @@ namespace TheGame
             {
                 enemies.Clear();
                 enemyPositions.Clear();
+                enemyHitbox.Clear();
             }
             // Creates the next wave of enemies
             for (int i = 0; i < currentWave; i++)
@@ -353,7 +383,9 @@ namespace TheGame
                             rng.Next(50, windowHeight - 50)), 
                         enemyImage, 
                         player));
-                //enemyPositions.Add(new Rectangle((int)enemies[i].Position.X, (int)enemies[i].Position.Y, EnemyFrameWidth, EnemyFrameHeight));
+                    enemyHitbox.Add(new Rectangle((int)enemies[i].Position.X - EnemyFrameWidth/2, (int)enemies[i].Position.Y - EnemyFrameHeight / 2,
+                    EnemyFrameWidth, EnemyFrameHeight));
+                
             }
         }
 
@@ -364,9 +396,9 @@ namespace TheGame
             {
                 // If enemy hits player, knock the enemy back
                 //Vector2.Distance(enemies[i].Position, player.Position) < 25  -  leave this here for backup use
-                if (Vector2.Distance(enemies[i].Position, player.Position) < 25)
+                if (playerHitbox.Intersects(enemies[i].Rectangle))
                 {
-                    playerIHealth--;
+                    //playerIHealth--;
                     for (int j = 0; j < 50; j++)
                     {
                         enemies[i].Position += new Vector2(1,1);

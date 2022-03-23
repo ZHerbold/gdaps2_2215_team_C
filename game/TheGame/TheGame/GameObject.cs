@@ -54,6 +54,19 @@ namespace TheGame
             get { return position; }
             set { position = value; }
         }
+        public Rectangle Rectangle
+        {
+            get { return new Rectangle((int)Position.X, 
+                (int)Position.Y, image.Width, image.Height); }
+        }
+        public Vector2 Origin
+        {
+            get {return new Vector2(image.Width / 2, image.Height / 2); }
+        }
+        public Texture2D Image
+        {
+            get { return image; }
+        }        
         // Constructor --------------------------------------------------------
         public GameObject(int health, Vector2 position, Texture2D image)
         {
