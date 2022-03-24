@@ -117,7 +117,7 @@ namespace TheGame
             }
 
             // Must finish an attack before moving again
-            if (state != PlayerState.AttackRight || 
+            if (state != PlayerState.AttackRight && 
                 state != PlayerState.AttackLeft)
             {
                 // ---- MOVE RIGHT ----
