@@ -27,8 +27,6 @@ namespace TheGame
         private Vector2 distance;
         private Vector2 direction;
         private bool isDead;
-        private float distanceX;
-        private float distanceY;
 
         // Animation
         private int frame;
@@ -252,7 +250,6 @@ namespace TheGame
         {
             isDead = true;
             player.Gold += 5;
-            // Remove the enemy from the game
         }
     }
 }

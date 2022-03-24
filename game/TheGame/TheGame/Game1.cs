@@ -54,6 +54,7 @@ namespace TheGame
         private SpriteFont debug;
 
         //Game info
+        private bool nextWave;
         private int currentWave;
         private Random rng;
         private GameState currentState;
@@ -89,7 +90,7 @@ namespace TheGame
             rng = new Random();
             currentState = GameState.MainMenu;
             enemyHitbox = new List<Rectangle>();
-            
+            nextWave = true;
 
             // Set the window size
             _graphics.PreferredBackBufferWidth = windowWidth;
@@ -134,11 +135,7 @@ namespace TheGame
             //}
             heart = Content.Load<Texture2D>("heart");
             goldText = Content.Load<SpriteFont>("gold");
-            information = Content.Load<SpriteFont>("information");
-
-            
-            
-
+            information = Content.Load<SpriteFont>("information");        
 
             //Debug font
             debug = Content.Load<SpriteFont>("Debug");
@@ -147,9 +144,7 @@ namespace TheGame
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            
+                Exit();            
             
             switch (currentState)
             {
@@ -173,23 +168,37 @@ namespace TheGame
 
                 // Endless Wave Gamestate
                 case GameState.EndlessWave:
+
                     currentKbState = Keyboard.GetState();
 
-                    // Enemy count
-                    if (enemies.Count == 0)
-                    {
-                        NextWave();
-                    }
+                    // Construct player hitbox
+                    playerHitbox = new Rectangle(
+                        (int)player.Position.X + PlayerFrameWidth/2, 
+                        (int)player.Position.Y + PlayerFrameHeight/2,
+                        PlayerFrameWidth, 
+                        PlayerFrameHeight);
 
-                    playerHitbox = new Rectangle((int)player.Position.X + PlayerFrameWidth/2, (int)player.Position.Y + PlayerFrameHeight/2,
-                    PlayerFrameWidth, PlayerFrameHeight);
-
+                    // Construct enemy hitboxes
                     for (int i = 0; i < enemyHitbox.Count; i++)
                     {
-                        enemyHitbox[i] = new Rectangle((int)enemies[i].Position.X - EnemyFrameWidth / 2, (int)enemies[i].Position.Y - EnemyFrameHeight / 2,
-                                            EnemyFrameWidth, EnemyFrameHeight);
-
+                        enemyHitbox[i] = 
+                            new Rectangle(
+                                (int)enemies[i].Position.X - EnemyFrameWidth / 2, 
+                                (int)enemies[i].Position.Y - EnemyFrameHeight / 2,
+                                EnemyFrameWidth, 
+                                EnemyFrameHeight);
                     }                    
+
+                    // Manage player attacks
+                    switch (player.State)
+                    {
+                        case PlayerState.AttackRight:
+                        case PlayerState.AttackLeft:
+
+                            // Check for collisions when attacking
+                            Attack();
+                            break;
+                    }
 
                     player.UpdateAnimation(gameTime);
                     player.Update(gameTime);
@@ -200,13 +209,36 @@ namespace TheGame
                         enemies[i].UpdateAnimation(gameTime);
                         enemies[i].Update(gameTime);
                     }
-                    CheckCollision();
 
                     // checks to see if the players health is zero
                     if (playerIHealth <= 0)
                     {
                         currentState = GameState.GameOver;
                     }
+
+                    // Update nextWave bool based on the
+                    // active property of enemies
+                    foreach (Enemy e in enemies)
+                    {
+                        if (e.Active)
+                        {
+                            nextWave = false;
+                            break;
+                        }
+                        else
+                        {
+                            nextWave = true;
+                        }
+                    }
+
+                    // If there aren't any more active enemies
+                    // progress to next wave
+                    if (nextWave)
+                    {
+                        NextWave();
+                        nextWave = false;
+                    }
+
                     break;
 
                 // Dialogue Box Gamestate (Not coded yet)
@@ -219,9 +251,7 @@ namespace TheGame
 
                 default:
                     break;
-            }
-
-            
+            }            
 
             //gets the keyboard state
             KeyboardState kbState = Keyboard.GetState();
@@ -261,6 +291,7 @@ namespace TheGame
 
             switch (currentState)
             {
+                // --- MAIN MENU ---
                 case GameState.MainMenu:
                     _spriteBatch.DrawString(
                         information,
@@ -275,6 +306,7 @@ namespace TheGame
                 case GameState.Settings:
                     break;
 
+                // --- GAME OVER ---
                 case GameState.GameOver:
                     _spriteBatch.DrawString(
                         information,
@@ -285,7 +317,9 @@ namespace TheGame
                         Color.White);
                     break;
 
+                // --- GAME LOOP ---
                 case GameState.EndlessWave:
+
                     //Draw stuff for the background
                     _spriteBatch.Draw(
                         background,
@@ -310,9 +344,12 @@ namespace TheGame
                     player.Draw(_spriteBatch);
 
                     //drawing for the enemy
-                    for (int i = 0; i < enemies.Count; i++)
+                    foreach (Enemy e in enemies)
                     {
-                        enemies[i].Draw(_spriteBatch);
+                        if (e.Active)
+                        {
+                            e.Draw(_spriteBatch);
+                        }
                     }
 
                     if (playerIHealth > 0)
@@ -334,9 +371,12 @@ namespace TheGame
 
                     if (enemies.Count > 0)
                     {
-                        _spriteBatch.DrawString(goldText, String.Format("Gold: {0}", enemyHitbox[0]), new Vector2(1, 50), Color.White);
+                        _spriteBatch.DrawString(
+                            goldText, 
+                            String.Format("Gold: {0}", enemyHitbox[0]), 
+                            new Vector2(1, 50), 
+                            Color.White);
                     }
-                    _spriteBatch.Draw(playerImage, playerHitbox, Color.Red);
 
                     break;
 
@@ -344,7 +384,6 @@ namespace TheGame
                     break;
 
                 case GameState.Shop:
-
                     break;
 
                 default:
@@ -381,32 +420,61 @@ namespace TheGame
                             rng.Next(50, windowHeight - 50)), 
                         enemyImage, 
                         player));
-                    enemyHitbox.Add(new Rectangle((int)enemies[i].Position.X - EnemyFrameWidth/2, (int)enemies[i].Position.Y - EnemyFrameHeight / 2,
-                    EnemyFrameWidth, EnemyFrameHeight));
+
+                // Enemy Hitbox Locations
+                    enemyHitbox.Add(
+                        new Rectangle(
+                            (int)enemies[i].Position.X - EnemyFrameWidth / 2, 
+                            (int)enemies[i].Position.Y - EnemyFrameHeight / 2,
+
+                // Enemy Hitbox Dimensions
+                        EnemyFrameWidth, 
+                        EnemyFrameHeight));
                 
             }
         }
 
-        // Collision method
+        /// <summary>
+        /// Kill an enemy when your hitbox becomes active 
+        /// and it intersects with theirs
+        /// </summary>
+        public void Attack()
+        {
+            foreach (Enemy e in enemies)
+            {
+                // Check for collisions only if the enemy is active
+                if (e.Active)
+                {
+                    // If the player and enemy collide return true
+                    if (playerHitbox.Intersects(e.Rectangle))
+                    {
+                        e.Active = false;
+                        e.Die();
+                    }
+                }
+            }
+        }
+
+        // Collision method by John
         public void CheckCollision()
         {
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                // If enemy hits player, knock the enemy back
-                //Vector2.Distance(enemies[i].Position, player.Position) < 25  -  leave this here for backup use
-                if (playerHitbox.Intersects(enemies[i].Rectangle))
-                {
-                    //playerIHealth--;
-                    for (int j = 0; j < 50; j++)
-                    {
-                        enemies[i].Position += new Vector2(1,1);
-                    }
-                    //enemies[i].Die();
-                    //enemies.RemoveAt(i);
-                    //enemyPositions.RemoveAt(i);
-                }   
-            }
-            
+            //for (int i = 0; i < enemies.Count; i++)
+            //{
+            //    // If enemy hits player, knock the enemy back
+            //    //Vector2.Distance(enemies[i].Position, player.Position) < 25  -  leave this here for backup use
+            //    if (playerHitbox.Intersects(enemies[i].Rectangle))
+            //    {
+            //        //playerIHealth--;
+            //        //for (int j = 0; j < 50; j++)
+            //        //{
+            //        //    enemies[i].Position += new Vector2(1, 1);
+            //        //}
+
+            //        enemies[i].Die();
+            //        enemies.RemoveAt(i);
+            //        enemyPositions.RemoveAt(i);
+            //    }
+            //}
         }
 
         // Single key press method for any key

@@ -10,10 +10,8 @@ namespace TheGame
     abstract class GameObject
     {
         // Fields -------------------------------------------------------------
-        // Have a protected access modifier so that children may access
         protected int health;
-        //changed position to a float since having it as a rectange would be hindering since player has constant 
-        //dimensions for frames to work (see PE mario walk if you dont understand)
+        protected bool active;
         protected Vector2 position;
         protected Texture2D image;
 
@@ -67,15 +65,30 @@ namespace TheGame
         {
             get { return image; }
         }        
+        public bool Active
+        {
+            get { return active; }
+            set { active = value; }
+        }
+
         // Constructor --------------------------------------------------------
         public GameObject(int health, Vector2 position, Texture2D image)
         {
             this.health = health;
             this.position = position;
             this.image = image;
+            
+            active = true;
         }
 
         // Methods ------------------------------------------------------------
+        /// <summary>
+        /// Checks if an enemy intersects the player
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="enemy"></param>
+        /// <returns></returns>
+
         //abstract update method for child classes to use
         public abstract void Update(GameTime gameTime);
 
@@ -93,20 +106,6 @@ namespace TheGame
             // FOR BOTH PLAYER & ENEMIES
             //      We may have a frame of animation dedicated to being hit and
             //      draw that here or call something that draws it instead?
-        }
-
-        /// <summary>
-        /// Creates projectile objects
-        /// </summary>
-        /// <returns></returns>
-        public void Attack()
-        {
-            // FOR PLAYER (MELEE):
-            //      Draw the attacks and immediately check for collisions.
-            //      If there is a collision, call TakeDamage on the enemy
-            //      that was hit.
-
-            // For projectiles, create a Projectile object
         }
     }
 }

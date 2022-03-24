@@ -218,6 +218,8 @@ namespace TheGame
             switch (state)
             {
                 case PlayerState.AttackRight:
+
+                    // Stop attack animations
                     if (frame == AttackFrameCount)
                     {
                         state = PlayerState.FaceRight;
@@ -225,6 +227,8 @@ namespace TheGame
                     break;
 
                 case PlayerState.AttackLeft:
+
+                    // Stop attack animations
                     if (frame == AttackFrameCount)
                     {
                         state = PlayerState.FaceLeft;
@@ -354,22 +358,6 @@ namespace TheGame
                 2.5f,
                 flipSprite,
                 0);
-        }
-
-        /// <summary>
-        /// Simulate a ranged attack
-        /// </summary>
-        public void RangedAttack()
-        {
-            base.Attack();
-        }
-
-        /// <summary>
-        /// Simulate a melee attack
-        /// </summary>
-        public void MeleeAttack()
-        {
-            base.Attack();
         }
     }
 }
