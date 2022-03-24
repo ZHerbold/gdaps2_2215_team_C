@@ -189,11 +189,9 @@ namespace TheGame
                         enemyHitbox[i] = new Rectangle((int)enemies[i].Position.X - EnemyFrameWidth / 2, (int)enemies[i].Position.Y - EnemyFrameHeight / 2,
                                             EnemyFrameWidth, EnemyFrameHeight);
 
-                    }
-                    
+                    }                    
 
                     player.UpdateAnimation(gameTime);
-                    //calls player update.
                     player.Update(gameTime);
 
                     //calls enemy update
@@ -306,8 +304,7 @@ namespace TheGame
                         debug, String.Format("" +
                         "Enemy distance: {0}", enemies[0].Position)
                         , new Vector2(10, 70), Color.White);
-                    }
-                    
+                    }                    
 
                     //drawing for the player
                     player.Draw(_spriteBatch);
@@ -316,7 +313,6 @@ namespace TheGame
                     for (int i = 0; i < enemies.Count; i++)
                     {
                         enemies[i].Draw(_spriteBatch);
-                        _spriteBatch.Draw(enemyImage, enemyHitbox[i], Color.Red);
                     }
 
                     if (playerIHealth > 0)
@@ -335,13 +331,12 @@ namespace TheGame
                             0);
                         }
                     }
+
                     if (enemies.Count > 0)
                     {
                         _spriteBatch.DrawString(goldText, String.Format("Gold: {0}", enemyHitbox[0]), new Vector2(1, 50), Color.White);
                     }
                     _spriteBatch.Draw(playerImage, playerHitbox, Color.Red);
-
-
 
                     break;
 
@@ -366,6 +361,7 @@ namespace TheGame
             currentWave++;
 
             enemyHealth = currentWave * currentWave;
+
             // Checks to see if there are any enemies within the enemies list
             if (enemies != null)
             {
@@ -373,6 +369,7 @@ namespace TheGame
                 enemyPositions.Clear();
                 enemyHitbox.Clear();
             }
+
             // Creates the next wave of enemies
             for (int i = 0; i < currentWave; i++)
             {

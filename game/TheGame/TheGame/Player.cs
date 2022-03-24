@@ -110,7 +110,7 @@ namespace TheGame
 
                 // ---- LEFT ATTACK ----
                 else if (state == PlayerState.FaceLeft ||
-                    state == PlayerState.WalkLeft)
+                         state == PlayerState.WalkLeft)
                 {
                     state = PlayerState.AttackLeft;
                 }
@@ -288,14 +288,14 @@ namespace TheGame
             spriteBatch.Draw(image,                               
                 position,
                 new Rectangle(
-                    0,
+                    frame * FrameWidth,
                     0,
                     FrameWidth,
                     FrameHeight),
                 Color.White,                                       
                 0,                          
                 Vector2.Zero, 
-                2.5f,           //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
+                2.5f,
                 flipSprite,
                 0);             //layer, make sure it is above the background
         }
