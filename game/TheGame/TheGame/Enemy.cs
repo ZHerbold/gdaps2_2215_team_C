@@ -178,7 +178,7 @@ namespace TheGame
         }
 
         /// <summary>
-        /// Update gold and the IsDead field
+        /// Update gold, the active property
         /// </summary>
         public void Die()
         {
