@@ -55,6 +55,11 @@ namespace TheGame
             set { gold = value; }
         }
 
+        public int Frame
+        {
+            get { return frame; }
+        }
+
 
         // Constructor --------------------------------------------------------
         public Player(int health, Vector2 position, Texture2D image, int gold, 

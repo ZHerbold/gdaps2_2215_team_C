@@ -14,7 +14,8 @@ namespace TheGame
         WalkLeft,
         WalkRight,
         Attack,
-        Chase
+        DyingLeft,
+        DyingRight
     }
 
     class Enemy : GameObject
@@ -57,9 +58,7 @@ namespace TheGame
 
             // Initialize
             fps = 10.0;                     // Will cycle through 10 walk frames per second
-            timePerFrame = 1.0 / fps;       // The amount of time in a single walk image
-
-            
+            timePerFrame = 1.0 / fps;       // The amount of time in a single walk image            
         }
 
         // Methods
@@ -94,28 +93,53 @@ namespace TheGame
 
         public override void Update(GameTime gameTime)
         {
-            Chase();
+            if (!isDead)
+            {
+                Chase();
 
-            // If the skeleton is not moving, draw it standing
-            if (currentDistance < followDistance && 
-                (player.Position.X < this.position.X))
-            {
-                state = EnemyState.FaceLeft;
-            }
-            else if (currentDistance < followDistance &&
-                (player.Position.X > this.position.X))
-            {
-                state = EnemyState.FaceRight;
+                // If the skeleton is not moving, draw it standing
+                if (currentDistance < followDistance &&
+                    (player.Position.X < this.position.X))
+                {
+                    state = EnemyState.FaceLeft;
+                }
+                else if (currentDistance < followDistance &&
+                    (player.Position.X > this.position.X))
+                {
+                    state = EnemyState.FaceRight;
+                }
+
+                // Change state depending on which direction the skeleton is facing
+                else if (player.Position.X < this.position.X + 100)
+                {
+                    state = EnemyState.WalkLeft;
+                }
+                else if (player.Position.X > this.position.X - 100)
+                {
+                    state = EnemyState.WalkRight;
+                }
             }
 
-            // Change state depending on which direction the skeleton is facing
-            else if (player.Position.X < this.position.X + 100)
+            // Changes state after dying
+            if (isDead)
             {
-                state = EnemyState.WalkLeft;
-            }
-            else if (player.Position.X > this.position.X - 100)
-            {
-                state = EnemyState.WalkRight;
+                // Die in the direction you were last facing
+                if (state == EnemyState.FaceLeft ||
+                    state == EnemyState.WalkLeft)
+                {
+                    state = EnemyState.DyingLeft;
+                }
+                else if (state == EnemyState.FaceRight ||
+                         state == EnemyState.WalkRight)
+                {
+                    state = EnemyState.DyingRight;
+                }
+
+                // Delete at final frame of death animation
+                if (frame == 3)
+                {
+                    active = false;
+                }
             }
         }
 
@@ -140,9 +164,27 @@ namespace TheGame
                     DrawWalking(SpriteEffects.None, spriteBatch);
                     break;
 
+                case EnemyState.DyingLeft:
+                    DrawDying(SpriteEffects.FlipHorizontally, spriteBatch);
+                    break;
+
+                case EnemyState.DyingRight:
+                    DrawDying(SpriteEffects.None, spriteBatch);
+                    break;
+
                 default:
                     break;
             }
+        }
+
+        /// <summary>
+        /// Update gold, the active property
+        /// </summary>
+        public void Die()
+        {
+            isDead = true;
+            player.Gold += 5;
+            frame = 0;
         }
 
         /// <summary>
@@ -187,6 +229,29 @@ namespace TheGame
                 2f,                     //Scale of the image. its kinda blurry, so if anyone knows how to fix it, be my guest.
                 flipSprite,             //sprite effect
                 0);                     //layer, make sure it is above the background
+        }
+
+        /// <summary>
+        /// Draws the enemy's death animation
+        /// </summary>
+        /// <param name="flipSprite"></param>
+        /// <param name="sprite"></param>
+        public void DrawDying(SpriteEffects flipSprite, SpriteBatch sprite)
+        {
+            sprite.Draw(
+                image,
+                position,
+                new Rectangle(
+                    frameWidth * frame,
+                    frameHeight * 4,
+                    frameWidth,
+                    frameHeight),
+                Color.White,
+                0,
+                Vector2.Zero,
+                2f,
+                flipSprite,
+                0);
         }
 
         /// <summary>
@@ -244,12 +309,6 @@ namespace TheGame
             //        //sameYPlane = true;
             //        Y += speed * -1;
             //    }
-        }
-
-        public void Die()
-        {
-            isDead = true;
-            player.Gold += 5;
         }
     }
 }

@@ -173,8 +173,8 @@ namespace TheGame
 
                     // Construct player hitbox
                     playerHitbox = new Rectangle(
-                        (int)player.Position.X + PlayerFrameWidth/2, 
-                        (int)player.Position.Y + PlayerFrameHeight/2,
+                        (int)player.Position.X, 
+                        (int)player.Position.Y,
                         PlayerFrameWidth, 
                         PlayerFrameHeight);
 
@@ -183,8 +183,8 @@ namespace TheGame
                     {
                         enemyHitbox[i] = 
                             new Rectangle(
-                                (int)enemies[i].Position.X - EnemyFrameWidth / 2, 
-                                (int)enemies[i].Position.Y - EnemyFrameHeight / 2,
+                                (int)enemies[i].Position.X, 
+                                (int)enemies[i].Position.Y,
                                 EnemyFrameWidth, 
                                 EnemyFrameHeight);
                     }                    
@@ -196,7 +196,11 @@ namespace TheGame
                         case PlayerState.AttackLeft:
 
                             // Check for collisions when attacking
-                            Attack();
+                            // Only active during the swinging part of the animation
+                            if (player.Frame > 1 && player.Frame < 6)
+                            {
+                                Attack();
+                            }
                             break;
                     }
 
@@ -448,7 +452,6 @@ namespace TheGame
                     // If the player and enemy collide return true
                     if (playerHitbox.Intersects(e.Rectangle))
                     {
-                        e.Active = false;
                         e.Die();
                     }
                 }
