@@ -33,6 +33,7 @@ namespace TheGame
         private List<Rectangle> enemyHitbox;
         private const int PlayerFrameWidth = 100;
         private const int PlayerFrameHeight = 55;
+        private Rectangle rectangle;
 
         //Enemy Fields
         private Enemy enemy;
@@ -171,6 +172,13 @@ namespace TheGame
 
                     currentKbState = Keyboard.GetState();
 
+                    // Visualized hitbox
+                    rectangle = new Rectangle(
+                        (int)player.Position.X + 90,
+                        (int)player.Position.Y + 30,
+                        80,
+                        110);
+
                     // Construct player hitbox
                     playerHitbox = new Rectangle(
                         (int)player.Position.X, 
@@ -187,6 +195,7 @@ namespace TheGame
                                 (int)enemies[i].Position.Y,
                                 EnemyFrameWidth, 
                                 EnemyFrameHeight);
+                        
                     }                    
 
                     // Manage player attacks
@@ -347,6 +356,8 @@ namespace TheGame
                     //drawing for the player
                     player.Draw(_spriteBatch);
 
+                    _spriteBatch.Draw(heart, rectangle, Color.Red);
+
                     //drawing for the enemy
                     foreach (Enemy e in enemies)
                     {
@@ -428,8 +439,8 @@ namespace TheGame
                 // Enemy Hitbox Locations
                     enemyHitbox.Add(
                         new Rectangle(
-                            (int)enemies[i].Position.X - EnemyFrameWidth / 2, 
-                            (int)enemies[i].Position.Y - EnemyFrameHeight / 2,
+                            (int)enemies[i].Position.X, 
+                            (int)enemies[i].Position.Y,
 
                 // Enemy Hitbox Dimensions
                         EnemyFrameWidth, 
