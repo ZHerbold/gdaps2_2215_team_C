@@ -21,8 +21,9 @@ namespace TheGame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        #region Fields
         // Fields -----------------------------------------------------------
-        
+
         //Player Fields
         private Player player;
         private int playerIHealth = 3;      // initial player health, raised via shop
@@ -68,6 +69,7 @@ namespace TheGame
         private const int windowHeight = 720;
         // If we have time, implement resolution choices in settings
         // But not for S2 skeleton
+        #endregion
 
         public Game1()
         {
@@ -76,6 +78,7 @@ namespace TheGame
             IsMouseVisible = true;
         }
 
+        #region Initialize
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
@@ -95,7 +98,9 @@ namespace TheGame
 
             base.Initialize();
         }
+        #endregion
 
+        #region Load Content
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -131,6 +136,7 @@ namespace TheGame
             //Debug font
             debug = Content.Load<SpriteFont>("Debug");
         }
+        #endregion
 
         protected override void Update(GameTime gameTime)
         {
@@ -179,6 +185,7 @@ namespace TheGame
                     // Construct enemy hitboxes
                     for (int i = 0; i < enemyHitbox.Count; i++)
                     {
+                        // Construct the hitbox based on the direction it's walking
                         if (enemies[i].State == EnemyState.WalkRight)
                         {
                             enemyHitbox[i] =
@@ -188,7 +195,7 @@ namespace TheGame
                                   EnemyFrameWidth / 2,
                                   EnemyFrameHeight + 30);
                         }
-                        else
+                        else if (enemies[i].State == EnemyState.WalkLeft)
                         {
                             enemyHitbox[i] =
                               new Rectangle(
@@ -197,7 +204,17 @@ namespace TheGame
                                   EnemyFrameWidth / 2,
                                   EnemyFrameHeight + 30);
                         }
-                          
+
+                        // Removes hitbox if enemies are dead
+                        else
+                        {
+                            enemyHitbox[i] =
+                              new Rectangle(
+                                  (int)enemies[i].Position.X + 140,
+                                  (int)enemies[i].Position.Y + 70,
+                                  0,
+                                  0);
+                        }
                     }
                     
                     // Manage player attacks
@@ -231,29 +248,27 @@ namespace TheGame
                         currentState = GameState.GameOver;
                     }
 
-                    ///NOTE: I removed this because I am removing the enemies from the List
-                    ///      and then checking the number of enemies in the List for the next wave
-                    //// Update nextWave bool based on the
-                    //// active property of enemies
-                    //foreach (Enemy e in enemies)
-                    //{
-                    //    if (e.Active)
-                    //    {
-                    //        nextWave = false;
-                    //        break;
-                    //    }
-                    //    else
-                    //    {
-                    //        nextWave = true;
-                    //    }
-                    //}
+                    // Update nextWave bool based on the
+                    // active property of enemies
+                    foreach (Enemy e in enemies)
+                    {
+                        if (e.Active)
+                        {
+                            nextWave = false;
+                            break;
+                        }
+                        else
+                        {
+                            nextWave = true;
+                        }
+                    }
 
                     // If there aren't any more active enemies
                     // progress to next wave
-                    if (enemies.Count ==0)
+                    if (nextWave)
                     {
                         NextWave();
-                        //nextWave = false;
+                        nextWave = false;
                     }
                     //CheckCollision();
 
@@ -493,8 +508,6 @@ namespace TheGame
                     if (playerHitbox.Intersects(enemyHitbox[i]))
                     {
                         enemies[i].Die();
-                        enemies.RemoveAt(i);
-                        enemyHitbox.RemoveAt(i);
                     }
                 }
             }
