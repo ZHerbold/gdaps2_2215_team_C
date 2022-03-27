@@ -183,20 +183,20 @@ namespace TheGame
 
                     // Construct player hitbox
                     playerHitbox = new Rectangle(
-                        (int)player.Position.X, 
-                        (int)player.Position.Y,
-                        PlayerFrameWidth, 
-                        PlayerFrameWidth);
+                        (int)player.Position.X + 90,
+                        (int)player.Position.Y + 30,
+                        80,
+                        110);
 
                     // Construct enemy hitboxes
                     for (int i = 0; i < enemyHitbox.Count; i++)
                     {
                         enemyHitbox[i] = 
                             new Rectangle(
-                                (int)enemies[i].Position.X, 
-                                (int)enemies[i].Position.Y,
-                                EnemyFrameWidth, 
-                                EnemyFrameHeight);
+                                (int)enemies[i].Position.X + 50, 
+                                (int)enemies[i].Position.Y + 70,
+                                EnemyFrameWidth/2, 
+                                EnemyFrameHeight + 30);
                     }
                     
                     
@@ -362,10 +362,10 @@ namespace TheGame
                     // visual player hitbox
                     _spriteBatch.Draw(heart, playerHitbox, Color.Red);
 
-                    //for (int i = 0; i < enemyHitbox.Count; i++)
-                    //{
-                    //    _spriteBatch.Draw(heart, enemyHitbox[i], Color.Red);
-                    //}
+                    for (int i = 0; i < enemyHitbox.Count; i++)
+                    {
+                        _spriteBatch.Draw(heart, enemyHitbox[i], Color.Red);
+                    }
 
                     //drawing for the enemy
                     foreach (Enemy e in enemies)
@@ -464,6 +464,12 @@ namespace TheGame
         /// </summary>
         public void Attack()
         {
+            playerHitbox = new Rectangle(
+                        (int)player.Position.X + 90,
+                        (int)player.Position.Y + 30,
+                        160,
+                        110);
+
             for (int i = 0; i < enemies.Count; i++)
             {
                 // Check for collisions only if the enemy is active
