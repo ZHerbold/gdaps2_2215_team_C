@@ -188,6 +188,8 @@ namespace TheGame
                         80,
                         110);
 
+                    
+
                     // Construct enemy hitboxes
                     for (int i = 0; i < enemyHitbox.Count; i++)
                     {
@@ -254,6 +256,8 @@ namespace TheGame
                         NextWave();
                         nextWave = false;
                     }
+                    //CheckCollision();
+
 
                     break;
 
@@ -464,11 +468,24 @@ namespace TheGame
         /// </summary>
         public void Attack()
         {
-            playerHitbox = new Rectangle(
+            
+
+            if (player.State == PlayerState.AttackRight)
+            {
+                playerHitbox = new Rectangle(
                         (int)player.Position.X + 90,
                         (int)player.Position.Y + 30,
                         160,
                         110);
+            }
+            else
+            {
+                playerHitbox = new Rectangle(
+                        (int)player.Position.X + 10,
+                        (int)player.Position.Y + 30,
+                        160,
+                        110);
+            }
 
             for (int i = 0; i < enemies.Count; i++)
             {
