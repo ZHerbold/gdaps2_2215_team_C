@@ -380,13 +380,13 @@ namespace TheGame
                     //drawing for the player
                     player.Draw(_spriteBatch);
 
-                    // visual player hitbox
-                    _spriteBatch.Draw(heart, playerHitbox, Color.Red);
-
-                    for (int i = 0; i < enemyHitbox.Count; i++)
-                    {
-                        _spriteBatch.Draw(heart, enemyHitbox[i], Color.Red);
-                    }
+                    // visualize hitboxs
+                    //_spriteBatch.Draw(heart, playerHitbox, Color.Red);
+                    //
+                    //for (int i = 0; i < enemyHitbox.Count; i++)
+                    //{
+                    //    _spriteBatch.Draw(heart, enemyHitbox[i], Color.Red);
+                    //}
 
                     //drawing for the enemy
                     foreach (Enemy e in enemies)

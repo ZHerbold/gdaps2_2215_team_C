@@ -264,7 +264,7 @@ namespace TheGame
         {
             //FIXME: enemy goes to players back foot instead of middle of model
             followDistance = 0.5f;            // How close the enemy will get to the player before stopping
-            float speed = 2.3f;             // Speed the enemy moves towards the player
+            float speed = 1.7f;             // Speed the enemy moves towards the player
             
             // get distance between enemy and player
             Vector2 newPos = new Vector2(X, Y+frameHeight/2);
