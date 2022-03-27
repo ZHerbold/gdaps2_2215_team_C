@@ -110,11 +110,11 @@ namespace TheGame
                 }
 
                 // Change state depending on which direction the skeleton is facing
-                else if (player.Position.X < this.position.X + 100)
+                else if (player.Position.X < this.position.X)
                 {
                     state = EnemyState.WalkLeft;
                 }
-                else if (player.Position.X > this.position.X - 100)
+                else if (player.Position.X > this.position.X)
                 {
                     state = EnemyState.WalkRight;
                 }

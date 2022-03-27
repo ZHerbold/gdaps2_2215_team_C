@@ -40,6 +40,7 @@ namespace TheGame
         private Texture2D enemyImage;
         private Vector2 enemyPos;
         private List<Rectangle> enemyPositions;
+        private List<Rectangle> visualHitboxes;
         private List<Enemy> enemies;
         private int enemyHealth;
         private const int spriteSheetWidth = 768;
@@ -92,6 +93,7 @@ namespace TheGame
             currentState = GameState.MainMenu;
             enemyHitbox = new List<Rectangle>();
             nextWave = true;
+            visualHitboxes = new List<Rectangle>();
 
             // Set the window size
             _graphics.PreferredBackBufferWidth = windowWidth;
@@ -172,7 +174,7 @@ namespace TheGame
 
                     currentKbState = Keyboard.GetState();
 
-                    // Visualized hitbox
+                    // Visualized hitbox for player
                     rectangle = new Rectangle(
                         (int)player.Position.X + 90,
                         (int)player.Position.Y + 30,
@@ -184,7 +186,7 @@ namespace TheGame
                         (int)player.Position.X, 
                         (int)player.Position.Y,
                         PlayerFrameWidth, 
-                        PlayerFrameHeight);
+                        PlayerFrameWidth);
 
                     // Construct enemy hitboxes
                     for (int i = 0; i < enemyHitbox.Count; i++)
@@ -195,8 +197,9 @@ namespace TheGame
                                 (int)enemies[i].Position.Y,
                                 EnemyFrameWidth, 
                                 EnemyFrameHeight);
-                        
-                    }                    
+                    }
+                    
+                    
 
                     // Manage player attacks
                     switch (player.State)
@@ -349,14 +352,20 @@ namespace TheGame
                     {
                         _spriteBatch.DrawString(
                         debug, String.Format("" +
-                        "Enemy distance: {0}", enemies[0].Position)
+                        "Enemy distance: {0}", playerHitbox)
                         , new Vector2(10, 70), Color.White);
                     }                    
 
                     //drawing for the player
                     player.Draw(_spriteBatch);
 
-                    _spriteBatch.Draw(heart, rectangle, Color.Red);
+                    // visual player hitbox
+                    _spriteBatch.Draw(heart, playerHitbox, Color.Red);
+
+                    //for (int i = 0; i < enemyHitbox.Count; i++)
+                    //{
+                    //    _spriteBatch.Draw(heart, enemyHitbox[i], Color.Red);
+                    //}
 
                     //drawing for the enemy
                     foreach (Enemy e in enemies)
@@ -455,15 +464,15 @@ namespace TheGame
         /// </summary>
         public void Attack()
         {
-            foreach (Enemy e in enemies)
+            for (int i = 0; i < enemies.Count; i++)
             {
                 // Check for collisions only if the enemy is active
-                if (e.Active)
+                if (enemies[i].Active)
                 {
                     // If the player and enemy collide return true
-                    if (playerHitbox.Intersects(e.Rectangle))
+                    if (playerHitbox.Intersects(enemyHitbox[i]))
                     {
-                        e.Die();
+                        enemies[i].Die();
                     }
                 }
             }
@@ -472,23 +481,23 @@ namespace TheGame
         // Collision method by John
         public void CheckCollision()
         {
-            //for (int i = 0; i < enemies.Count; i++)
-            //{
-            //    // If enemy hits player, knock the enemy back
-            //    //Vector2.Distance(enemies[i].Position, player.Position) < 25  -  leave this here for backup use
-            //    if (playerHitbox.Intersects(enemies[i].Rectangle))
-            //    {
-            //        //playerIHealth--;
-            //        //for (int j = 0; j < 50; j++)
-            //        //{
-            //        //    enemies[i].Position += new Vector2(1, 1);
-            //        //}
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                // If enemy hits player, knock the enemy back
+                //Vector2.Distance(enemies[i].Position, player.Position) < 25  -  leave this here for backup use
+                if (rectangle.Intersects(enemyHitbox[i]))
+                {
+                    playerIHealth--;
+                    for (int j = 0; j < 50; j++)
+                    {
+                        enemies[i].Position += new Vector2(1, 1);
+                    }
 
-            //        enemies[i].Die();
-            //        enemies.RemoveAt(i);
-            //        enemyPositions.RemoveAt(i);
-            //    }
-            //}
+                    //enemies[i].Die();
+                    //enemies.RemoveAt(i);
+                    //enemyPositions.RemoveAt(i);
+                }
+            }
         }
 
         // Single key press method for any key
