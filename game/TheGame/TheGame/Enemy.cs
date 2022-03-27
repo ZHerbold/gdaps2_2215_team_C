@@ -50,7 +50,10 @@ namespace TheGame
         {
             get { return isDead; }
         }
-
+        public EnemyState State
+        {
+            get { return state; }
+        }
         // Constructor
         public Enemy(int health, Vector2 position, Texture2D image, Player player) : base(health, position, image)
         {            
