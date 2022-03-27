@@ -138,6 +138,7 @@ namespace TheGame
         }
         #endregion
 
+        #region Update
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -316,7 +317,9 @@ namespace TheGame
             previousKbState = currentKbState;
             base.Update(gameTime);
         }
+        #endregion
 
+        #region Draw
         protected override void Draw(GameTime gameTime)
         {
             
@@ -435,7 +438,9 @@ namespace TheGame
             _spriteBatch.End();
             base.Draw(gameTime);
         }
+        #endregion
 
+        #region Methods
         // The Next Wave method
         public void NextWave()
         {
@@ -548,5 +553,6 @@ namespace TheGame
                 return false;
             }
         }
+        #endregion
     }
 }
