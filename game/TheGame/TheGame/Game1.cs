@@ -135,7 +135,7 @@ namespace TheGame
 
             enemy = new Enemy(enemyIHealth, enemyPos, enemyImage, player);
 
-            heart = Content.Load<Texture2D>("heart");
+            heart = Content.Load<Texture2D>("newHeart");
             goldText = Content.Load<SpriteFont>("gold");
             information = Content.Load<SpriteFont>("information");
 
@@ -513,11 +513,11 @@ namespace TheGame
                             _spriteBatch.Draw(
                             heart,
                             new Vector2(i * 40, 10),
-                            new Rectangle(0, 0, 16, 16),
+                            new Rectangle(0, 0, 32, 32),
                             Color.White,
                             0,
                             Vector2.Zero,
-                            2,
+                            1.5f,
                             SpriteEffects.None,
                             0);
                         }
@@ -545,11 +545,11 @@ namespace TheGame
                         _spriteBatch.Draw(
                             heart,
                             new Vector2((i * 40) + 30, 150),
-                            new Rectangle(0, 0, 16, 16),
+                            new Rectangle(0, 0, 32, 32),
                             Color.White,
                             0,
                             Vector2.Zero,
-                            2,
+                            1.5f,
                             SpriteEffects.None,
                             0);
                     }
