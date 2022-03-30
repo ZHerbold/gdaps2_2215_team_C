@@ -13,7 +13,8 @@ namespace TheGame
         FaceRight,
         WalkLeft,
         WalkRight,
-        Attack,
+        AttackLeft,
+        AttackRight,
         DyingLeft,
         DyingRight
     }
@@ -99,18 +100,16 @@ namespace TheGame
         {
             if (!isDead)
             {
-                Chase();
-
                 // If the skeleton is not moving, draw it standing
                 if (currentDistance < followDistance &&
                     (player.Position.X < this.position.X))
                 {
-                    state = EnemyState.FaceLeft;
+                    state = EnemyState.AttackLeft;
                 }
                 else if (currentDistance < followDistance &&
                     (player.Position.X > this.position.X))
                 {
-                    state = EnemyState.FaceRight;
+                    state = EnemyState.AttackRight;
                 }
 
                 // Change state depending on which direction the skeleton is facing
@@ -128,13 +127,13 @@ namespace TheGame
             if (isDead)
             {
                 // Die in the direction you were last facing
-                if (state == EnemyState.FaceLeft ||
+                if (state == EnemyState.AttackLeft ||
                     state == EnemyState.WalkLeft)
                 {
                     frame = 0;
                     state = EnemyState.DyingLeft;
                 }
-                else if (state == EnemyState.FaceRight ||
+                else if (state == EnemyState.AttackRight ||
                          state == EnemyState.WalkRight)
                 {
                     frame = 0;
@@ -146,6 +145,22 @@ namespace TheGame
                 {
                     active = false;
                 }
+            }
+
+            switch (state)
+            {
+                case EnemyState.WalkLeft:
+                case EnemyState.WalkRight:
+                    Chase();
+                    break;
+                
+                case EnemyState.AttackLeft:
+                case EnemyState.AttackRight:
+                    if (frame == WalkFrameCount)
+                    {
+                        Chase();
+                    }
+                    break;
             }
         }
 
@@ -168,6 +183,14 @@ namespace TheGame
 
                 case EnemyState.WalkRight:
                     DrawWalking(SpriteEffects.None, spriteBatch);
+                    break;
+
+                case EnemyState.AttackLeft:
+                    DrawAttack(SpriteEffects.FlipHorizontally, spriteBatch);
+                    break;
+
+                case EnemyState.AttackRight:
+                    DrawAttack(SpriteEffects.None, spriteBatch);
                     break;
 
                 case EnemyState.DyingLeft:
@@ -237,6 +260,29 @@ namespace TheGame
         }
 
         /// <summary>
+        /// Draws the enemy's attack cycle
+        /// </summary>
+        /// <param name="flipSprite"></param>
+        /// <param name="sprite"></param>
+        public void DrawAttack(SpriteEffects flipSprite, SpriteBatch sprite)
+        {
+            sprite.Draw(
+                image,
+                position,
+                new Rectangle(
+                    frameWidth * frame,
+                    0,
+                    frameWidth,
+                    frameHeight),
+                Color.White,
+                0,
+                Vector2.Zero,
+                2f,
+                flipSprite,
+                0);
+        }
+
+        /// <summary>
         /// Draws the enemy's death animation
         /// </summary>
         /// <param name="flipSprite"></param>
@@ -265,7 +311,7 @@ namespace TheGame
         public void Chase()
         {
             //FIXME: enemy goes to players back foot instead of middle of model
-            followDistance = 0.5f;            // How close the enemy will get to the player before stopping
+            followDistance = 60.0f;            // How close the enemy will get to the player before stopping
             float speed = 1.7f;             // Speed the enemy moves towards the player
             
             // get distance between enemy and player

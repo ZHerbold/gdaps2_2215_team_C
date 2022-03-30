@@ -162,6 +162,14 @@ namespace TheGame
                 // Gameover GameState
                 case GameState.GameOver:
                     currentKbState = Keyboard.GetState();
+
+                    //if (currentKbState.IsKeyDown(Keys.Enter))
+                    //{
+                    //    playerIHealth = 3;
+                    //    playerPos = 
+                    //    currentState = GameState.MainMenu;
+                    //}
+
                     break;
 
                 // Endless Wave Gamestate
@@ -187,7 +195,8 @@ namespace TheGame
                     for (int i = 0; i < enemyHitbox.Count; i++)
                     {
                         // Construct the hitbox based on the direction it's walking
-                        if (enemies[i].State == EnemyState.WalkRight)
+                        if (enemies[i].State == EnemyState.WalkRight ||
+                            enemies[i].State == EnemyState.AttackRight)
                         {
                             enemyHitbox[i] =
                               new Rectangle(
@@ -196,7 +205,8 @@ namespace TheGame
                                   EnemyFrameWidth / 2,
                                   EnemyFrameHeight + 30);
                         }
-                        else if (enemies[i].State == EnemyState.WalkLeft)
+                        else if (enemies[i].State == EnemyState.WalkLeft ||
+                            enemies[i].State == EnemyState.AttackLeft)
                         {
                             enemyHitbox[i] =
                               new Rectangle(
@@ -518,7 +528,7 @@ namespace TheGame
             }
         }
 
-        // Collision method by John
+        // Collision method
         public void CheckCollision()
         {
             for (int i = 0; i < enemies.Count; i++)
