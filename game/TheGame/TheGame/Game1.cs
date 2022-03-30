@@ -30,9 +30,12 @@ namespace TheGame
         private Texture2D playerImage;
         private Vector2 playerPos;
         private int gold;
+        private bool iFrame;
         private Rectangle playerHitbox;
         private List<Rectangle> enemyHitbox;
         private Rectangle rectangle;
+        private double timeCounter;
+        private const double endIFrame = 2;
 
         //Enemy Fields
         private Enemy enemy;
@@ -89,6 +92,7 @@ namespace TheGame
             currentState = GameState.MainMenu;
             enemyHitbox = new List<Rectangle>();
             nextWave = true;
+            iFrame = false;
 
             // Set the window size
             _graphics.PreferredBackBufferWidth = windowWidth;
@@ -243,6 +247,25 @@ namespace TheGame
                             break;
                     }
 
+                    // Manage enemy attacks
+                    for (int i = 0; i < enemyHitbox.Count; i++)
+                    {
+                        switch (enemies[i].State)
+                        {
+                            case EnemyState.AttackLeft:
+                            case EnemyState.AttackRight:
+
+                                // Check for collisions when attacking
+                                // Only active during certain frames
+                                if (enemies[i].Frame == 4)
+                                {
+                                    Attack(i);
+                                }
+
+                                break;
+                        }
+                    }
+
                     player.UpdateAnimation(gameTime);
                     player.Update(gameTime);
 
@@ -281,8 +304,18 @@ namespace TheGame
                         NextWave();
                         nextWave = false;
                     }
-                    //CheckCollision();
 
+                    // Update iFrame if active
+                    // After a set period, iFrame is set to false
+                    if (iFrame)
+                    {
+                        timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
+
+                        if (timeCounter >= endIFrame)
+                        {
+                            iFrame = false;
+                        }
+                    }
 
                     break;
 
@@ -523,6 +556,46 @@ namespace TheGame
                     if (playerHitbox.Intersects(enemyHitbox[i]))
                     {
                         enemies[i].Die();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Check for collisions between the player and an enemy from the list
+        /// </summary>
+        /// <param name="e"></param>
+        private void Attack(int i)
+        {
+            // Check which way the enemy is facing
+            // and extend the hitbox in that direction
+            if (enemies[i].State == EnemyState.AttackRight)
+            {
+                enemyHitbox[i] = new Rectangle(
+                        (int)player.Position.X + 90,
+                        (int)player.Position.Y + 30,
+                        160,
+                        110);
+            }
+            else
+            {
+                enemyHitbox[i] = new Rectangle(
+                        (int)player.Position.X + 10,
+                        (int)player.Position.Y + 30,
+                        160,
+                        110);
+            }
+
+            // Check for collisions only if the enemy is active
+            if (enemies[i].Active)
+            {
+                // If the player and enemy collide return true
+                if (enemyHitbox[i].Intersects(playerHitbox))
+                {
+                    if (!iFrame)
+                    {
+                        playerIHealth--;
+                        iFrame = true;
                     }
                 }
             }

@@ -48,14 +48,9 @@ namespace TheGame
         private const int frameHeight = spriteSheetHeight / 6;
 
         // Properties
-        public bool IsDead
-        {
-            get { return isDead; }
-        }
-        public EnemyState State
-        {
-            get { return state; }
-        }
+        public bool IsDead { get { return isDead; } }
+        public int Frame { get { return frame; } }
+        public EnemyState State { get { return state; } }
 
         // Constructor
         public Enemy(int health, Vector2 position, Texture2D image, Player player) : base(health, position, image)

@@ -32,7 +32,7 @@ namespace TheGame
         private const int movement = 4;
 
         // Animation
-        private const int WalkFrameCount = 7;
+        private const int SpriteSheetWidth = 7;
         private const int AttackFrameCount = 7;
         private const int PlayerWalkOffsetY = 55;
         private const int PlayerAttackOffsetY = 165;
@@ -254,7 +254,7 @@ namespace TheGame
             {
                 frame += 1;
 
-                if (frame > WalkFrameCount)
+                if (frame > SpriteSheetWidth)
                     frame = 0;
 
                 timeCounter -= timePerFrame;
