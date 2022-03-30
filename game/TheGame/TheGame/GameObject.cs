@@ -22,7 +22,7 @@ namespace TheGame
             set
             {
                 // Only edit health if there is health remaining
-                if (health > 0)
+                if (health >= 0)
                 {
                     health = value;
 

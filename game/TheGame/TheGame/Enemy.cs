@@ -143,17 +143,6 @@ namespace TheGame
                 }
             }
 
-            // Change the frame to 0 whenever the
-            // state switches from walk to attack
-            if ((state == EnemyState.AttackLeft || 
-                state == EnemyState.AttackRight) && 
-                (previousState == EnemyState.WalkLeft || 
-                previousState == EnemyState.WalkRight))
-            {
-                frame = 0;
-            }
-            previousState = state;
-
             // Movement logic
             switch (state)
             {
@@ -178,6 +167,28 @@ namespace TheGame
                     }
                     break;
             }
+
+            // Change the frame to 0 whenever the
+            // state switches from walk to attack
+            if ((state == EnemyState.AttackLeft ||
+                state == EnemyState.AttackRight) &&
+                (previousState == EnemyState.WalkLeft ||
+                previousState == EnemyState.WalkRight))
+            {
+                frame = 0;
+            }
+            // Prevents a bug where the dead enemy
+            // gives the player gold more than once
+            if ((previousState == EnemyState.AttackLeft ||
+                previousState == EnemyState.AttackRight ||
+                previousState == EnemyState.WalkLeft ||
+                previousState == EnemyState.WalkRight) &&
+                (state == EnemyState.DyingLeft ||
+                state == EnemyState.DyingRight))
+            {
+                player.Gold++;
+            }
+            previousState = state;
         }
 
         //we'll eventually need drawing for the enemy to call in Game1
@@ -228,7 +239,6 @@ namespace TheGame
         public void Die()
         {
             isDead = true;
-            player.Gold += 5;
         }
 
         /// <summary>

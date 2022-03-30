@@ -29,7 +29,7 @@ namespace TheGame
         private const int FrameWidth = 100;
         private const int FrameHeight = 55;
 
-        private const int movement = 4;
+        private int movement = 4;
 
         // Animation
         private const int SpriteSheetWidth = 7;
@@ -52,12 +52,6 @@ namespace TheGame
             set { state = value; }
         }
 
-        public int Gold
-        {
-            get { return gold; }
-            set { gold = value; }
-        }
-
         public int Frame
         {
             get { return frame; }
@@ -67,6 +61,19 @@ namespace TheGame
         { 
             get { return iFrame; } 
             set { iFrame = value; }
+        }
+
+        public int Gold
+        {
+            get { return gold; }
+            set { gold = value; }
+        }
+
+        // Can be modified at the shop
+        public int Movement
+        {
+            get { return movement; }
+            set { movement = value; }
         }
 
         // Constructor --------------------------------------------------------

@@ -13,7 +13,7 @@ namespace TheGame
             MainMenu,
             Settings,
             GameOver,
-            EndlessWave, // Only Enless Mode for S2 Skeleton
+            EndlessWave,
             DialogueBox, // For NPC
             Shop         // For NPC
         }
@@ -26,15 +26,15 @@ namespace TheGame
 
         //Player Fields
         private Player player;
-        private int playerIHealth = 10;      // initial player health, raised via shop
+        private const int playerIHealth = 3;      // initial player health, raised via shop
+        private int maxHealth;
         private Texture2D playerImage;
         private Vector2 playerPos;
-        private int gold;
         private Rectangle playerHitbox;
         private List<Rectangle> enemyHitbox;
         private Rectangle rectangle;
         private double timeCounter;
-        private const double endIFrame = 1.0;
+        private double endIFrame = 1.0;
 
         //Enemy Fields
         private Enemy enemy;
@@ -69,8 +69,12 @@ namespace TheGame
         private const int enemyIHealth = 1; // initial enemy health        
         private const int windowWidth = 1280;
         private const int windowHeight = 720;
-        // If we have time, implement resolution choices in settings
-        // But not for S2 skeleton
+
+        // Costs of Upgrades
+        private const int healthCost = 10;
+        private const int moveCost = 20;
+        private const int invulCost = 30;
+
         #endregion
 
         public Game1()
@@ -91,6 +95,7 @@ namespace TheGame
             currentState = GameState.MainMenu;
             enemyHitbox = new List<Rectangle>();
             nextWave = true;
+            maxHealth = playerIHealth;
 
             // Set the window size
             _graphics.PreferredBackBufferWidth = windowWidth;
@@ -112,7 +117,6 @@ namespace TheGame
             playerPos = new Vector2(
                 (GraphicsDevice.Viewport.Width / 2) - 125, 
                 (GraphicsDevice.Viewport.Height / 2) - 95);
-            gold = 0;
 
             //Enemy Content
             enemyImage = Content.Load<Texture2D>("Melee Enemy");
@@ -126,14 +130,14 @@ namespace TheGame
                 playerIHealth, 
                 playerPos, 
                 playerImage, 
-                gold, 
+                0, 
                 PlayerState.FaceRight);
 
             enemy = new Enemy(enemyIHealth, enemyPos, enemyImage, player);
 
             heart = Content.Load<Texture2D>("heart");
             goldText = Content.Load<SpriteFont>("gold");
-            information = Content.Load<SpriteFont>("information");        
+            information = Content.Load<SpriteFont>("information");
 
             //Debug font
             debug = Content.Load<SpriteFont>("Debug");
@@ -150,11 +154,18 @@ namespace TheGame
             {
                 // Main Menu GameState
                 case GameState.MainMenu:
+
                     currentKbState = Keyboard.GetState();
+
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
                         currentState = GameState.EndlessWave;
                     }
+                    else if (SingleKeyPress(Keys.X, currentKbState))
+                    {
+                        currentState = GameState.Shop;
+                    }
+
                     break;
 
                 // Settings (Not created yet)
@@ -163,7 +174,14 @@ namespace TheGame
 
                 // Gameover GameState
                 case GameState.GameOver:
+
                     currentKbState = Keyboard.GetState();
+
+                    // For testing purposes, may remove later
+                    if (SingleKeyPress(Keys.X, currentKbState))
+                    {
+                        currentState = GameState.Shop;
+                    }
 
                     //if (currentKbState.IsKeyDown(Keys.Enter))
                     //{
@@ -275,7 +293,7 @@ namespace TheGame
                     }
 
                     // checks to see if the players health is zero
-                    if (playerIHealth <= 0)
+                    if (player.Health <= 0)
                     {
                         currentState = GameState.GameOver;
                     }
@@ -321,8 +339,57 @@ namespace TheGame
                 case GameState.DialogueBox:
                     break;
 
-                // Shop GameState (Not coded yet)
+                // ----- Purchase Weapons/Upgrades -----
                 case GameState.Shop:
+
+                    currentKbState = Keyboard.GetState();
+
+                    // Return to game from shop
+                    if (SingleKeyPress(Keys.Enter, currentKbState))
+                    {
+                        // Apply health changes
+                        player.Health = maxHealth;
+
+                        // Change state
+                        currentState = GameState.EndlessWave;
+                    }
+
+                    // Purchase Extra Health
+                    if (player.Gold >= healthCost)
+                    {
+                        if (SingleKeyPress(Keys.H, currentKbState))
+                        {
+                            maxHealth++;
+                            player.Gold -= healthCost;
+                        }
+                    }
+
+                    // Purchase Extra Movement Speed
+                    if (player.Gold >= moveCost)
+                    {
+                        if (SingleKeyPress(Keys.M, currentKbState))
+                        {
+                            player.Movement++;
+                            player.Gold -= moveCost;
+                        }
+                    }
+
+                    // Purchase Extra iFrames
+                    if (player.Gold >= invulCost)
+                    {
+                        if (SingleKeyPress(Keys.I, currentKbState))
+                        {
+                            endIFrame += 0.2;
+                            player.Gold -= invulCost;
+                        }
+                    }
+
+                    // free gold (for testing)
+                    if (SingleKeyPress(Keys.P, currentKbState))
+                    {
+                        player.Gold++;
+                    }
+
                     break;
 
                 default:
@@ -376,6 +443,7 @@ namespace TheGame
                         String.Format("" +
                         "Welcome to GAME TITLE\n" +
                         "Press 'Enter' to play\n" +
+                        "Press 'X' to access the shop\n" +
                         "use 'wasd' to move and 'mouse1' to attack"),
                         new Vector2(500, 500),
                         Color.White);
@@ -438,9 +506,9 @@ namespace TheGame
                         }
                     }
 
-                    if (playerIHealth > 0)
+                    if (player.Health > 0)
                     {
-                        for (int i = 0; i < playerIHealth; i++)
+                        for (int i = 0; i < player.Health; i++)
                         {
                             _spriteBatch.Draw(
                             heart,
@@ -458,9 +526,9 @@ namespace TheGame
                     if (enemies.Count > 0)
                     {
                         _spriteBatch.DrawString(
-                            goldText, 
-                            String.Format("Gold: {0}", enemyHitbox[0]), 
-                            new Vector2(1, 50), 
+                            information, 
+                            String.Format("Gold: {0}", player.Gold), 
+                            new Vector2(10, 50), 
                             Color.White);
                     }
 
@@ -470,6 +538,63 @@ namespace TheGame
                     break;
 
                 case GameState.Shop:
+
+                    // Display hearts, updates as upgrades are purchased
+                    for (int i = 0; i < maxHealth; i++)
+                    {
+                        _spriteBatch.Draw(
+                            heart,
+                            new Vector2((i * 40) + 30, 150),
+                            new Rectangle(0, 0, 16, 16),
+                            Color.White,
+                            0,
+                            Vector2.Zero,
+                            2,
+                            SpriteEffects.None,
+                            0);
+                    }
+
+                    // Display current gold
+                    _spriteBatch.DrawString(
+                        goldText, 
+                        String.Format("Gold: {0}", player.Gold), 
+                        new Vector2(30, 60), 
+                        Color.Gold);
+
+                    // Display current movement speed
+                    _spriteBatch.DrawString(
+                        information,
+                        String.Format("Movement Speed - {0}", player.Movement),
+                        new Vector2(30, 200),
+                        Color.White);
+
+                    // Display current invulnerability
+                    _spriteBatch.DrawString(
+                        information,
+                        String.Format("Invulnerability - {0}", endIFrame),
+                        new Vector2(30, 220),
+                        Color.White);
+
+                    // Display price of more health
+                    _spriteBatch.DrawString(
+                        goldText,
+                        String.Format("(h)  +HEALTH [cost: {0}]", healthCost),
+                        new Vector2(70, windowHeight/2),
+                        Color.BlanchedAlmond);
+
+                    // Display price of more movement speed
+                    _spriteBatch.DrawString(
+                        goldText,
+                        String.Format("(m)  +MOVE [cost: {0}]", moveCost),
+                        new Vector2(70, (windowHeight / 2) + 100),
+                        Color.BlanchedAlmond);
+
+                    // Display price of more invuln frames
+                    _spriteBatch.DrawString(
+                        goldText,
+                        String.Format("(i)  +INVUL [cost: {0}]", invulCost),
+                        new Vector2(70, (windowHeight / 2) + 200),
+                        Color.BlanchedAlmond);
                     break;
 
                 default:
@@ -592,7 +717,7 @@ namespace TheGame
                 {
                     if (!player.IFrame)
                     {
-                        playerIHealth--;
+                        player.Health--;
                         player.IFrame = true;
                         timeCounter = 0;
                     }
