@@ -42,6 +42,9 @@ namespace TheGame
         private double fps;
         private double timePerFrame;
 
+        private bool iFrame;
+        private Color color;
+
         // Properties ---------------------------------------------------------
         public PlayerState State
         {
@@ -60,6 +63,11 @@ namespace TheGame
             get { return frame; }
         }
 
+        public bool IFrame 
+        { 
+            get { return iFrame; } 
+            set { iFrame = value; }
+        }
 
         // Constructor --------------------------------------------------------
         public Player(int health, Vector2 position, Texture2D image, int gold, 
@@ -68,6 +76,8 @@ namespace TheGame
         {
             this.gold = gold;
             this.state = startingState;
+
+            iFrame = false;
 
             fps = 10.0;
             timePerFrame = 1.0 / fps;
@@ -241,6 +251,17 @@ namespace TheGame
                     break;
             }
 
+            // Visual representation of active iFrames
+            if (iFrame)
+            {
+                color = Color.Red;
+            }
+            else
+            {
+                color = Color.White;
+            }
+
+            // Update previous mouse/keyboard states
             prevKBstate = kbState;
             prevMState = mState;
         }
@@ -301,7 +322,7 @@ namespace TheGame
                     0,
                     FrameWidth,
                     FrameHeight),
-                Color.White,                                       
+                color,                                       
                 0,                          
                 Vector2.Zero, 
                 2.5f,
@@ -321,7 +342,7 @@ namespace TheGame
                         PlayerWalkOffsetY,
                         FrameWidth,
                         FrameHeight),
-                    Color.White,
+                    color,
                     0,
                     Vector2.Zero,
                     2.5f,
@@ -338,7 +359,7 @@ namespace TheGame
                         0,
                         FrameWidth,
                         FrameHeight),
-                    Color.White,
+                    color,
                     0,
                     Vector2.Zero,
                     2.5f,
@@ -357,7 +378,7 @@ namespace TheGame
                     PlayerAttackOffsetY,
                     FrameWidth,
                     FrameHeight),
-                Color.White,
+                color,
                 0,
                 Vector2.Zero,
                 2.5f,

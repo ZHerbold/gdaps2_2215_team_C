@@ -26,16 +26,15 @@ namespace TheGame
 
         //Player Fields
         private Player player;
-        private int playerIHealth = 3;      // initial player health, raised via shop
+        private int playerIHealth = 10;      // initial player health, raised via shop
         private Texture2D playerImage;
         private Vector2 playerPos;
         private int gold;
-        private bool iFrame;
         private Rectangle playerHitbox;
         private List<Rectangle> enemyHitbox;
         private Rectangle rectangle;
         private double timeCounter;
-        private const double endIFrame = 2;
+        private const double endIFrame = 1.0;
 
         //Enemy Fields
         private Enemy enemy;
@@ -92,7 +91,6 @@ namespace TheGame
             currentState = GameState.MainMenu;
             enemyHitbox = new List<Rectangle>();
             nextWave = true;
-            iFrame = false;
 
             // Set the window size
             _graphics.PreferredBackBufferWidth = windowWidth;
@@ -307,13 +305,13 @@ namespace TheGame
 
                     // Update iFrame if active
                     // After a set period, iFrame is set to false
-                    if (iFrame)
+                    if (player.IFrame)
                     {
                         timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
 
                         if (timeCounter >= endIFrame)
                         {
-                            iFrame = false;
+                            player.IFrame = false;
                         }
                     }
 
@@ -592,36 +590,37 @@ namespace TheGame
                 // If the player and enemy collide return true
                 if (enemyHitbox[i].Intersects(playerHitbox))
                 {
-                    if (!iFrame)
+                    if (!player.IFrame)
                     {
                         playerIHealth--;
-                        iFrame = true;
+                        player.IFrame = true;
+                        timeCounter = 0;
                     }
                 }
             }
         }
 
         // Collision method
-        public void CheckCollision()
-        {
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                // If enemy hits player, knock the enemy back
-                //Vector2.Distance(enemies[i].Position, player.Position) < 25  -  leave this here for backup use
-                if (rectangle.Intersects(enemyHitbox[i]))
-                {
-                    playerIHealth--;
-                    for (int j = 0; j < 50; j++)
-                    {
-                        enemies[i].Position += new Vector2(1, 1);
-                    }
+        //public void CheckCollision()
+        //{
+        //    for (int i = 0; i < enemies.Count; i++)
+        //    {
+        //        // If enemy hits player, knock the enemy back
+        //        //Vector2.Distance(enemies[i].Position, player.Position) < 25  -  leave this here for backup use
+        //        if (rectangle.Intersects(enemyHitbox[i]))
+        //        {
+        //            playerIHealth--;
+        //            for (int j = 0; j < 50; j++)
+        //            {
+        //                enemies[i].Position += new Vector2(1, 1);
+        //            }
 
-                    //enemies[i].Die();
-                    //enemies.RemoveAt(i);
-                    //enemyPositions.RemoveAt(i);
-                }
-            }
-        }
+        //            //enemies[i].Die();
+        //            //enemies.RemoveAt(i);
+        //            //enemyPositions.RemoveAt(i);
+        //        }
+        //    }
+        //}
 
         // Single key press method for any key
         public bool SingleKeyPress(Keys key, KeyboardState currentKbState)
