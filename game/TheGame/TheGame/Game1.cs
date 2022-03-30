@@ -17,6 +17,12 @@ namespace TheGame
             DialogueBox, // For NPC
             Shop         // For NPC
         }
+
+        enum LevelState
+        {
+            level1,
+            level2
+        }
         
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
