@@ -350,6 +350,11 @@ namespace TheGame
                         // Apply health changes
                         player.Health = maxHealth;
 
+                        // Reset player location and wave
+                        currentWave = 1;
+                        player.Position = playerPos;
+                        player.IFrame = false;
+
                         // Change state
                         currentState = GameState.EndlessWave;
                     }
@@ -458,7 +463,7 @@ namespace TheGame
                         information,
                         String.Format("" +
                         "GAME OVER\n" +
-                        "Get better"),
+                        "Press 'X' to go to the shop"),
                         new Vector2(500, 500),
                         Color.White);
                     break;
