@@ -54,6 +54,7 @@ namespace TheGame
         {
             get { return state; }
         }
+
         // Constructor
         public Enemy(int health, Vector2 position, Texture2D image, Player player) : base(health, position, image)
         {            
@@ -130,11 +131,13 @@ namespace TheGame
                 if (state == EnemyState.FaceLeft ||
                     state == EnemyState.WalkLeft)
                 {
+                    frame = 0;
                     state = EnemyState.DyingLeft;
                 }
                 else if (state == EnemyState.FaceRight ||
                          state == EnemyState.WalkRight)
                 {
+                    frame = 0;
                     state = EnemyState.DyingRight;
                 }
 
@@ -187,7 +190,6 @@ namespace TheGame
         {
             isDead = true;
             player.Gold += 5;
-            frame = 0;
         }
 
         /// <summary>
@@ -240,7 +242,7 @@ namespace TheGame
         /// <param name="flipSprite"></param>
         /// <param name="sprite"></param>
         public void DrawDying(SpriteEffects flipSprite, SpriteBatch sprite)
-        {
+        {            
             sprite.Draw(
                 image,
                 position,
