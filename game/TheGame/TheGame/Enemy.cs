@@ -23,6 +23,7 @@ namespace TheGame
     {
         // Fields
         EnemyState state;
+        EnemyState previousState;
         private Player player;           // Used for chasing player
         private float followDistance;
         private float currentDistance;
@@ -39,7 +40,7 @@ namespace TheGame
         // Constants for animation
         private const int spriteSheetWidth = 768;
         private const int spriteSheetHeight = 576;
-        private const int WalkFrameCount = 5;
+        private const int SpriteSheetWidth = 5;
         private const int EnemyOffsetX = (spriteSheetWidth / 6)*5;
 
         // Frame dimentions
@@ -89,7 +90,7 @@ namespace TheGame
             {
                 frame += 1;                     
 
-                if (frame > WalkFrameCount)     
+                if (frame > SpriteSheetWidth)     
                     frame = 1;
 
                 timeCounter -= timePerFrame;     
@@ -147,6 +148,18 @@ namespace TheGame
                 }
             }
 
+            // Change the frame to 0 whenever the
+            // state switches from walk to attack
+            if ((state == EnemyState.AttackLeft || 
+                state == EnemyState.AttackRight) && 
+                (previousState == EnemyState.WalkLeft || 
+                previousState == EnemyState.WalkRight))
+            {
+                frame = 0;
+            }
+            previousState = state;
+
+            // Movement logic
             switch (state)
             {
                 case EnemyState.WalkLeft:
@@ -155,9 +168,17 @@ namespace TheGame
                     break;
                 
                 case EnemyState.AttackLeft:
-                case EnemyState.AttackRight:
-                    if (frame == WalkFrameCount)
+                    if (frame == SpriteSheetWidth)
                     {
+                        X += 60;
+                        Chase();
+                    }
+                    break;
+
+                case EnemyState.AttackRight:
+                    if (frame == SpriteSheetWidth)
+                    {
+                        X -= 60;
                         Chase();
                     }
                     break;
