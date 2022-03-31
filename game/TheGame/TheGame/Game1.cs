@@ -357,7 +357,7 @@ namespace TheGame
 
                                 break;
                             }
-                            break;
+                            //break;
 
                         case LevelState.level2:
                             {
@@ -509,7 +509,7 @@ namespace TheGame
 
                                 break;
                             }
-                            break;
+                            //break;
                     }
                     break;
 
@@ -641,6 +641,7 @@ namespace TheGame
                         information,
                         String.Format("" +
                         "GAME OVER\n" +
+                        "Press 'x' to go to the shop to\n" +
                         "Get better"),
                         new Vector2(500, 500),
                         Color.White);
@@ -858,6 +859,20 @@ namespace TheGame
                         String.Format("(i)  +INVUL [cost: {0}]", invulCost),
                         new Vector2(70, (windowHeight / 2) + 200),
                         Color.BlanchedAlmond);
+
+                    // Displays the controls/actions and how to exist the shop.
+                    _spriteBatch.DrawString(
+                        information,
+                        String.Format("Press 'H','M' or 'I' to buy upgrades.\n" +
+                        "Press 'ENTER' to exist the shop", player.Movement),
+                        new Vector2(30, 300),
+                        Color.White);
+
+                    // NPC Dialoge
+
+                    // NPC Apearance
+
+
                     break;
 
                 default:
