@@ -23,7 +23,7 @@ namespace TheGame
         enum LevelState
         {
             level1,
-            level2,
+            level2
         }
         
         private GraphicsDeviceManager _graphics;
@@ -123,8 +123,6 @@ namespace TheGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            currentLevelState = LevelState.level1;
-
             //Player Content
             playerImage = Content.Load<Texture2D>("Game Stuff");
             playerPos = new Vector2(
@@ -173,6 +171,7 @@ namespace TheGame
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
                         currentState = GameState.EndlessWave;
+                        currentLevelState = LevelState.level1;
                     }
                     else if (SingleKeyPress(Keys.X, currentKbState))
                     {
@@ -189,6 +188,9 @@ namespace TheGame
                 case GameState.GameOver:
 
                     currentKbState = Keyboard.GetState();
+
+                    enemies.Clear();
+                    enemyHitbox.Clear();
 
                     // For testing purposes, may remove later
                     if (SingleKeyPress(Keys.X, currentKbState))
@@ -208,158 +210,156 @@ namespace TheGame
                 // Endless Wave Gamestate
                 case GameState.EndlessWave:
 
-                    switch(currentLevelState)
+                    timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    currentKbState = Keyboard.GetState();
+
+                    // Construct player hitbox
+                    playerHitbox = new Rectangle(
+                        (int)player.Position.X + 90,
+                        (int)player.Position.Y + 30,
+                        80,
+                        110);
+
+                    // Construct enemy hitboxes
+                    // Only run after the level text has gone away
+                    if (timer > 3)
+                    {
+                        for (int i = 0; i < enemyHitbox.Count; i++)
+                        {
+                            // Construct the hitbox based on the direction it's walking
+                            if (enemies[i].State == EnemyState.WalkRight ||
+                                enemies[i].State == EnemyState.AttackRight)
+                            {
+                                enemyHitbox[i] =
+                                  new Rectangle(
+                                      (int)enemies[i].Position.X + 50,
+                                      (int)enemies[i].Position.Y + 70,
+                                      EnemyFrameWidth / 2,
+                                      EnemyFrameHeight + 30);
+                            }
+                            else if (enemies[i].State == EnemyState.WalkLeft ||
+                                enemies[i].State == EnemyState.AttackLeft)
+                            {
+                                enemyHitbox[i] =
+                                  new Rectangle(
+                                      (int)enemies[i].Position.X + 140,
+                                      (int)enemies[i].Position.Y + 70,
+                                      EnemyFrameWidth / 2,
+                                      EnemyFrameHeight + 30);
+                            }
+
+                            // Removes hitbox if enemies are dead
+                            else
+                            {
+                                enemyHitbox[i] =
+                                  new Rectangle(
+                                      (int)enemies[i].Position.X + 140,
+                                      (int)enemies[i].Position.Y + 70,
+                                      0,
+                                      0);
+                            }
+                        }
+
+                        // Manage enemy attacks
+                        for (int i = 0; i < enemyHitbox.Count; i++)
+                        {
+                            switch (enemies[i].State)
+                            {
+                                case EnemyState.AttackLeft:
+                                case EnemyState.AttackRight:
+
+                                    // Check for collisions when attacking
+                                    // Only active during certain frames
+                                    if (enemies[i].Frame == 4)
+                                    {
+                                        Attack(i);
+                                    }
+
+                                    break;
+                            }
+                        }
+
+                        //calls enemy update
+                        for (int i = 0; i < enemies.Count; i++)
+                        {
+                            enemies[i].UpdateAnimation(gameTime);
+                            enemies[i].Update(gameTime);
+                        }
+                    }
+
+                    // Manage player attacks
+                    switch (player.State)
+                    {
+                        case PlayerState.AttackRight:
+                        case PlayerState.AttackLeft:
+
+                            // Check for collisions when attacking
+                            // Only active during the swinging part of the animation
+                            if (player.Frame > 1 && player.Frame < 6)
+                            {
+                                Attack();
+                            }
+                            break;
+                    }
+
+
+                    player.UpdateAnimation(gameTime);
+                    player.Update(gameTime);
+
+
+
+                    // checks to see if the players health is zero
+                    if (player.Health <= 0)
+                    {
+                        currentState = GameState.GameOver;
+                    }
+
+                    // Update nextWave bool based on the
+                    // active property of enemies
+                    foreach (Enemy e in enemies)
+                    {
+                        if (e.Active)
+                        {
+                            nextWave = false;
+                            break;
+                        }
+                        else
+                        {
+                            nextWave = true;
+                        }
+                    }
+
+                    // If there aren't any more active enemies
+                    // progress to next wave
+                    if (nextWave)
+                    {
+                        NextWave();
+                        nextWave = false;
+                    }
+
+                    // Update iFrame if active
+                    // After a set period, iFrame is set to false
+                    if (player.IFrame)
+                    {
+                        timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
+
+                        if (timeCounter >= endIFrame)
+                        {
+                            player.IFrame = false;
+                        }
+                    }
+
+                    switch (currentLevelState)
                     {
                         // LEVEL 1 ----------------------------------------------------------------------------------------------
                         case LevelState.level1:
                             {
-                                timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
                                 if (currentWave > 5)
                                 {
                                     currentWave = 0;
                                     currentLevelState = LevelState.level2;
                                     timer = 0;
                                 }
-
-                                currentKbState = Keyboard.GetState();
-
-                                // Construct player hitbox
-                                playerHitbox = new Rectangle(
-                                    (int)player.Position.X + 90,
-                                    (int)player.Position.Y + 30,
-                                    80,
-                                    110);
-
-                                // Construct enemy hitboxes
-                                // Only run after the level text has gone away
-                                if (timer > 3)
-                                {
-                                    for (int i = 0; i < enemyHitbox.Count; i++)
-                                    {
-                                        // Construct the hitbox based on the direction it's walking
-                                        if (enemies[i].State == EnemyState.WalkRight ||
-                                            enemies[i].State == EnemyState.AttackRight)
-                                        {
-                                            enemyHitbox[i] =
-                                              new Rectangle(
-                                                  (int)enemies[i].Position.X + 50,
-                                                  (int)enemies[i].Position.Y + 70,
-                                                  EnemyFrameWidth / 2,
-                                                  EnemyFrameHeight + 30);
-                                        }
-                                        else if (enemies[i].State == EnemyState.WalkLeft ||
-                                            enemies[i].State == EnemyState.AttackLeft)
-                                        {
-                                            enemyHitbox[i] =
-                                              new Rectangle(
-                                                  (int)enemies[i].Position.X + 140,
-                                                  (int)enemies[i].Position.Y + 70,
-                                                  EnemyFrameWidth / 2,
-                                                  EnemyFrameHeight + 30);
-                                        }
-
-                                        // Removes hitbox if enemies are dead
-                                        else
-                                        {
-                                            enemyHitbox[i] =
-                                              new Rectangle(
-                                                  (int)enemies[i].Position.X + 140,
-                                                  (int)enemies[i].Position.Y + 70,
-                                                  0,
-                                                  0);
-                                        }
-                                    }
-
-                                    // Manage enemy attacks
-                                    for (int i = 0; i < enemyHitbox.Count; i++)
-                                    {
-                                        switch (enemies[i].State)
-                                        {
-                                            case EnemyState.AttackLeft:
-                                            case EnemyState.AttackRight:
-
-                                                // Check for collisions when attacking
-                                                // Only active during certain frames
-                                                if (enemies[i].Frame == 4)
-                                                {
-                                                    Attack(i);
-                                                }
-
-                                                break;
-                                        }
-                                    }
-
-                                    //calls enemy update
-                                    for (int i = 0; i < enemies.Count; i++)
-                                    {
-                                        enemies[i].UpdateAnimation(gameTime);
-                                        enemies[i].Update(gameTime);
-                                    }
-                                }
-                                
-                                // Manage player attacks
-                                switch (player.State)
-                                {
-                                    case PlayerState.AttackRight:
-                                    case PlayerState.AttackLeft:
-
-                                        // Check for collisions when attacking
-                                        // Only active during the swinging part of the animation
-                                        if (player.Frame > 1 && player.Frame < 6)
-                                        {
-                                            Attack();
-                                        }
-                                        break;
-                                }
-
-
-                                player.UpdateAnimation(gameTime);
-                                player.Update(gameTime);
-
-
-
-                                // checks to see if the players health is zero
-                                if (player.Health <= 0)
-                                {
-                                    currentState = GameState.GameOver;
-                                }
-
-                                // Update nextWave bool based on the
-                                // active property of enemies
-                                foreach (Enemy e in enemies)
-                                {
-                                    if (e.Active)
-                                    {
-                                        nextWave = false;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        nextWave = true;
-                                    }
-                                }
-
-                                // If there aren't any more active enemies
-                                // progress to next wave
-                                if (nextWave)
-                                {
-                                    NextWave();
-                                    nextWave = false;
-                                }
-
-                                // Update iFrame if active
-                                // After a set period, iFrame is set to false
-                                if (player.IFrame)
-                                {
-                                    timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
-
-                                    if (timeCounter >= endIFrame)
-                                    {
-                                        player.IFrame = false;
-                                    }
-                                }
-
                                 break;
                             }
                         
@@ -367,157 +367,13 @@ namespace TheGame
                         // LEVEL 2 ----------------------------------------------------------------------------------------------
                         case LevelState.level2:
                             {
-                                timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
                                 if (currentWave > 7)
                                 {
                                     currentWave = 0;
-                                    currentState = GameState.Victory;
+                                    currentState = GameState.MainMenu;
                                 }
-
-                                currentKbState = Keyboard.GetState();
-
-                                // Construct player hitbox
-                                playerHitbox = new Rectangle(
-                                    (int)player.Position.X + 90,
-                                    (int)player.Position.Y + 30,
-                                    80,
-                                    110);
-
-                                // Only run enemy code after the level text has gone away
-                                if (timer > 3f)
-                                {
-                                    // Construct enemy hitboxes
-                                    for (int i = 0; i < enemyHitbox.Count; i++)
-                                    {
-                                        // Construct the hitbox based on the direction it's walking
-                                        if (enemies[i].State == EnemyState.WalkRight ||
-                                            enemies[i].State == EnemyState.AttackRight)
-                                        {
-                                            enemyHitbox[i] =
-                                              new Rectangle(
-                                                  (int)enemies[i].Position.X + 50,
-                                                  (int)enemies[i].Position.Y + 70,
-                                                  EnemyFrameWidth / 2,
-                                                  EnemyFrameHeight + 30);
-                                        }
-                                        else if (enemies[i].State == EnemyState.WalkLeft ||
-                                            enemies[i].State == EnemyState.AttackLeft)
-                                        {
-                                            enemyHitbox[i] =
-                                              new Rectangle(
-                                                  (int)enemies[i].Position.X + 140,
-                                                  (int)enemies[i].Position.Y + 70,
-                                                  EnemyFrameWidth / 2,
-                                                  EnemyFrameHeight + 30);
-                                        }
-
-                                        // Removes hitbox if enemies are dead
-                                        else
-                                        {
-                                            enemyHitbox[i] =
-                                              new Rectangle(
-                                                  (int)enemies[i].Position.X + 140,
-                                                  (int)enemies[i].Position.Y + 70,
-                                                  0,
-                                                  0);
-                                        }
-                                    }
-
-                                    // Manage enemy attacks
-                                    for (int i = 0; i < enemyHitbox.Count; i++)
-                                    {
-                                        switch (enemies[i].State)
-                                        {
-                                            case EnemyState.AttackLeft:
-                                            case EnemyState.AttackRight:
-
-                                                // Check for collisions when attacking
-                                                // Only active during certain frames
-                                                if (enemies[i].Frame == 4)
-                                                {
-                                                    Attack(i);
-                                                }
-
-                                                break;
-                                        }
-                                    }
-
-                                    // Update nextWave bool based on the
-                                    // active property of enemies
-                                    foreach (Enemy e in enemies)
-                                    {
-                                        if (e.Active)
-                                        {
-                                            nextWave = false;
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            nextWave = true;
-                                        }
-                                    }
-
-                                    //calls enemy update
-                                    for (int i = 0; i < enemies.Count; i++)
-                                    {
-                                        enemies[i].UpdateAnimation(gameTime);
-                                        enemies[i].Update(gameTime);
-                                    }
-                                }
-
-                                
-
-                                // Manage player attacks
-                                switch (player.State)
-                                {
-                                    case PlayerState.AttackRight:
-                                    case PlayerState.AttackLeft:
-
-                                        // Check for collisions when attacking
-                                        // Only active during the swinging part of the animation
-                                        if (player.Frame > 1 && player.Frame < 6)
-                                        {
-                                            Attack();
-                                        }
-                                        break;
-                                }
-
-                                // Update player animation
-                                player.UpdateAnimation(gameTime);
-                                player.Update(gameTime);
-
-                                // checks to see if the players health is zero
-                                if (player.Health <= 0)
-                                {
-                                    currentState = GameState.GameOver;
-                                }
-
-
-
-                                // If there aren't any more active enemies
-                                // progress to next wave
-                                if (nextWave)
-                                {
-                                    NextWave();
-                                    nextWave = false;
-                                }
-
-                                // Update iFrame if active
-                                // After a set period, iFrame is set to false
-                                if (player.IFrame)
-                                {
-                                    timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
-
-                                    if (timeCounter >= endIFrame)
-                                    {
-                                        player.IFrame = false;
-                                    }
-                                }
-
                                 break;
-                            }
-                            //break;
+                            }                            
                     }
                     break;
 
@@ -536,8 +392,16 @@ namespace TheGame
                         // Apply health changes
                         player.Health = maxHealth;
 
+                        // Reset player location and wave
+                        player.Position = playerPos;
+                        player.IFrame = false;
+                        nextWave = true;
+                        timer = 0;
+                        currentWave = 1;
+
                         // Change state
                         currentState = GameState.EndlessWave;
+                        currentLevelState = LevelState.level1;
                     }
 
                     // Purchase Extra Health
@@ -658,11 +522,10 @@ namespace TheGame
                 // --- GAME LOOP ---
                 case GameState.EndlessWave:
 
-                    switch(currentLevelState)
+                    switch (currentLevelState)
                     {
                         case LevelState.level1:
-                            {
-                                
+                            {                                
                                 //Draw stuff for the background
                                 _spriteBatch.Draw(
                                     background,
@@ -673,65 +536,10 @@ namespace TheGame
                                     new Vector2(0, 0),
                                     2f,
                                     SpriteEffects.None,
-                                    1);
-
-                                //if (enemies.Count != 0)
-                                //{
-                                //    _spriteBatch.DrawString(
-                                //    debug, String.Format("" +
-                                //    "Enemy distance: {0}", playerHitbox)
-                                //    , new Vector2(10, 70), Color.White);
-                                //}
+                                    0);
 
                                 //drawing for the player
                                 player.Draw(_spriteBatch);
-
-                                // visualize hitboxs
-                                //_spriteBatch.Draw(heart, playerHitbox, Color.Red);
-                                //
-                                //for (int i = 0; i < enemyHitbox.Count; i++)
-                                //{
-                                //    _spriteBatch.Draw(heart, enemyHitbox[i], Color.Red);
-                                //}
-
-                                if (timer > 3f)
-                                {
-                                    //drawing for the enemy
-                                    foreach (Enemy e in enemies)
-                                    {
-                                        if (e.Active)
-                                        {
-                                            e.Draw(_spriteBatch);
-                                        }
-                                    }
-                                }
-                                
-
-                                if (player.Health > 0)
-                                {
-                                    for (int i = 0; i < player.Health; i++)
-                                    {
-                                        _spriteBatch.Draw(
-                                        heart,
-                                        new Vector2(i * 40, 10),
-                                        new Rectangle(0, 0, 32, 32),
-                                        Color.White,
-                                        0,
-                                        Vector2.Zero,
-                                        1.5f,
-                                        SpriteEffects.None,
-                                        0);
-                                    }
-                                }
-
-                                if (enemies.Count > 0)
-                                {
-                                    _spriteBatch.DrawString(
-                                        information,
-                                        String.Format("Gold: {0}", player.Gold),
-                                        new Vector2(10, 50),
-                                        Color.White);
-                                }
 
                                 if (timer < 3f)
                                 {
@@ -761,63 +569,8 @@ namespace TheGame
                                     SpriteEffects.None,
                                     1);
 
-                                //if (enemies.Count != 0)
-                                //{
-                                //    _spriteBatch.DrawString(
-                                //    debug, String.Format("" +
-                                //    "Enemy distance: {0}", playerHitbox)
-                                //    , new Vector2(10, 70), Color.White);
-                                //}
-
                                 //drawing for the player
                                 player.Draw(_spriteBatch);
-
-                                // visualize hitboxs
-                                //_spriteBatch.Draw(heart, playerHitbox, Color.Red);
-                                //
-                                //for (int i = 0; i < enemyHitbox.Count; i++)
-                                //{
-                                //    _spriteBatch.Draw(heart, enemyHitbox[i], Color.Red);
-                                //}
-
-                                if (timer > 3f)
-                                {
-                                    //drawing for the enemy
-                                    foreach (Enemy e in enemies)
-                                    {
-                                        if (e.Active)
-                                        {
-                                            e.Draw(_spriteBatch);
-                                        }
-                                    }
-
-                                }
-
-                                if (player.Health > 0)
-                                {
-                                    for (int i = 0; i < player.Health; i++)
-                                    {
-                                        _spriteBatch.Draw(
-                                        heart,
-                                        new Vector2(i * 40, 10),
-                                        new Rectangle(0, 0, 32, 32),
-                                        Color.White,
-                                        0,
-                                        Vector2.Zero,
-                                        1.5f,
-                                        SpriteEffects.None,
-                                        0);
-                                    }
-                                }
-
-                                if (enemies.Count > 0)
-                                {
-                                    _spriteBatch.DrawString(
-                                        information,
-                                        String.Format("Gold: {0}", player.Gold),
-                                        new Vector2(10, 50),
-                                        Color.White);
-                                }
 
                                 // Display level for 3 seconds
                                 if (timer < 3f)
@@ -835,7 +588,43 @@ namespace TheGame
                             break;
                     }
 
-                    
+                    if (timer > 3f)
+                    {
+                        //drawing for the enemy
+                        foreach (Enemy e in enemies)
+                        {
+                            if (e.Active)
+                            {
+                                e.Draw(_spriteBatch);
+                            }
+                        }
+                    }
+
+                    if (player.Health > 0)
+                    {
+                        for (int i = 0; i < player.Health; i++)
+                        {
+                            _spriteBatch.Draw(
+                            heart,
+                            new Vector2(i * 40, 10),
+                            new Rectangle(0, 0, 32, 32),
+                            Color.White,
+                            0,
+                            Vector2.Zero,
+                            1.5f,
+                            SpriteEffects.None,
+                            1);
+                        }
+                    }
+
+                    if (enemies.Count > 0)
+                    {
+                        _spriteBatch.DrawString(
+                            information,
+                            String.Format("Gold: {0}", player.Gold),
+                            new Vector2(10, 50),
+                            Color.White);
+                    }
                     break;
 
                 case GameState.DialogueBox:

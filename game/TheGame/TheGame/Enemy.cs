@@ -320,7 +320,7 @@ namespace TheGame
                 position,
                 new Rectangle(
                     frameWidth * frame,
-                    frameHeight * 4,
+                    frameHeight * 4 + 1,
                     frameWidth,
                     frameHeight),
                 Color.White,
