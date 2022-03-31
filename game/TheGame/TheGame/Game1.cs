@@ -175,6 +175,8 @@ namespace TheGame
                     // Game Loop
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
+                        SoftReset();
+
                         currentState = GameState.EndlessWave;
                         currentLevelState = LevelState.level1;
                     }
