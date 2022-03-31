@@ -189,6 +189,9 @@ namespace TheGame
 
                     currentKbState = Keyboard.GetState();
 
+                    enemies.Clear();
+                    enemyHitbox.Clear();
+
                     // For testing purposes, may remove later
                     if (SingleKeyPress(Keys.X, currentKbState))
                     {
@@ -390,11 +393,11 @@ namespace TheGame
                         player.Health = maxHealth;
 
                         // Reset player location and wave
-                        currentWave = 1;
                         player.Position = playerPos;
                         player.IFrame = false;
+                        nextWave = true;
                         timer = 0;
-                        currentWave = 0;
+                        currentWave = 1;
 
                         // Change state
                         currentState = GameState.EndlessWave;
@@ -535,6 +538,9 @@ namespace TheGame
                                     SpriteEffects.None,
                                     0);
 
+                                //drawing for the player
+                                player.Draw(_spriteBatch);
+
                                 if (timer < 3f)
                                 {
                                     _spriteBatch.DrawString(
@@ -561,8 +567,10 @@ namespace TheGame
                                     new Vector2(0, 0),
                                     2f,
                                     SpriteEffects.None,
-                                    1);                                
+                                    1);
 
+                                //drawing for the player
+                                player.Draw(_spriteBatch);
 
                                 // Display level for 3 seconds
                                 if (timer < 3f)
@@ -579,9 +587,6 @@ namespace TheGame
                             }
                             break;
                     }
-
-                    //drawing for the player
-                    player.Draw(_spriteBatch);
 
                     if (timer > 3f)
                     {
