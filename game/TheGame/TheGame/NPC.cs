@@ -23,10 +23,18 @@ namespace TheGame
             this.timePerFrame = 1.0 / fps;
         }
 
-        // Dialoge ------------------------------------------------------------
-        public void dialogeClass()
+        // Dialoge ------------------------------------------------------------                    
+        public void dialogeClass(Player player, SpriteBatch _spriteBatch, SpriteFont information)
         {
+            // Box for text
 
+            // Text
+            _spriteBatch.DrawString(
+                information,
+                String.Format("Press 'H','M' or 'I' to buy upgrades.\n" +
+                "Press 'ENTER' to exist the shop", player.Movement),
+                new Vector2(30, 300),
+                Color.White);
         }
 
         // Animation Updater --------------------------------------------------
