@@ -24,9 +24,10 @@ namespace TheGame
         }
 
         // Dialoge ------------------------------------------------------------                    
-        public void dialogeClass(Player player, SpriteBatch _spriteBatch, SpriteFont information)
+        public void dialogeClass(SpriteBatch _spriteBatch, SpriteFont information, Player player)
         {
             // Box for text
+            //_spriteBatch.DrawString(information,)
 
             // Text
             _spriteBatch.DrawString(

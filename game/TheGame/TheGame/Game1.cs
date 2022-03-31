@@ -25,6 +25,13 @@ namespace TheGame
             level1,
             level2
         }
+
+        enum DialogeState
+        {
+            fail,
+            success,
+            normal
+        }
         
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -71,6 +78,7 @@ namespace TheGame
         private KeyboardState currentKbState;
         private KeyboardState previousKbState;
         private Texture2D heart;
+        private Texture2D shrine;
         private SpriteFont goldText;
         private SpriteFont information;
         float timer;
@@ -149,6 +157,9 @@ namespace TheGame
             heart = Content.Load<Texture2D>("newHeart");
             goldText = Content.Load<SpriteFont>("gold");
             information = Content.Load<SpriteFont>("information");
+
+            // NPC
+            shrine = Content.Load<Texture2D>("Shrine");
 
             //Debug font
             debug = Content.Load<SpriteFont>("Debug");
@@ -697,7 +708,17 @@ namespace TheGame
                         new Vector2(30, 300),
                         Color.White);
 
-                    // NPC Dialoge
+                    // Displays NPC in the shop
+                    _spriteBatch.Draw(
+                            shrine,
+                            new Vector2(700, 150),
+                            new Rectangle(0, 0, 400, 400),
+                            Color.White,
+                            0,
+                            Vector2.Zero,
+                            3f,
+                            SpriteEffects.None,
+                            0);
 
                     // NPC Apearance
 
