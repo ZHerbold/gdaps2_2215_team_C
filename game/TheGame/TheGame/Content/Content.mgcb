@@ -178,6 +178,18 @@
 /processorParam:TextureFormat=Color
 /build:Room 5.png
 
+#begin Shrine.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Shrine.png
+
 #begin Store template.png
 /importer:TextureImporter
 /processor:TextureProcessor
