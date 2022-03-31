@@ -210,11 +210,6 @@ namespace TheGame
 
                     currentKbState = Keyboard.GetState();
 
-                    // Clears current wave
-                    nextWave = true;
-                    enemies.Clear();
-                    enemyHitbox.Clear();
-
                     SoftReset();
 
                     if (SingleKeyPress(Keys.X, currentKbState))
@@ -979,6 +974,11 @@ namespace TheGame
         /// </summary>
         private void SoftReset()
         {
+            // Clears current wave
+            nextWave = true;
+            enemies.Clear();
+            enemyHitbox.Clear();
+
             // Apply health changes
             player.Health = maxHealth;
 
