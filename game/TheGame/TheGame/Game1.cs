@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace TheGame
 {
@@ -72,6 +73,7 @@ namespace TheGame
         private Texture2D heart;
         private SpriteFont goldText;
         private SpriteFont information;
+        float timer;
 
         // Constants
         private const int enemyIHealth = 1; // initial enemy health        
@@ -110,6 +112,7 @@ namespace TheGame
             _graphics.PreferredBackBufferHeight = windowHeight;
             _graphics.ApplyChanges();
             enemyHealth = 1;
+            timer = 0;
 
             base.Initialize();
         }
@@ -209,12 +212,13 @@ namespace TheGame
                     {
                         case LevelState.level1:
                             {
+                                timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-
-                                if(currentWave > 5)
+                                if (currentWave > 5)
                                 {
                                     currentWave = 0;
                                     currentLevelState = LevelState.level2;
+                                    timer = 0;
                                 }
 
                                 currentKbState = Keyboard.GetState();
@@ -361,7 +365,7 @@ namespace TheGame
 
                         case LevelState.level2:
                             {
-
+                                timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                                 if (currentWave > 7)
                                 {
@@ -654,6 +658,7 @@ namespace TheGame
                     {
                         case LevelState.level1:
                             {
+                                
                                 //Draw stuff for the background
                                 _spriteBatch.Draw(
                                     background,
@@ -666,13 +671,13 @@ namespace TheGame
                                     SpriteEffects.None,
                                     1);
 
-                                if (enemies.Count != 0)
-                                {
-                                    _spriteBatch.DrawString(
-                                    debug, String.Format("" +
-                                    "Enemy distance: {0}", playerHitbox)
-                                    , new Vector2(10, 70), Color.White);
-                                }
+                                //if (enemies.Count != 0)
+                                //{
+                                //    _spriteBatch.DrawString(
+                                //    debug, String.Format("" +
+                                //    "Enemy distance: {0}", playerHitbox)
+                                //    , new Vector2(10, 70), Color.White);
+                                //}
 
                                 //drawing for the player
                                 player.Draw(_spriteBatch);
@@ -717,6 +722,17 @@ namespace TheGame
                                         information,
                                         String.Format("Gold: {0}", player.Gold),
                                         new Vector2(10, 50),
+                                        Color.White);
+                                }
+
+                                if (timer < 3f)
+                                {
+                                    _spriteBatch.DrawString(
+                                        debug,
+                                        String.Format("LEVEL 1"),
+                                        new Vector2(
+                                            _graphics.GraphicsDevice.Viewport.Width/2 - 250,
+                                            _graphics.GraphicsDevice.Viewport.Height/2 - 50),
                                         Color.White);
                                 }
 
@@ -737,13 +753,13 @@ namespace TheGame
                                     SpriteEffects.None,
                                     1);
 
-                                if (enemies.Count != 0)
-                                {
-                                    _spriteBatch.DrawString(
-                                    debug, String.Format("" +
-                                    "Enemy distance: {0}", playerHitbox)
-                                    , new Vector2(10, 70), Color.White);
-                                }
+                                //if (enemies.Count != 0)
+                                //{
+                                //    _spriteBatch.DrawString(
+                                //    debug, String.Format("" +
+                                //    "Enemy distance: {0}", playerHitbox)
+                                //    , new Vector2(10, 70), Color.White);
+                                //}
 
                                 //drawing for the player
                                 player.Draw(_spriteBatch);
@@ -764,6 +780,8 @@ namespace TheGame
                                         e.Draw(_spriteBatch);
                                     }
                                 }
+
+                                
 
                                 if (player.Health > 0)
                                 {
@@ -790,6 +808,8 @@ namespace TheGame
                                         new Vector2(10, 50),
                                         Color.White);
                                 }
+
+                                
 
                             }
                             break;
@@ -1038,6 +1058,18 @@ namespace TheGame
                 return false;
             }
         }
+
+        
+        //public void ReadLevelFile(string fileName)
+        //{
+        //    StreamReader reader = new StreamReader(fileName);
+        //    string line;
+        //
+        //    while ((line = reader.ReadLine()) != null)
+        //    {
+        //
+        //    }
+        //}
         #endregion
     }
 }
