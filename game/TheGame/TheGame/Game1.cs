@@ -946,8 +946,8 @@ namespace TheGame
                     new Enemy(
                         enemyHealth, 
                         new Vector2(
-                            rng.Next(50, windowWidth - 50), 
-                            rng.Next(50, windowHeight - 50)), 
+                            rng.Next(100, windowWidth - 100), 
+                            rng.Next(100, windowHeight - 100)), 
                         enemyImage, 
                         player));
 
