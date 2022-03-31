@@ -85,6 +85,9 @@ namespace TheGame
         private const int moveCost = 20;
         private const int invulCost = 30;
 
+        // File IO
+        private const string fileName = "savedata.txt";
+
         #endregion
 
         public Game1()
@@ -100,7 +103,6 @@ namespace TheGame
             // TODO: Add your initialization logic here
             // Initialize list of enemies, set wave count to 1 and enemy health to 1
             enemies = new List<Enemy>();
-            currentWave = 1;
             rng = new Random();
             currentState = GameState.MainMenu;
             enemyHitbox = new List<Rectangle>();
@@ -111,6 +113,8 @@ namespace TheGame
             _graphics.PreferredBackBufferWidth = windowWidth;
             _graphics.PreferredBackBufferHeight = windowHeight;
             _graphics.ApplyChanges();
+
+            currentWave = 1;
             enemyHealth = 1;
             timer = 0;
 
@@ -168,14 +172,29 @@ namespace TheGame
 
                     currentKbState = Keyboard.GetState();
 
+                    // Game Loop
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
                         currentState = GameState.EndlessWave;
                         currentLevelState = LevelState.level1;
                     }
+
+                    // Shop
                     else if (SingleKeyPress(Keys.X, currentKbState))
                     {
                         currentState = GameState.Shop;
+                    }
+
+                    // Load Game
+                    else if (SingleKeyPress(Keys.L, currentKbState))
+                    {
+                        LoadStats(fileName);
+                    }
+
+                    // Save Game
+                    else if (SingleKeyPress(Keys.S, currentKbState))
+                    {
+                        SaveGame(fileName);
                     }
 
                     break;
@@ -189,21 +208,21 @@ namespace TheGame
 
                     currentKbState = Keyboard.GetState();
 
+                    // Clears current wave
+                    nextWave = true;
                     enemies.Clear();
                     enemyHitbox.Clear();
 
-                    // For testing purposes, may remove later
+                    SoftReset();
+
                     if (SingleKeyPress(Keys.X, currentKbState))
                     {
                         currentState = GameState.Shop;
                     }
-
-                    //if (currentKbState.IsKeyDown(Keys.Enter))
-                    //{
-                    //    playerIHealth = 3;
-                    //    playerPos = 
-                    //    currentState = GameState.MainMenu;
-                    //}
+                    if (SingleKeyPress(Keys.Enter, currentKbState))
+                    {
+                        currentState = GameState.MainMenu;
+                    }
 
                     break;
 
@@ -387,21 +406,19 @@ namespace TheGame
                     currentKbState = Keyboard.GetState();
 
                     // Return to game from shop
-                    if (SingleKeyPress(Keys.Enter, currentKbState))
+                    if (SingleKeyPress(Keys.Space, currentKbState))
                     {
-                        // Apply health changes
-                        player.Health = maxHealth;
-
-                        // Reset player location and wave
-                        player.Position = playerPos;
-                        player.IFrame = false;
-                        nextWave = true;
-                        timer = 0;
-                        currentWave = 1;
+                        SoftReset();
 
                         // Change state
                         currentState = GameState.EndlessWave;
                         currentLevelState = LevelState.level1;
+                    }
+
+                    // Go to Main Menu
+                    if (SingleKeyPress(Keys.Enter, currentKbState))
+                    {
+                        currentState = GameState.MainMenu;
                     }
 
                     // Purchase Extra Health
@@ -437,7 +454,7 @@ namespace TheGame
                     // free gold (for testing)
                     if (SingleKeyPress(Keys.P, currentKbState))
                     {
-                        player.Gold++;
+                        player.Gold += 10;
                     }
 
                     break;
@@ -499,6 +516,7 @@ namespace TheGame
                         "Welcome to GAME TITLE\n" +
                         "Press 'Enter' to play\n" +
                         "Press 'X' to access the shop\n" +
+                        "Press 'L' to load or 'S' to save\n" +
                         "use 'wasd' to move and 'mouse1' to attack"),
                         new Vector2(500, 500),
                         Color.White);
@@ -513,8 +531,8 @@ namespace TheGame
                         information,
                         String.Format("" +
                         "GAME OVER\n" +
-                        "Press 'x' to go to the shop to\n" +
-                        "Get better"),
+                        "Press 'x' to go to the shop\n" +
+                        "Press 'ENTER' to return to the main menu"),
                         new Vector2(500, 500),
                         Color.White);
                     break;
@@ -551,7 +569,6 @@ namespace TheGame
                                             _graphics.GraphicsDevice.Viewport.Height/2 - 50),
                                         Color.White);
                                 }
-
                             }
                             break;
 
@@ -583,7 +600,6 @@ namespace TheGame
                                             _graphics.GraphicsDevice.Viewport.Height / 2 - 50),
                                         Color.White);
                                 }
-
                             }
                             break;
                     }
@@ -693,8 +709,10 @@ namespace TheGame
                     _spriteBatch.DrawString(
                         information,
                         String.Format("Press 'H','M' or 'I' to buy upgrades.\n" +
-                        "Press 'ENTER' to exist the shop", player.Movement),
-                        new Vector2(30, 300),
+                        "Press 'SPACE' to play\n" + 
+                        "Press 'ENTER' to return to the Main Menu", 
+                        player.Movement),
+                        new Vector2(30, 280),
                         Color.White);
 
                     // NPC Dialoge
@@ -868,17 +886,107 @@ namespace TheGame
             }
         }
 
-        
-        //public void ReadLevelFile(string fileName)
-        //{
-        //    StreamReader reader = new StreamReader(fileName);
-        //    string line;
-        //
-        //    while ((line = reader.ReadLine()) != null)
-        //    {
-        //
-        //    }
-        //}
+        /// <summary>
+        /// File IO readline, reads in player health, move, and invuln stats
+        /// </summary>
+        /// <param name="fileName"></param>
+        public void LoadStats(string fileName)
+        {
+            StreamReader reader = null;
+            string line;
+            string[] stats = new string[4];
+
+            try
+            {
+                reader = new StreamReader(fileName);
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    stats = line.Split('|');
+                }
+
+                // Assign read in values to stats
+                maxHealth = int.Parse(stats[0]);
+                player.Health = int.Parse(stats[0]);
+                player.Movement = int.Parse(stats[1]);
+                endIFrame = double.Parse(stats[2]);
+                player.Gold = int.Parse(stats[3]);
+            }
+
+            // Writes exceptions to the Output window
+            catch (IOException ioe)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    "IO Error: " + ioe.Message);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    "General Error: " + ex.Message);
+            }
+
+            // Close the reader
+            if (reader != null)
+            {
+                reader.Close();
+            }
+        }
+
+        /// <summary>
+        /// Saves the player's current stats to a save file
+        /// </summary>
+        private void SaveGame(string fileName)
+        {
+            // Open the writer
+            StreamWriter writer = null;
+
+            try
+            {
+                writer = new StreamWriter(fileName);
+
+                // Write the current stats to the file
+                writer.WriteLine(
+                    "{0}|{1}|{2}|{3}", 
+                    maxHealth, 
+                    player.Movement, 
+                    endIFrame,
+                    player.Gold);
+            }
+
+            // Writes exceptions to the Output window
+            catch (IOException ioe)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    "IO Error: " + ioe.Message);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    "General Error: " + ex.Message);
+            }
+
+            // Close the writer
+            if (writer != null)
+            {
+                writer.Close();
+            }
+        }
+
+        /// <summary>
+        /// Resets the game pieces when switching between game states
+        /// </summary>
+        private void SoftReset()
+        {
+            // Apply health changes
+            player.Health = maxHealth;
+
+            // Reset player location and wave
+            player.Position = playerPos;
+            player.IFrame = false;
+            nextWave = true;
+            timer = 0;
+            currentWave = 1;
+        }
         #endregion
     }
 }
