@@ -23,11 +23,12 @@ namespace TheGame
             this.timePerFrame = 1.0 / fps;
         }
 
-        // Dialoge ------------------------------------------------------------                    
-        public void dialogeClass(SpriteBatch _spriteBatch, SpriteFont information, Player player)
+        // Dialoge ------------------------------------------------------------
+        /*                  
+        public void dialogeClass(SpriteBatch _spriteBatch, SpriteFont information, Player player, Rectangle rect)
         {
             // Box for text
-            //_spriteBatch.DrawString(information,)
+            _spriteBatch.Draw(null, new Vector2(100, 100), rect, Color.Red, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 1);
 
             // Text
             _spriteBatch.DrawString(
@@ -37,7 +38,7 @@ namespace TheGame
                 new Vector2(30, 300),
                 Color.White);
         }
-
+        */
         // Animation Updater --------------------------------------------------
         public void UpdateAnimation(GameTime gameTime)
         {

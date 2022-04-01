@@ -81,6 +81,7 @@ namespace TheGame
         private Texture2D shrine;
         private SpriteFont goldText;
         private SpriteFont information;
+        private Texture2D rect;
         float timer;
 
         // Constants
@@ -164,6 +165,8 @@ namespace TheGame
 
             // NPC
             shrine = Content.Load<Texture2D>("Shrine");
+            rectangle = new Rectangle(500,500,100,100);
+            rect = new Texture2D(_graphics.GraphicsDevice, 300, 300);
 
             //Debug font
             debug = Content.Load<SpriteFont>("Debug");
@@ -722,6 +725,20 @@ namespace TheGame
                         player.Movement),
                         new Vector2(30, 280),
                         Color.White);
+
+                    // Dialoge box - For Sprite 4
+                    /*
+                    _spriteBatch.Draw(
+                        rect, 
+                        new Vector2(300, 200), 
+                        rectangle, 
+                        Color.Red, 
+                        0f, 
+                        new Vector2(0, 0), 
+                        4f, 
+                        SpriteEffects.None, 
+                        1);
+                    */
 
                     // Displays NPC in the shop
                     _spriteBatch.Draw(
