@@ -9,21 +9,33 @@ namespace TheGame
     class Room
     {
         // Fields
-        private int enemyCount;
+        private int waveCount;
+        private int currentWave;
         private Texture2D texture;
-        private bool isActive;
+        private bool allDead;
+        private string roomType;
+        private Vector2 backgroundPos = new Vector2(4, -25); //constant
 
         // properties
-        public int EnemyCount { get { return enemyCount; } }
+        public int WaveCount { get { return waveCount; } }
 
-        public bool IsActive { get { return isActive; } }
+        public int CurrentWave { set { currentWave = value; } }
+
+        public bool AllDead { get { return allDead; } set { allDead = value; } }
+
+        public string RoomType { get { return roomType; } }
 
         // Constructor
-        public Room(int enemyCount, Texture2D texture)
+        public Room(int waveCount, Texture2D texture, string roomType)
         {
-            this.enemyCount = enemyCount;
+            currentWave = 0;
+            this.waveCount = waveCount;
             this.texture = texture;
-            isActive = false;
+            if (roomType == "exit" || roomType == "shop" || roomType == "start")
+                allDead = true;
+            else
+                allDead = false;
+            this.roomType = roomType;
         }
 
         // Methods
@@ -32,8 +44,18 @@ namespace TheGame
             
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
+            spriteBatch.Draw(
+                                    texture,
+                                    backgroundPos,
+                                    null,
+                                    Color.White,
+                                    0f,
+                                    new Vector2(0, 0),
+                                    1.99f,
+                                    SpriteEffects.None,
+                                    0);
 
         }
 

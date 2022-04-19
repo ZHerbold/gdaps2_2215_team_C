@@ -20,11 +20,13 @@ namespace TheGame
             Victory
         }
 
+        /*
         enum LevelState
         {
             level1,
             level2
         }
+        */
 
         enum DialogeState
         {
@@ -41,7 +43,7 @@ namespace TheGame
 
         //Player Fields
         private Player player;
-        private const int playerIHealth = 3;      // initial player health, raised via shop
+        private int playerIHealth = 3;      // initial player health, raised via shop
         private int maxHealth;
         private Texture2D playerImage;
         private Vector2 playerPos;
@@ -63,8 +65,24 @@ namespace TheGame
         private const int EnemyFrameHeight = spriteSheetHeight / 6;
 
         //Background fields;
-        private Texture2D background;
-        private Vector2 backgroundPos;
+        
+        //private Texture2D background;
+        //private Vector2 backgroundPos;
+
+        private Texture2D startingRoom;
+        private Texture2D room1;
+        private Texture2D room2;
+        private Texture2D room3;
+        private Texture2D room4;
+        private Texture2D shopRoom;
+        private Texture2D endRoom;  //not implemented yet. do we want a hybring.
+        private Texture2D forcefields;
+
+        private int level;
+        private List<Texture2D> roomList;
+
+        private Map map;
+
 
         //Debug
         private SpriteFont debug;
@@ -74,7 +92,7 @@ namespace TheGame
         private int currentWave;
         private Random rng;
         private GameState currentState;
-        private LevelState currentLevelState;  
+        //private LevelState currentLevelState;  
         private KeyboardState currentKbState;
         private KeyboardState previousKbState;
         private Texture2D heart;
@@ -83,6 +101,7 @@ namespace TheGame
         private SpriteFont information;
         private Texture2D rect;
         float timer;
+        private int difficulty; //IMPORTANT;
 
         // Constants
         private const int enemyIHealth = 1; // initial enemy health        
@@ -98,7 +117,7 @@ namespace TheGame
         private const string fileName = "savedata.txt";
 
         #endregion
-
+        
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -123,7 +142,7 @@ namespace TheGame
             _graphics.PreferredBackBufferHeight = windowHeight;
             _graphics.ApplyChanges();
 
-            currentWave = 1;
+            currentWave = 0;
             enemyHealth = 1;
             timer = 0;
 
@@ -147,8 +166,27 @@ namespace TheGame
             enemyPos = new Vector2(900, 300);
 
             //Background Content
-            background = Content.Load<Texture2D>("Background With Portal");
-            backgroundPos = new Vector2(0, -17);
+            //background = Content.Load<Texture2D>("Background With Portal");
+            //backgroundPos = new Vector2(0, -17);
+            startingRoom = Content.Load<Texture2D>("Teleporter Room 1");
+            room1 = Content.Load<Texture2D>("Room 2");
+            room2 = Content.Load<Texture2D>("Room 3");
+            room3 = Content.Load<Texture2D>("Room 4");
+            room4 = Content.Load<Texture2D>("Room 5");
+            shopRoom = Content.Load<Texture2D>("Store Template");
+            endRoom = Content.Load<Texture2D>("Teleporter Room 1");
+            forcefields = Content.Load<Texture2D>("Forcefield");
+
+            roomList = new List<Texture2D>();
+            roomList.Add(startingRoom);
+            roomList.Add(room1);
+            roomList.Add(room2);
+            roomList.Add(room3);
+            roomList.Add(room4);
+            roomList.Add(shopRoom);
+            roomList.Add(endRoom);
+
+            map = new Map(3, roomList, difficulty);
 
             player = new Player(
                 playerIHealth, 
@@ -192,7 +230,7 @@ namespace TheGame
                         SoftReset();
 
                         currentState = GameState.EndlessWave;
-                        currentLevelState = LevelState.level1;
+                        //currentLevelState = LevelState.level1;
                     }
 
                     // Shop
@@ -346,25 +384,42 @@ namespace TheGame
 
                     // Update nextWave bool based on the
                     // active property of enemies
-                    foreach (Enemy e in enemies)
+                    if(!map.CurrentRoom.AllDead)
                     {
-                        if (e.Active)
+                        foreach (Enemy e in enemies)
                         {
-                            nextWave = false;
-                            break;
-                        }
-                        else
-                        {
-                            nextWave = true;
+                            if (e.Active)
+                            {
+
+                                nextWave = false;
+                                break;
+                            }
+                            else
+                            {
+                                nextWave = true;
+                            }
+
                         }
                     }
+                    
 
                     // If there aren't any more active enemies
                     // progress to next wave
                     if (nextWave)
                     {
-                        NextWave();
-                        nextWave = false;
+                        if(currentWave < map.CurrentRoom.WaveCount)
+                        {
+                            NextWave();
+                            nextWave = false;
+                        }
+                        else
+                        {
+                            map.CurrentRoom.AllDead = true;
+                            difficulty++;
+                            map.Diff = difficulty;
+                            currentWave = 0;
+                            nextWave = false;
+                        }
                     }
 
                     // Update iFrame if active
@@ -379,6 +434,16 @@ namespace TheGame
                         }
                     }
 
+                    if (currentWave == map.CurrentRoom.WaveCount + 1)
+                    {
+                        map.CurrentRoom.AllDead = true;
+                        difficulty++;
+                        map.Diff = difficulty;
+                    }
+
+
+
+                    /*
                     switch (currentLevelState)
                     {
                         // LEVEL 1 ----------------------------------------------------------------------------------------------
@@ -405,6 +470,7 @@ namespace TheGame
                                 break;
                             }                            
                     }
+                    */
                     break;
 
                 // Dialogue Box Gamestate (Not coded yet)
@@ -423,7 +489,7 @@ namespace TheGame
 
                         // Change state
                         currentState = GameState.EndlessWave;
-                        currentLevelState = LevelState.level1;
+                        //currentLevelState = LevelState.level1;
                     }
 
                     // Go to Main Menu
@@ -550,7 +616,65 @@ namespace TheGame
 
                 // --- GAME LOOP ---
                 case GameState.EndlessWave:
+                    map.Draw(_spriteBatch);
+                    player.Draw(_spriteBatch);
 
+                    
+                    if (!map.CurrentRoom.AllDead)
+                    {
+                        _spriteBatch.Draw(forcefields, new Vector2(4, -25), null, Color.White, 0f, new Vector2(0, 0), 1.99f, SpriteEffects.None, 0);
+                    }
+                    
+
+                    if (timer > 3f)
+                    {
+                        //drawing for the enemy
+                        foreach (Enemy e in enemies)
+                        {
+                            if (e.Active)
+                            {
+                                e.Draw(_spriteBatch);
+                            }
+                        }
+                    }
+
+                    if (player.Health > 0)
+                    {
+                        for (int i = 0; i < player.Health; i++)
+                        {
+                            _spriteBatch.Draw(
+                            heart,
+                            new Vector2(i * 40, 10),
+                            new Rectangle(0, 0, 32, 32),
+                            Color.White,
+                            0,
+                            Vector2.Zero,
+                            1.5f,
+                            SpriteEffects.None,
+                            1);
+                        }
+                    }
+
+                    if (enemies.Count > 0)
+                    {
+                        _spriteBatch.DrawString(
+                            information,
+                            String.Format("Gold: {0}", player.Gold),
+                            new Vector2(10, 50),
+                            Color.White);
+                        _spriteBatch.DrawString(
+                            information,
+                            String.Format("Wave count: {0}\nMax Waves: {1}", currentWave, map.CurrentRoom.WaveCount),
+                            new Vector2(10, 80),
+                            Color.White);
+                    }
+
+                    break;
+
+
+
+
+                    /*
                     switch (currentLevelState)
                     {
                         case LevelState.level1:
@@ -615,44 +739,9 @@ namespace TheGame
                             break;
                     }
 
-                    if (timer > 3f)
-                    {
-                        //drawing for the enemy
-                        foreach (Enemy e in enemies)
-                        {
-                            if (e.Active)
-                            {
-                                e.Draw(_spriteBatch);
-                            }
-                        }
-                    }
-
-                    if (player.Health > 0)
-                    {
-                        for (int i = 0; i < player.Health; i++)
-                        {
-                            _spriteBatch.Draw(
-                            heart,
-                            new Vector2(i * 40, 10),
-                            new Rectangle(0, 0, 32, 32),
-                            Color.White,
-                            0,
-                            Vector2.Zero,
-                            1.5f,
-                            SpriteEffects.None,
-                            1);
-                        }
-                    }
-
-                    if (enemies.Count > 0)
-                    {
-                        _spriteBatch.DrawString(
-                            information,
-                            String.Format("Gold: {0}", player.Gold),
-                            new Vector2(10, 50),
-                            Color.White);
-                    }
+                    
                     break;
+                    */
 
                 case GameState.DialogueBox:
                     break;
@@ -1023,9 +1112,8 @@ namespace TheGame
             // Reset player location and wave
             player.Position = playerPos;
             player.IFrame = false;
-            nextWave = true;
             timer = 0;
-            currentWave = 1;
+            currentWave = 0;
         }
         #endregion
     }

@@ -147,17 +147,23 @@ namespace TheGame
                 {
                     State = PlayerState.WalkRight;
                     position.X += movement; //movement in the direction specified
+                    if (position.X > 1100)
+                        position.X = 1100;
                 }
                 // ---- MOVE LEFT ----
                 else if (kbState.IsKeyDown(Keys.A))
                 {
                     State = PlayerState.WalkLeft;
                     position.X -= movement;
+                    if (position.X < -75)
+                        position.X = -75;
                 }
                 // ---- MOVE UP ----
                 if (kbState.IsKeyDown(Keys.W))
                 {
                     position.Y -= movement;
+                    if (position.Y < 0)
+                        position.Y = 0;
 
                     // Determine which direction to face when walking
                     if (prevKBstate.IsKeyDown(Keys.D) ||
@@ -175,6 +181,8 @@ namespace TheGame
                 else if (kbState.IsKeyDown(Keys.S))
                 {
                     position.Y += movement;
+                    if (position.Y > 575)
+                        position.Y = 575;
 
                     // Determine which direction to face when walking
                     if (prevKBstate.IsKeyDown(Keys.D) ||
