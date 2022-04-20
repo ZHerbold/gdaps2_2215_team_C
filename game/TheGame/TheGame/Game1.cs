@@ -542,8 +542,8 @@ namespace TheGame
                     // Return to game from shop
                     if (SingleKeyPress(Keys.Space, currentKbState))
                     {
-                        
 
+                        player.Health = maxHealth;
                         // Change state
                         currentState = GameState.EndlessWave;
                         //currentLevelState = LevelState.level1;
@@ -1282,6 +1282,8 @@ namespace TheGame
         private void NextLevel()
         {
             area++;
+            mapX = map.X;
+            mapX = map.Y;
             map.SetUpMap(area, roomList);
             player.Position = new Vector2(
                 (GraphicsDevice.Viewport.Width / 2) - 125,

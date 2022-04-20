@@ -160,11 +160,6 @@ namespace TheGame
             }
         }
 
-        public void Nextlevel()
-        {
-
-        }
-
         public void Update(GameTime gameTime, Vector2 pos)
         {
             deadEnd = false;
@@ -208,6 +203,10 @@ namespace TheGame
             //IMPLEMENT A BETTER MAP USING RECTANGLE SHAPES PLEASE
             //ideally, it would show the 8 adjacent squares around the one your one, since each level increases the map size(width/height) by 1
             //color coded maybe>
+
+            
+           
+
 
             for (int i = 0; i < roomMap.GetLength(0); i++)
             {
