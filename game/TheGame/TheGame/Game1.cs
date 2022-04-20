@@ -89,7 +89,7 @@ namespace TheGame
         private List<Texture2D> roomList;
 
         private Map map;
-
+        private float speed;
 
         //Debug
         private SpriteFont debug;
@@ -118,8 +118,8 @@ namespace TheGame
 
         // Costs of Upgrades
         private const int healthCost = 10;
-        private const int moveCost = 20;
-        private const int invulCost = 30;
+        private const int moveCost = 15;
+        private const int invulCost = 20;
 
         // File IO
         private const string fileName = "savedata.txt";
@@ -201,9 +201,10 @@ namespace TheGame
             area = 3;
 
             map = new Map(area, roomList, difficulty);
-            mapX = 3/2;
-            mapY = 3/2;
+            mapX = 1;
+            mapY = 1;
 
+            speed = 1.7f;
 
             player = new Player(
                 playerIHealth, 
@@ -212,7 +213,7 @@ namespace TheGame
                 0, 
                 PlayerState.FaceRight);
 
-            enemy = new Enemy(enemyIHealth, enemyPos, enemyImage, player);
+            enemy = new Enemy(enemyIHealth, enemyPos, enemyImage, player, speed);
 
             heart = Content.Load<Texture2D>("newHeart");
             goldText = Content.Load<SpriteFont>("gold");
@@ -586,11 +587,12 @@ namespace TheGame
                     }
 
                     // free gold (for testing)
+                    /*
                     if (SingleKeyPress(Keys.P, currentKbState))
                     {
                         player.Gold += 10;
                     }
-
+                    */
                     break;
 
                 case GameState.Victory:
@@ -1007,7 +1009,7 @@ namespace TheGame
                             rng.Next(-75, 1100), 
                             rng.Next(0, 575)), 
                         enemyImage, 
-                        player));
+                        player, speed));
 
                 // Enemy Hitbox Locations
                     enemyHitbox.Add(
@@ -1266,6 +1268,8 @@ namespace TheGame
             enemies.Clear();
             enemyHitbox.Clear();
 
+            speed = 1.7f;
+
             mapX = 1;
             mapY = 1;
             area = 3;
@@ -1284,9 +1288,9 @@ namespace TheGame
 
         private void NextLevel()
         {
-            
-            mapX = map.X;
-            mapX = map.Y;
+            speed += 0.7f;
+            mapX = 1;
+            mapY = 1;
             map.SetUpMap(area, roomList);
             player.Position = new Vector2(
                 (GraphicsDevice.Viewport.Width / 2) - 125,

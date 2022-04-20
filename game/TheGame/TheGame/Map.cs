@@ -220,11 +220,11 @@ namespace TheGame
                     {
                         if(currentRoom == roomMap[i,j])
                         {
-                            spriteBatch.DrawString(font, " (X) ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.LimeGreen);
+                            spriteBatch.DrawString(font, " [X] ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.DarkGreen);
                         }
                         else
                         {
-                            spriteBatch.DrawString(font, " (X) ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.White);
+                            spriteBatch.DrawString(font, " [X] ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.LightGreen);
                         }
                         
                     }
@@ -232,11 +232,11 @@ namespace TheGame
                     {
                         if (currentRoom == roomMap[i, j])
                         {
-                            spriteBatch.DrawString(font, " (E) ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.LimeGreen);
+                            spriteBatch.DrawString(font, " [E] ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.DarkGreen);
                         }
                         else
                         {
-                            spriteBatch.DrawString(font, " (E) ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.White);
+                            spriteBatch.DrawString(font, " [E] ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.Red);
                         }
                         
                     }
@@ -244,11 +244,11 @@ namespace TheGame
                     {
                         if (currentRoom == roomMap[i, j])
                         {
-                            spriteBatch.DrawString(font, " (S) ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.LimeGreen);
+                            spriteBatch.DrawString(font, " [S] ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.DarkGreen);
                         }
                         else
                         {
-                            spriteBatch.DrawString(font, " (S) ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.White);
+                            spriteBatch.DrawString(font, " [S] ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.Yellow);
                         }
                        
                     }
@@ -256,11 +256,15 @@ namespace TheGame
                     {
                         if (currentRoom == roomMap[i, j])
                         {
-                            spriteBatch.DrawString(font, " (O) ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.LimeGreen);
+                            spriteBatch.DrawString(font, " [O] ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.DarkGreen);
+                        }
+                        else if(roomMap[i,j].AllDead)
+                        {
+                            spriteBatch.DrawString(font, " [O] ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.LightGreen);
                         }
                         else
                         {
-                            spriteBatch.DrawString(font, " (O) ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.White);
+                            spriteBatch.DrawString(font, " [O] ", new Vector2(1050 + (i * 60), 10 + (j * 50)), Color.White);
                         }
                         
                     }

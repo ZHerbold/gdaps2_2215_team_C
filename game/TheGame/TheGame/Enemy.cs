@@ -30,6 +30,7 @@ namespace TheGame
         private Vector2 distance;
         private Vector2 direction;
         private bool isDead;
+        private float moveSpeed;
 
         // Animation
         private int frame;
@@ -52,10 +53,13 @@ namespace TheGame
         public int Frame { get { return frame; } }
         public EnemyState State { get { return state; } }
 
+        
+
         // Constructor
-        public Enemy(int health, Vector2 position, Texture2D image, Player player) : base(health, position, image)
+        public Enemy(int health, Vector2 position, Texture2D image, Player player, float moveSpeed) : base(health, position, image)
         {            
             this.player = player;
+            this.moveSpeed = moveSpeed;
 
             // Initialize
             fps = 10.0;                     // Will cycle through 10 walk frames per second
@@ -338,7 +342,7 @@ namespace TheGame
         {
             //FIXME: enemy goes to players back foot instead of middle of model
             followDistance = 60.0f;            // How close the enemy will get to the player before stopping
-            float speed = 1.7f;             // Speed the enemy moves towards the player
+            float speed = moveSpeed;             // Speed the enemy moves towards the player
             
             // get distance between enemy and player
             Vector2 newPos = new Vector2(X, Y+frameHeight/2);
