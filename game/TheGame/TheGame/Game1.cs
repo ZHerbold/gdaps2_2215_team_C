@@ -543,7 +543,7 @@ namespace TheGame
                     if (SingleKeyPress(Keys.Space, currentKbState))
                     {
 
-                        player.Health = maxHealth;
+                        
                         // Change state
                         currentState = GameState.EndlessWave;
                         //currentLevelState = LevelState.level1;
@@ -560,7 +560,7 @@ namespace TheGame
                     {
                         if (SingleKeyPress(Keys.H, currentKbState))
                         {
-                            maxHealth++;
+                            player.Health++;
                             player.Gold -= healthCost;
                         }
                     }
@@ -876,7 +876,7 @@ namespace TheGame
                 case GameState.Shop:
 
                     // Display hearts, updates as upgrades are purchased
-                    for (int i = 0; i < maxHealth; i++)
+                    for (int i = 0; i < player.Health; i++)
                     {
                         _spriteBatch.Draw(
                             heart,
@@ -1266,8 +1266,11 @@ namespace TheGame
             enemies.Clear();
             enemyHitbox.Clear();
 
+            mapX = 1;
+            mapY = 1;
             area = 3;
             difficulty = 0;
+            map.SetUpMap(area, roomList);
 
             // Apply health changes
             player.Health = maxHealth;
