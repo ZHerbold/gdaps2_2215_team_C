@@ -19,19 +19,25 @@ namespace TheGame
         private bool deadEnd;
         private int numTiles;
 
+
         public int X { get { return x; } }
         public int Y { get { return y; }  }
 
         public int NumTiles { get { return numTiles; } }
 
-        public int UnvSquares { get { return unvSquares; } }
+        public int UnvSquares { get { return unvSquares; } set { unvSquares = value; } }
 
         public int Diff { get { return diff; } set { diff = value; } }
 
         public Room CurrentRoom { get { return currentRoom; } }
 
+        public bool DeadEnd { get { return deadEnd; } }
+
         public Map(int mapSpace, List<Texture2D> roomList, int difficulty)
         {
+            
+            
+
             rng = new Random();
             placedExit = false;
             diff = difficulty;
@@ -42,8 +48,9 @@ namespace TheGame
 
         public void SetUpMap(int numtiles, List<Texture2D> list)
         {
+            placedExit = false;
             numTiles = numtiles;
-            unvSquares = numtiles * numtiles;
+            unvSquares = 0;
             roomMap = new Room[numtiles, numtiles];
 
             for (int i = 0; i < roomMap.GetLength(0); i++)
@@ -59,7 +66,7 @@ namespace TheGame
                     }
                     else
                     {
-                        int random = rng.Next(1, 11);
+                        int random = rng.Next(1, 12);
                         if(!placedExit && random == 11)
                         {
                             roomMap[i, j] = new Room(list[6], "exit");
@@ -84,6 +91,7 @@ namespace TheGame
                             {
                                 roomMap[i, j] = new Room(list[random], "normal");
                             }
+                            unvSquares++;
                             
                         }
 
@@ -93,7 +101,8 @@ namespace TheGame
 
             if(!placedExit)
             {
-                roomMap[roomMap.GetLength(0) - 1, roomMap.GetLength(0) - 1] = new Room(list[6], "exit");
+                roomMap[numtiles-1, numtiles-1] = new Room(list[6], "exit");
+                unvSquares--;
                 placedExit = true;
             }
         }
@@ -105,60 +114,48 @@ namespace TheGame
             {
                 if(x+1 < roomMap.GetLength(1))
                 {
-                    unvSquares--;
+                   
                     x++;
                     currentRoom = roomMap[x, y];
                     currentRoom.WaveCount = 1 + diff / 5;
                 }
-                else
-                {
-                    deadEnd = true;
-                }
+                
                 
             }
             else if (pos.X <= -75 && (pos.Y > 250 && pos.Y < 290))
             {
                 if (x - 1 >= 0)
                 {
-                    unvSquares--;
+                    
                     x--;
                     currentRoom = roomMap[x, y];
                     currentRoom.WaveCount = 1 + diff / 5;
                 }
-                else
-                {
-                    deadEnd = true;
-                }
+                
                 
             }
             else if (pos.Y <= 0 && (pos.X > 490 && pos.X < 530))
             {
                 if (y - 1 >= 0)
                 {
-                    unvSquares--;
+                    
                     y--;
                     currentRoom = roomMap[x, y];
                     currentRoom.WaveCount = 1 + diff / 5;
                 }
-                else
-                {
-                    deadEnd = true;
-                }
+                
                 
             }
             else if (pos.Y >= 575 && (pos.X > 490 && pos.X < 530))
             {
                 if (y + 1 < roomMap.GetLength(0))
                 {
-                    unvSquares--;
+                    
                     y++;
                     currentRoom = roomMap[x, y];
                     currentRoom.WaveCount = 1 + diff / 5;
                 }
-                else
-                {
-                    deadEnd = true;
-                }
+                
                 
             }
         }
@@ -168,20 +165,50 @@ namespace TheGame
 
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Vector2 pos)
         {
-            
+            deadEnd = false;
+            if (pos.X >= 1100 && (pos.Y > 250 && pos.Y < 290))
+            {
+                if(x + 1 >= numTiles)
+                {
+                    deadEnd = true;
+                }
+                
+            }
+            else if (pos.X <= -75 && (pos.Y > 250 && pos.Y < 290))
+            {
+                if (x - 1 < 0)
+                {
+                    deadEnd = true;
+                }
+            }
+            else if (pos.Y <= 0 && (pos.X > 490 && pos.X < 530))
+            {
+                if (y - 1 < 0)
+                {
+                    deadEnd = true;
+                }
+            }
+            else if (pos.Y >= 575 && (pos.X > 490 && pos.X < 530))
+            {
+                if (y + 1 >= numTiles)
+                {
+                    deadEnd = true;
+                }
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             
-            if(deadEnd)
-            {
-                deadEnd = false;
-                spriteBatch.DrawString(font, "This Hallway is closed off...", new Vector2(270, 510), Color.White);
-            }
+            
             currentRoom.Draw(spriteBatch);
+            //map
+            //IMPLEMENT A BETTER MAP USING RECTANGLE SHAPES PLEASE
+            //ideally, it would show the 8 adjacent squares around the one your one, since each level increases the map size(width/height) by 1
+            //color coded maybe>
+
             for (int i = 0; i < roomMap.GetLength(0); i++)
             {
                 for (int j = 0; j < roomMap.GetLength(1); j++)
@@ -238,6 +265,10 @@ namespace TheGame
             }
 
         }
+
+        
+
+        
 
         
 

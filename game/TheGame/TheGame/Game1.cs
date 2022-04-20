@@ -81,7 +81,11 @@ namespace TheGame
         private Texture2D endRoom;  //not implemented yet. do we want a hybring.
         private Texture2D forcefields;
 
-        private int level;
+        private Texture2D deadEnd;
+        private Texture2D clearFloor;
+        private Texture2D menuButton;
+
+        private int area;
         private List<Texture2D> roomList;
 
         private Map map;
@@ -181,6 +185,10 @@ namespace TheGame
             endRoom = Content.Load<Texture2D>("Exit");
             forcefields = Content.Load<Texture2D>("Forcefield");
 
+            deadEnd = Content.Load<Texture2D>("Deadend");
+            clearFloor = Content.Load<Texture2D>("Clearfloor");
+            menuButton = Content.Load<Texture2D>("Menu Button");
+
             roomList = new List<Texture2D>();
             roomList.Add(startingRoom);
             roomList.Add(room1);
@@ -190,7 +198,9 @@ namespace TheGame
             roomList.Add(shopRoom);
             roomList.Add(endRoom);
 
-            map = new Map(3, roomList, difficulty);
+            area = 3;
+
+            map = new Map(area, roomList, difficulty);
             mapX = 3/2;
             mapY = 3/2;
 
@@ -241,11 +251,7 @@ namespace TheGame
                         //currentLevelState = LevelState.level1;
                     }
 
-                    // Shop
-                    else if (SingleKeyPress(Keys.X, currentKbState))
-                    {
-                        currentState = GameState.Shop;
-                    }
+                   
 
                     // Load Game
                     else if (SingleKeyPress(Keys.L, currentKbState))
@@ -272,10 +278,7 @@ namespace TheGame
 
                     SoftReset();
 
-                    if (SingleKeyPress(Keys.X, currentKbState))
-                    {
-                        currentState = GameState.Shop;
-                    }
+                    
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
                         currentState = GameState.MainMenu;
@@ -288,6 +291,18 @@ namespace TheGame
 
                     timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
                     currentKbState = Keyboard.GetState();
+
+                     // Shop
+                    if (SingleKeyPress(Keys.X, currentKbState) && map.CurrentRoom.RoomType == "shop")
+                    {
+                        currentState = GameState.Shop;
+                    }
+                    //next level
+                    else if (SingleKeyPress(Keys.X, currentKbState) && map.CurrentRoom.RoomType == "exit" && map.UnvSquares <= 0)
+                    {
+                        NextLevel();
+                    }
+
 
                     // Construct player hitbox
                     playerHitbox = new Rectangle(
@@ -382,7 +397,7 @@ namespace TheGame
                     player.UpdateAnimation(gameTime);
                     player.Update(gameTime);
 
-
+                    map.Update(gameTime, player.Position);
 
                     // checks to see if the players health is zero
                     if (player.Health <= 0)
@@ -423,6 +438,7 @@ namespace TheGame
                         else
                         {
                             map.CurrentRoom.AllDead = true;
+                            map.UnvSquares--;
                             difficulty++;
                             map.Diff = difficulty;
                             currentWave = 0;
@@ -452,6 +468,16 @@ namespace TheGame
                     */
                     
                     //checks if the player is at any of the exits
+
+                    //shrine collision, do the same below but testing for the shrine.
+                    if(map.CurrentRoom.RoomType == "shop")
+                    {
+                        if(true)
+                        {
+
+                        }
+                    }
+
                     if(map.CurrentRoom.AllDead)
                     {
                         if (player.Position.X >= 1100 && (player.Position.Y > 250 && player.Position.Y < 290))
@@ -516,7 +542,7 @@ namespace TheGame
                     // Return to game from shop
                     if (SingleKeyPress(Keys.Space, currentKbState))
                     {
-                        SoftReset();
+                        
 
                         // Change state
                         currentState = GameState.EndlessWave;
@@ -623,7 +649,6 @@ namespace TheGame
                         String.Format("" +
                         "Welcome to GAME TITLE\n" +
                         "Press 'Enter' to play\n" +
-                        "Press 'X' to access the shop\n" +
                         "Press 'L' to load or 'S' to save\n" +
                         "use 'wasd' to move and 'mouse1' to attack"),
                         new Vector2(500, 500),
@@ -639,7 +664,6 @@ namespace TheGame
                         information,
                         String.Format("" +
                         "GAME OVER\n" +
-                        "Press 'x' to go to the shop\n" +
                         "Press 'ENTER' to return to the main menu"),
                         new Vector2(500, 500),
                         Color.White);
@@ -647,14 +671,24 @@ namespace TheGame
 
                 // --- GAME LOOP ---
                 case GameState.EndlessWave:
+                    
+                    
+
                     map.Draw(_spriteBatch, displayMessage);
+                    if (!map.CurrentRoom.AllDead)
+                    {
+                        _spriteBatch.Draw(forcefields, new Vector2(4, -25), null, Color.White, 0f, new Vector2(0, 0), 1.99f, SpriteEffects.None, 0f);
+                    }
+
+                    if (map.CurrentRoom.RoomType == "shop")
+                    {
+                        _spriteBatch.Draw(shrine, new Vector2(450, 170), null, Color.White, 0f, new Vector2(0, 0), 1.99f, SpriteEffects.None, 0f);
+                    }
+
                     player.Draw(_spriteBatch);
 
                     
-                    if (!map.CurrentRoom.AllDead)
-                    {
-                        _spriteBatch.Draw(forcefields, new Vector2(4, -25), null, Color.White, 0f, new Vector2(0, 0), 1.99f, SpriteEffects.None, 0);
-                    }
+                    
                     
 
                     if (timer > 3f)
@@ -685,6 +719,8 @@ namespace TheGame
                             1);
                         }
                     }
+
+                    
 
                     if (currentState == GameState.EndlessWave)
                     {
@@ -723,9 +759,41 @@ namespace TheGame
                            String.Format("Difficulty: {0}", map.Diff),
                            new Vector2(10, 190),
                            Color.White);
+                        _spriteBatch.DrawString(
+                          information,
+                          String.Format("Deadend: {0}", map.DeadEnd),
+                          new Vector2(10, 210),
+                          Color.White);
+                        _spriteBatch.DrawString(
+                          information,
+                          String.Format("Rooms left: {0}", map.UnvSquares),
+                          new Vector2(10, 230),
+                          Color.White);
 
 
 
+
+                    }
+
+
+                    //maybe make the menu buttons bob up and down?
+                    if (map.DeadEnd)
+                    {
+                        _spriteBatch.Draw(deadEnd, new Vector2(440, 20), null, Color.White, 0f, new Vector2(0, 0), 3f, SpriteEffects.None, 0f);
+                    }
+
+                    if(map.CurrentRoom.RoomType == "shop")
+                    {
+                        _spriteBatch.Draw(menuButton, new Vector2(600, 200), null, Color.White, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0f);
+                    }
+
+                    if(map.UnvSquares > 0 && map.CurrentRoom.RoomType == "exit")
+                    {
+                        _spriteBatch.Draw(clearFloor, new Vector2(420, 600), null, Color.White, 0f, new Vector2(0, 0), 3f, SpriteEffects.None, 0f);
+                    }
+                    else if (map.CurrentRoom.RoomType == "exit")
+                    {
+                        _spriteBatch.Draw(menuButton, new Vector2(605, 330), null, Color.White, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0f);
                     }
 
                     break;
@@ -868,7 +936,7 @@ namespace TheGame
                     _spriteBatch.DrawString(
                         information,
                         String.Format("Press 'H','M' or 'I' to buy upgrades.\n" +
-                        "Press 'SPACE' to play\n" + 
+                        "Press 'SPACE' to return to the game\n" + 
                         "Press 'ENTER' to return to the Main Menu", 
                         player.Movement),
                         new Vector2(30, 280),
@@ -1198,6 +1266,9 @@ namespace TheGame
             enemies.Clear();
             enemyHitbox.Clear();
 
+            area = 3;
+            difficulty = 0;
+
             // Apply health changes
             player.Health = maxHealth;
 
@@ -1207,6 +1278,17 @@ namespace TheGame
             timer = 0;
             currentWave = 0;
         }
+
+        private void NextLevel()
+        {
+            area++;
+            map.SetUpMap(area, roomList);
+            player.Position = new Vector2(
+                (GraphicsDevice.Viewport.Width / 2) - 125,
+                (GraphicsDevice.Viewport.Height / 2) - 95);
+
+        }
+
         #endregion
     }
 }

@@ -46,6 +46,7 @@ namespace TheGame
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            
             spriteBatch.Draw(
                                     texture,
                                     backgroundPos,
@@ -55,8 +56,8 @@ namespace TheGame
                                     new Vector2(0, 0),
                                     1.99f,
                                     SpriteEffects.None,
-                                    0);
-
+                                    0f);
+            
         }
 
     }
