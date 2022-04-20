@@ -13,6 +13,7 @@ namespace TheGame
         private Room currentRoom;
         private Random rng;
         private bool placedExit;
+        private bool placedShop;
         private int diff;
         private int x;
         private int y;
@@ -49,6 +50,7 @@ namespace TheGame
         public void SetUpMap(int numtiles, List<Texture2D> list)
         {
             placedExit = false;
+            placedShop = false;
             numTiles = numtiles;
             unvSquares = 0;
             roomMap = new Room[numtiles, numtiles];
@@ -57,7 +59,7 @@ namespace TheGame
             {
                 for (int j = 0; j < roomMap.GetLength(1); j++)
                 {
-                    if(i == numtiles/2 && j == numtiles/2)
+                    if (i == numtiles / 2 && j == numtiles / 2)
                     {
                         roomMap[i, j] = new Room(list[0], "start");
                         currentRoom = roomMap[i, j];
@@ -67,23 +69,24 @@ namespace TheGame
                     else
                     {
                         int random = rng.Next(1, 12);
-                        if(!placedExit && random == 11)
+                        if (!placedExit && random == 11)
                         {
                             roomMap[i, j] = new Room(list[6], "exit");
                             placedExit = true;
-                            
+
                         }
-                        else if(random == 10)
+                        else if (!placedShop && random == 10)
                         {
                             roomMap[i, j] = new Room(list[5], "shop");
+                            placedShop = true;
                         }
                         else
                         {
-                            if(random == 11)
+                            if (random == 11)
                             {
                                 roomMap[i, j] = new Room(list[1], "normal");
                             }
-                            else if(random > 3)
+                            else if (random > 3)
                             {
                                 roomMap[i, j] = new Room(list[4], "normal");
                             }
@@ -92,16 +95,22 @@ namespace TheGame
                                 roomMap[i, j] = new Room(list[random], "normal");
                             }
                             unvSquares++;
-                            
+
                         }
 
                     }
                 }
             }
 
-            if(!placedExit)
+            if (!placedExit)
             {
-                roomMap[numtiles-1, numtiles-1] = new Room(list[6], "exit");
+                roomMap[numtiles - 1, numtiles - 1] = new Room(list[6], "exit");
+                unvSquares--;
+                placedExit = true;
+            }
+            if (!placedShop)
+            {
+                roomMap[0,0] = new Room(list[5], "shop");
                 unvSquares--;
                 placedExit = true;
             }
