@@ -17,7 +17,7 @@ namespace TheGame
         private Vector2 backgroundPos = new Vector2(4, -25); //constant
 
         // properties
-        public int WaveCount { get { return waveCount; } }
+        public int WaveCount { get { return waveCount; } set { waveCount = value; } }
 
         public int CurrentWave { set { currentWave = value; } }
 
@@ -26,10 +26,10 @@ namespace TheGame
         public string RoomType { get { return roomType; } }
 
         // Constructor
-        public Room(int waveCount, Texture2D texture, string roomType)
+        public Room(Texture2D texture, string roomType)
         {
             currentWave = 0;
-            this.waveCount = waveCount;
+            waveCount = 1;
             this.texture = texture;
             if (roomType == "exit" || roomType == "shop" || roomType == "start")
                 allDead = true;

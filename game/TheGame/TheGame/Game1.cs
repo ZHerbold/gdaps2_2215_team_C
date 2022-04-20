@@ -52,6 +52,9 @@ namespace TheGame
         private Rectangle rectangle;
         private double timeCounter;
         private double endIFrame = 1.0;
+        private int mapX;
+        private int mapY;
+
 
         //Enemy Fields
         private Enemy enemy;
@@ -99,6 +102,7 @@ namespace TheGame
         private Texture2D shrine;
         private SpriteFont goldText;
         private SpriteFont information;
+        private SpriteFont displayMessage;
         private Texture2D rect;
         float timer;
         private int difficulty; //IMPORTANT;
@@ -174,19 +178,22 @@ namespace TheGame
             room3 = Content.Load<Texture2D>("Room 4");
             room4 = Content.Load<Texture2D>("Room 5");
             shopRoom = Content.Load<Texture2D>("Store Template");
-            endRoom = Content.Load<Texture2D>("Teleporter Room 1");
+            endRoom = Content.Load<Texture2D>("Exit");
             forcefields = Content.Load<Texture2D>("Forcefield");
 
             roomList = new List<Texture2D>();
             roomList.Add(startingRoom);
             roomList.Add(room1);
             roomList.Add(room2);
-            roomList.Add(room3);
             roomList.Add(room4);
+            roomList.Add(room3); //most common room
             roomList.Add(shopRoom);
             roomList.Add(endRoom);
 
             map = new Map(3, roomList, difficulty);
+            mapX = 3/2;
+            mapY = 3/2;
+
 
             player = new Player(
                 playerIHealth, 
@@ -200,6 +207,7 @@ namespace TheGame
             heart = Content.Load<Texture2D>("newHeart");
             goldText = Content.Load<SpriteFont>("gold");
             information = Content.Load<SpriteFont>("information");
+            displayMessage = Content.Load<SpriteFont>("display");
 
             // NPC
             shrine = Content.Load<Texture2D>("Shrine");
@@ -405,7 +413,7 @@ namespace TheGame
 
                     // If there aren't any more active enemies
                     // progress to next wave
-                    if (nextWave)
+                    if (nextWave && !map.CurrentRoom.AllDead)
                     {
                         if(currentWave < map.CurrentRoom.WaveCount)
                         {
@@ -434,14 +442,37 @@ namespace TheGame
                         }
                     }
 
+                    /*
                     if (currentWave == map.CurrentRoom.WaveCount + 1)
                     {
                         map.CurrentRoom.AllDead = true;
                         difficulty++;
                         map.Diff = difficulty;
                     }
-
-
+                    */
+                    
+                    //checks if the player is at any of the exits
+                    if(map.CurrentRoom.AllDead)
+                    {
+                        if (player.Position.X >= 1100 && (player.Position.Y > 250 && player.Position.Y < 290))
+                        {
+                            NextRoom();
+                        }
+                        else if (player.Position.X <= -75 && (player.Position.Y > 250 && player.Position.Y < 290))
+                        {
+                            NextRoom();
+                        }
+                        else if (player.Position.Y <= 0 && (player.Position.X > 490 && player.Position.X < 530))
+                        {
+                            NextRoom();
+                        }
+                        else if (player.Position.Y >= 575 && (player.Position.X > 490 && player.Position.X < 530))
+                        {
+                            NextRoom();
+                        }
+                    }
+                    
+                    
 
                     /*
                     switch (currentLevelState)
@@ -616,7 +647,7 @@ namespace TheGame
 
                 // --- GAME LOOP ---
                 case GameState.EndlessWave:
-                    map.Draw(_spriteBatch);
+                    map.Draw(_spriteBatch, displayMessage);
                     player.Draw(_spriteBatch);
 
                     
@@ -655,7 +686,7 @@ namespace TheGame
                         }
                     }
 
-                    if (enemies.Count > 0)
+                    if (currentState == GameState.EndlessWave)
                     {
                         _spriteBatch.DrawString(
                             information,
@@ -665,8 +696,36 @@ namespace TheGame
                         _spriteBatch.DrawString(
                             information,
                             String.Format("Wave count: {0}\nMax Waves: {1}", currentWave, map.CurrentRoom.WaveCount),
-                            new Vector2(10, 80),
+                            new Vector2(10, 90),
                             Color.White);
+                        _spriteBatch.DrawString(
+                            information,
+                            String.Format("Pos: {0},{1}", player.Position.X, player.Position.Y),
+                            new Vector2(10, 70),
+                            Color.White);
+                        _spriteBatch.DrawString(
+                            information,
+                            String.Format("Room Pos: {0},{1}", map.X, map.Y),
+                            new Vector2(10, 130),
+                            Color.White);
+                        _spriteBatch.DrawString(
+                            information,
+                            String.Format("Program Pos: {0},{1}", mapX, mapY),
+                            new Vector2(10, 150),
+                            Color.White);
+                        _spriteBatch.DrawString(
+                           information,
+                           String.Format("Num Tiles: {0}", map.NumTiles),
+                           new Vector2(10, 170),
+                           Color.White);
+                        _spriteBatch.DrawString(
+                           information,
+                           String.Format("Difficulty: {0}", map.Diff),
+                           new Vector2(10, 190),
+                           Color.White);
+
+
+
                     }
 
                     break;
@@ -877,8 +936,8 @@ namespace TheGame
                     new Enemy(
                         enemyHealth, 
                         new Vector2(
-                            rng.Next(100, windowWidth - 100), 
-                            rng.Next(100, windowHeight - 100)), 
+                            rng.Next(-75, 1100), 
+                            rng.Next(0, 575)), 
                         enemyImage, 
                         player));
 
@@ -894,6 +953,39 @@ namespace TheGame
                 
             }
         }
+
+        public void NextRoom()
+        {
+            
+
+            if (player.X >= 1100 && (player.Y > 250 && player.Y < 290) && mapX < map.NumTiles - 1)
+            {
+                mapX++;
+                map.MoveRoom(player.Position);
+                player.X = -74;
+            }
+            else if (player.X <= -75 && (player.Y > 250 && player.Y < 290) && mapX > 0)
+            {
+                mapX--;
+                map.MoveRoom(player.Position);
+                player.X = 1099;
+            }
+            else if (player.Y <= 0 && (player.X > 490 && player.X < 530) && mapY > 0)
+            {
+                mapY--;
+                map.MoveRoom(player.Position);
+                player.Y = 574;
+            }
+            else if (player.Y >= 575 && (player.X > 490 && player.X < 530) && mapY < map.NumTiles - 1)
+            {
+                mapY++;
+                map.MoveRoom(player.Position);
+                player.Y = 1;
+            }
+            
+            nextWave = true;
+        }
+
 
         /// <summary>
         /// Kill an enemy when your hitbox becomes active 
