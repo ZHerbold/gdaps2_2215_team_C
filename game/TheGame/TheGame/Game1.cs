@@ -1284,7 +1284,7 @@ namespace TheGame
 
         private void NextLevel()
         {
-            area++;
+            
             mapX = map.X;
             mapX = map.Y;
             map.SetUpMap(area, roomList);
