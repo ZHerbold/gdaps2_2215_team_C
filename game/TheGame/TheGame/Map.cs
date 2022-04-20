@@ -108,12 +108,7 @@ namespace TheGame
                 unvSquares--;
                 placedExit = true;
             }
-            if (!placedShop)
-            {
-                roomMap[0,0] = new Room(list[5], "shop");
-                unvSquares--;
-                placedExit = true;
-            }
+            
         }
 
         public void MoveRoom(Vector2 pos)
