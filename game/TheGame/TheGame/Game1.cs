@@ -121,6 +121,11 @@ namespace TheGame
         private const int moveCost = 15;
         private const int invulCost = 20;
 
+        // Cost of Skills
+        private const int potionCost = 30;
+        private const int dodgeCost = 45;
+        private const int shieldCost = 60;
+
         // File IO
         private const string fileName = "savedata.txt";
 
@@ -557,32 +562,86 @@ namespace TheGame
                     }
 
                     // Purchase Extra Health
-                    if (player.Gold >= healthCost)
+                    if (player.Health < 6)
                     {
-                        if (SingleKeyPress(Keys.H, currentKbState))
+                        if (player.Gold >= healthCost)
                         {
-                            player.Health++;
-                            player.Gold -= healthCost;
+                            if (SingleKeyPress(Keys.H, currentKbState))
+                            {
+                                player.Health++;
+                                player.Gold -= healthCost;
+                            }
+                        }
+                    }
+                    // Purchase Health potion ability
+                    else
+                    {
+                        if (player.Ability == false)
+                        {
+                            if (player.Gold >= potionCost)
+                            {
+                                if (SingleKeyPress(Keys.H, currentKbState))
+                                {
+                                    player.Ability = true;
+                                    player.TypeOfAbility = 0;
+                                }
+                            }
                         }
                     }
 
                     // Purchase Extra Movement Speed
-                    if (player.Gold >= moveCost)
+                    if (player.Movement <= 9)
                     {
-                        if (SingleKeyPress(Keys.M, currentKbState))
+                        if (player.Gold >= moveCost)
                         {
-                            player.Movement++;
-                            player.Gold -= moveCost;
+                            if (SingleKeyPress(Keys.M, currentKbState))
+                            {
+                                player.Movement++;
+                                player.Gold -= moveCost;
+                            }
+                        }
+                    }
+                    // Purchase Dodge Ability
+                    else
+                    {
+                        if (player.Ability == false)
+                        {
+                            if (player.Gold >= dodgeCost)
+                            {
+                                if (SingleKeyPress(Keys.M, currentKbState))
+                                {
+                                    player.Ability = true;
+                                    player.TypeOfAbility = 1;
+                                }
+                            }
                         }
                     }
 
                     // Purchase Extra iFrames
-                    if (player.Gold >= invulCost)
+                    if (endIFrame <= 3)
                     {
-                        if (SingleKeyPress(Keys.I, currentKbState))
+                        if (player.Gold >= invulCost)
                         {
-                            endIFrame += 0.2;
-                            player.Gold -= invulCost;
+                            if (SingleKeyPress(Keys.I, currentKbState))
+                            {
+                                endIFrame += 0.2;
+                                player.Gold -= invulCost;
+                            }
+                        }
+                    }
+                    // Purchase Shield Ability
+                    else
+                    {
+                        if (player.Ability == false)
+                        {
+                            if (player.Gold >= shieldCost)
+                            {
+                                if (SingleKeyPress(Keys.I, currentKbState))
+                                {
+                                    player.Ability = true;
+                                    player.TypeOfAbility = 2;
+                                }
+                            }
                         }
                     }
 

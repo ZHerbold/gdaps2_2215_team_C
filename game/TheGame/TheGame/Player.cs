@@ -14,13 +14,17 @@ namespace TheGame
         WalkRight,
         WalkLeft,
         AttackRight,
-        AttackLeft
+        AttackLeft,
+        Roll
     }
 
     class Player : GameObject
     {
         // Fields--------------------------------------------------------------
         private int gold;
+        private bool ability;
+        private Dictionary<int, string> abilityDict;
+        private int typeOfAbility;
         PlayerState state;
         private KeyboardState prevKBstate;
         private MouseState prevMState;
@@ -69,6 +73,12 @@ namespace TheGame
             set { gold = value; }
         }
 
+        public bool Ability
+        {
+            get { return ability; }
+            set { ability = value; }
+        }
+
         // Can be modified at the shop
         public int Movement
         {
@@ -76,12 +86,27 @@ namespace TheGame
             set { movement = value; }
         }
 
+        public int TypeOfAbility
+        {
+            get { return typeOfAbility; }
+            set { typeOfAbility = value; }
+        }
+
         // Constructor --------------------------------------------------------
         public Player(int health, Vector2 position, Texture2D image, int gold, 
             PlayerState startingState) : 
             base(health, position, image)
         {
+
+            abilityDict = new Dictionary<int, string>();
+            // Abilities
+            abilityDict.Add(1, "dodge");
+            abilityDict.Add(0, "potion");
+            abilityDict.Add(2, "shield");
+            ability = false;
+
             this.gold = gold;
+            
             this.state = startingState;
 
             iFrame = false;
