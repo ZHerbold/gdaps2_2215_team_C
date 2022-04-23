@@ -547,8 +547,9 @@ namespace TheGame
 
                     // Return to game from shop
                     if (SingleKeyPress(Keys.Space, currentKbState))
-                    {                        
+                    {
                         // Change state
+                        SoftReset();
                         currentState = GameState.EndlessWave;
                         //currentLevelState = LevelState.level1;
                     }
@@ -975,7 +976,7 @@ namespace TheGame
                     // Display current invulnerability
                     _spriteBatch.DrawString(
                         information,
-                        String.Format("Invulnerability - {0}", endIFrame),
+                        String.Format("Invulnerability - {0:F1}", endIFrame),
                         new Vector2(30, 220),
                         Color.White);
 
@@ -1338,7 +1339,6 @@ namespace TheGame
             player.Health = maxHealth;
 
             // Reset player location and wave
-            player.Position = playerPos;
             player.IFrame = false;
             timer = 0;
             currentWave = 0;
@@ -1349,6 +1349,8 @@ namespace TheGame
         /// </summary>
         private void MapReset()
         {
+            player.Position = playerPos;
+
             speed = 1.7f;
 
             mapX = 1;
