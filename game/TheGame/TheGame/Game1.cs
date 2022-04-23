@@ -833,6 +833,11 @@ namespace TheGame
                           String.Format("Rooms left: {0}", map.UnvSquares),
                           new Vector2(10, 230),
                           Color.White);
+                        _spriteBatch.DrawString(
+                          information,
+                          String.Format("Level: {0}", level),
+                          new Vector2(10, 250),
+                          Color.White);
                     }
 
                     //maybe make the menu buttons bob up and down?
@@ -855,6 +860,7 @@ namespace TheGame
                         _spriteBatch.Draw(menuButton, new Vector2(605, 330), null, Color.White, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0f);
                     }
 
+                    // Prints a giant message indicating which level the player is on
                     if (map.CurrentRoom.RoomType == "start")
                     {
                         LevelAnnouncer();
@@ -1341,10 +1347,6 @@ namespace TheGame
             player.IFrame = false;
             timer = 0;
             currentWave = 0;
-
-            // Resets Game Over Details
-            player.Score = 0;
-            level = 1;
         }
 
         /// <summary>
@@ -1352,6 +1354,10 @@ namespace TheGame
         /// </summary>
         private void MapReset()
         {
+            // Resets Game Over Details
+            player.Score = 0;
+            level = 1;
+
             player.Position = playerPos;
 
             speed = 1.7f;
