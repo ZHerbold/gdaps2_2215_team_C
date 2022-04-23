@@ -118,6 +118,7 @@ namespace TheGame
         private int healthCost = 10;
         private int moveCost = 15;
         private int invulCost = 20;
+        private const int costRaise = 5;
 
         // Cost of Skills
         private const int potionCost = 30;
@@ -250,6 +251,7 @@ namespace TheGame
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
                         SoftReset();
+                        MapReset();
 
                         currentState = GameState.EndlessWave;
                         //currentLevelState = LevelState.level1;
@@ -267,6 +269,12 @@ namespace TheGame
                         SaveGame(fileName);
                     }
 
+                    // Shop (FOR TESTING)
+                    else if (SingleKeyPress(Keys.P, currentKbState))
+                    {
+                        currentState = GameState.Shop;                        
+                    }
+
                     break;
 
                 // Settings (Not created yet)
@@ -279,7 +287,7 @@ namespace TheGame
                     currentKbState = Keyboard.GetState();
 
                     SoftReset();
-
+                    MapReset();
                     
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
@@ -297,6 +305,7 @@ namespace TheGame
                      // Shop
                     if (SingleKeyPress(Keys.X, currentKbState) && map.CurrentRoom.RoomType == "shop")
                     {
+                        timer = 0;
                         currentState = GameState.Shop;
                     }
                     //next level
@@ -304,7 +313,6 @@ namespace TheGame
                     {
                         NextLevel();
                     }
-
 
                     // Construct player hitbox
                     playerHitbox = new Rectangle(
@@ -539,9 +547,7 @@ namespace TheGame
 
                     // Return to game from shop
                     if (SingleKeyPress(Keys.Space, currentKbState))
-                    {
-
-                        
+                    {                        
                         // Change state
                         currentState = GameState.EndlessWave;
                         //currentLevelState = LevelState.level1;
@@ -553,6 +559,12 @@ namespace TheGame
                         currentState = GameState.MainMenu;
                     }
 
+                    // Free Gold (FOR TESTING)
+                    if (SingleKeyPress(Keys.P, currentKbState))
+                    {
+                        player.Gold += 100;
+                    }
+
                     // Purchase Extra Health
                     //if (player.Health < 6)
                     //{
@@ -560,9 +572,10 @@ namespace TheGame
                         {
                             if (SingleKeyPress(Keys.H, currentKbState))
                             {
+                                maxHealth++;
                                 player.Health++;
                                 player.Gold -= healthCost;
-                                healthCost += 5;
+                                healthCost += costRaise;
                             }
                         }
                     //}
@@ -591,7 +604,7 @@ namespace TheGame
                             {
                                 player.Movement++;
                                 player.Gold -= moveCost;
-                                moveCost += 5;
+                                moveCost += costRaise;
                             }
                         }
                     //}
@@ -620,7 +633,7 @@ namespace TheGame
                             {
                                 endIFrame += 0.2;
                                 player.Gold -= invulCost;
-                                invulCost += 5;
+                                invulCost += costRaise;
                             }
                         }
                     //}
@@ -919,8 +932,19 @@ namespace TheGame
 
                 case GameState.Shop:
 
+                    timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                    if (timer < 2f)
+                    {
+                        _spriteBatch.DrawString(
+                            goldText,
+                            String.Format("HP RESTORED"),
+                            new Vector2(785, 180),
+                            Color.Red);
+                    }
+
                     // Display hearts, updates as upgrades are purchased
-                    for (int i = 0; i < player.Health; i++)
+                    for (int i = 0; i < maxHealth; i++)
                     {
                         _spriteBatch.Draw(
                             heart,
@@ -1310,14 +1334,6 @@ namespace TheGame
             enemies.Clear();
             enemyHitbox.Clear();
 
-            speed = 1.7f;
-
-            mapX = 1;
-            mapY = 1;
-            area = 3;
-            difficulty = 0;
-            map.SetUpMap(area, roomList);
-
             // Apply health changes
             player.Health = maxHealth;
 
@@ -1326,6 +1342,20 @@ namespace TheGame
             player.IFrame = false;
             timer = 0;
             currentWave = 0;
+        }
+
+        /// <summary>
+        /// Resets map position, difficulty, and enemy speed
+        /// </summary>
+        private void MapReset()
+        {
+            speed = 1.7f;
+
+            mapX = 1;
+            mapY = 1;
+            area = 3;
+            difficulty = 0;
+            map.SetUpMap(area, roomList);
         }
 
         private void NextLevel()
