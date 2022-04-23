@@ -15,7 +15,10 @@ namespace TheGame
         WalkLeft,
         AttackRight,
         AttackLeft,
-        Roll
+        RightRoll,
+        LeftRoll,
+        RightShield,
+        LeftShield
     }
 
     class Player : GameObject
@@ -41,6 +44,8 @@ namespace TheGame
         private const int AttackFrameCount = 7;
         private const int PlayerWalkOffsetY = 55;
         private const int PlayerAttackOffsetY = 165;
+        private const int PlayerRollOffestY = 465;
+        private const int PlayerShieldOffsetY = 400;
 
         private int frame;
         private double timeCounter;
@@ -141,6 +146,7 @@ namespace TheGame
                     }
             */
 
+            #region Attack 
             // Click to attack, holding m1 does nothing
             // Clicking while attacking does nothing
             if (
@@ -175,6 +181,81 @@ namespace TheGame
                     state = PlayerState.AttackLeft;
                 }
             }
+            #endregion
+
+            #region Abilites
+            //does the same thing as Attack but for the abilities
+            if (ability) 
+            {
+                #region Roll
+                if (typeOfAbility == 1)
+                {
+                    if (
+                        ((
+                        (prevMState.LeftButton != ButtonState.Pressed && mState.LeftButton == ButtonState.Pressed)
+
+                        ||
+
+                        (kbState.IsKeyDown(Keys.Space) && !prevKBstate.IsKeyDown(Keys.Space)
+                        ))
+
+                        &&
+
+                        (state != PlayerState.RightRoll &&
+                        state != PlayerState.LeftRoll)))
+                    {
+                        // Roll Direction dependent on previous state
+                        // --- Roll Right ---
+                        if (state == PlayerState.FaceRight ||
+                            state == PlayerState.WalkRight)
+                        {
+                            state = PlayerState.RightRoll;
+                        }
+                        // --- Roll Left ---
+                        if (state == PlayerState.FaceRight ||
+                            state == PlayerState.WalkRight)
+                        {
+                            state = PlayerState.LeftRoll;
+                        }
+                    }
+                }
+                #endregion
+                #region Shield
+                else if (typeOfAbility == 2)
+                {
+                    if (
+                        ((
+                        (prevMState.LeftButton != ButtonState.Pressed && mState.LeftButton == ButtonState.Pressed)
+
+                        ||
+
+                        (kbState.IsKeyDown(Keys.Space) && !prevKBstate.IsKeyDown(Keys.Space)
+                        ))
+
+                        &&
+
+                        (state != PlayerState.RightShield &&
+                        state != PlayerState.LeftShield)))
+                    {
+                        // Shield Direction dependent on previous state
+
+                        // --- Shield Right ---
+                        if (state == PlayerState.FaceRight ||
+                            state == PlayerState.WalkRight)
+                        {
+                            state = PlayerState.RightShield;
+                        }
+                        // --- Shield Left ---
+                        if (state == PlayerState.FaceRight ||
+                            state == PlayerState.WalkRight)
+                        {
+                            state = PlayerState.LeftShield;
+                        }
+                    }
+                }
+                #endregion
+            }
+            #endregion
 
             // Must finish an attack before moving again
             if (state != PlayerState.AttackRight && 
@@ -421,6 +502,7 @@ namespace TheGame
             }
         }
 
+        // Draw Attack
         public void DrawAttack(SpriteEffects flipSprite, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(
@@ -438,5 +520,45 @@ namespace TheGame
                 flipSprite,
                 0);
         }
+
+        /*
+        // Draw Roll
+        public void DrawRoll(SpriteEffect flipSprite, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(
+                image,
+                position,
+                new Rectangle(
+                    (frame * FrameWidth) + 1,
+                    PlayerRollOffestY,
+                    FrameWidth,
+                    FrameHeight),
+                color,
+                0,
+                Vector2.Zero,
+                2.5f,
+                flipSprite,
+                0);
+        }
+
+        // Draw Shield
+        public void DrawShield(SpriteEffect flipSprite, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(
+                image,
+                position,
+                new Rectangle(
+                    (frame * FrameWidth) + 1,
+                    PlayerShieldOffsetY,
+                    FrameWidth,
+                    FrameHeight),
+                color,
+                0,
+                Vector2.Zero,
+                2.5f,
+                flipSprite,
+                0);
+        }
+        */
     }
 }
