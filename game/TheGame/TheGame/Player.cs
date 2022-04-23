@@ -33,7 +33,7 @@ namespace TheGame
         private const int FrameWidth = 100;
         private const int FrameHeight = 55;
 
-        private int movement = 4;
+        private int movement = 5;
 
         // Animation
         private const int SpriteSheetWidth = 7;
@@ -116,9 +116,6 @@ namespace TheGame
         }
 
         // Methods ------------------------------------------------------------
-        //override method to call when update is called in game1
-        //PUT CODE YOU WANT TO CALL DURING THE GAME HERE
-
         /// <summary>
         /// Controls movement and FSM
         /// </summary>

@@ -105,6 +105,7 @@ namespace TheGame
         private SpriteFont goldText;
         private SpriteFont information;
         private SpriteFont displayMessage;
+        private SpriteFont shopMessage;
         private Texture2D rect;
         float timer;
         private int difficulty; //IMPORTANT;
@@ -115,9 +116,9 @@ namespace TheGame
         private const int windowHeight = 720;
 
         // Costs of Upgrades
-        private int healthCost = 10;
-        private int moveCost = 15;
-        private int invulCost = 20;
+        private int healthCost = 15;
+        private int moveCost = 20;
+        private int invulCost = 30;
         private const int costRaise = 5;
 
         // Cost of Skills
@@ -223,6 +224,7 @@ namespace TheGame
             goldText = Content.Load<SpriteFont>("gold");
             information = Content.Load<SpriteFont>("information");
             displayMessage = Content.Load<SpriteFont>("display");
+            shopMessage = Content.Load<SpriteFont>("shopDialogue");
 
             // NPC
             shrine = Content.Load<Texture2D>("Shrine");
@@ -933,17 +935,6 @@ namespace TheGame
 
                 case GameState.Shop:
 
-                    timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                    if (timer < 2f)
-                    {
-                        _spriteBatch.DrawString(
-                            goldText,
-                            String.Format("HP RESTORED"),
-                            new Vector2(785, 180),
-                            Color.Red);
-                    }
-
                     // Display hearts, updates as upgrades are purchased
                     for (int i = 0; i < maxHealth; i++)
                     {
@@ -1037,8 +1028,18 @@ namespace TheGame
                             SpriteEffects.None,
                             0);
 
-                    // NPC Apearance
+                    timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+                    // Health restored message
+                    if (timer < 5f)
+                    {
+                        _spriteBatch.DrawString(
+                            shopMessage,
+                            String.Format("You feel a calming presence\n" +
+                                          "     as your life is restored"),
+                            new Vector2(745, 140),
+                            Color.LightBlue);
+                    }
 
                     break;
 

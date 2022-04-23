@@ -245,6 +245,13 @@
 /processorParam:TextureFormat=Color
 /build:Room 5.png
 
+#begin shopDialogue.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:shopDialogue.spritefont
+
 #begin Shrine.png
 /importer:TextureImporter
 /processor:TextureProcessor
