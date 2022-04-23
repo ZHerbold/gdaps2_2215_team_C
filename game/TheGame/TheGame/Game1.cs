@@ -129,6 +129,9 @@ namespace TheGame
         // File IO
         private const string fileName = "savedata.txt";
 
+        // Score
+        private int score;
+
         #endregion
         
         public Game1()
@@ -158,6 +161,7 @@ namespace TheGame
             currentWave = 0;
             enemyHealth = 1;
             timer = 0;
+            score = 0;
 
             base.Initialize();
         }
@@ -325,69 +329,66 @@ namespace TheGame
 
                     // Construct enemy hitboxes
                     // Only run after the level text has gone away
-                    if (timer > 3)
+                    for (int i = 0; i < enemyHitbox.Count; i++)
                     {
-                        for (int i = 0; i < enemyHitbox.Count; i++)
+                        // Construct the hitbox based on the direction it's walking
+                        if (enemies[i].State == EnemyState.WalkRight ||
+                            enemies[i].State == EnemyState.AttackRight)
                         {
-                            // Construct the hitbox based on the direction it's walking
-                            if (enemies[i].State == EnemyState.WalkRight ||
-                                enemies[i].State == EnemyState.AttackRight)
-                            {
-                                enemyHitbox[i] =
-                                  new Rectangle(
-                                      (int)enemies[i].Position.X + 50,
-                                      (int)enemies[i].Position.Y + 70,
-                                      EnemyFrameWidth / 2,
-                                      EnemyFrameHeight + 30);
-                            }
-                            else if (enemies[i].State == EnemyState.WalkLeft ||
-                                enemies[i].State == EnemyState.AttackLeft)
-                            {
-                                enemyHitbox[i] =
-                                  new Rectangle(
-                                      (int)enemies[i].Position.X + 140,
-                                      (int)enemies[i].Position.Y + 70,
-                                      EnemyFrameWidth / 2,
-                                      EnemyFrameHeight + 30);
-                            }
-
-                            // Removes hitbox if enemies are dead
-                            else
-                            {
-                                enemyHitbox[i] =
-                                  new Rectangle(
-                                      (int)enemies[i].Position.X + 140,
-                                      (int)enemies[i].Position.Y + 70,
-                                      0,
-                                      0);
-                            }
+                            enemyHitbox[i] =
+                              new Rectangle(
+                                  (int)enemies[i].Position.X + 50,
+                                  (int)enemies[i].Position.Y + 70,
+                                  EnemyFrameWidth / 2,
+                                  EnemyFrameHeight + 30);
+                        }
+                        else if (enemies[i].State == EnemyState.WalkLeft ||
+                            enemies[i].State == EnemyState.AttackLeft)
+                        {
+                            enemyHitbox[i] =
+                              new Rectangle(
+                                  (int)enemies[i].Position.X + 140,
+                                  (int)enemies[i].Position.Y + 70,
+                                  EnemyFrameWidth / 2,
+                                  EnemyFrameHeight + 30);
                         }
 
-                        // Manage enemy attacks
-                        for (int i = 0; i < enemyHitbox.Count; i++)
+                        // Removes hitbox if enemies are dead
+                        else
                         {
-                            switch (enemies[i].State)
-                            {
-                                case EnemyState.AttackLeft:
-                                case EnemyState.AttackRight:
-
-                                    // Check for collisions when attacking
-                                    // Only active during certain frames
-                                    if (enemies[i].Frame == 4)
-                                    {
-                                        Attack(i);
-                                    }
-
-                                    break;
-                            }
+                            enemyHitbox[i] =
+                              new Rectangle(
+                                  (int)enemies[i].Position.X + 140,
+                                  (int)enemies[i].Position.Y + 70,
+                                  0,
+                                  0);
                         }
+                    }
 
-                        //calls enemy update
-                        for (int i = 0; i < enemies.Count; i++)
+                    // Manage enemy attacks
+                    for (int i = 0; i < enemyHitbox.Count; i++)
+                    {
+                        switch (enemies[i].State)
                         {
-                            enemies[i].UpdateAnimation(gameTime);
-                            enemies[i].Update(gameTime);
+                            case EnemyState.AttackLeft:
+                            case EnemyState.AttackRight:
+
+                                // Check for collisions when attacking
+                                // Only active during certain frames
+                                if (enemies[i].Frame == 4)
+                                {
+                                    Attack(i);
+                                }
+
+                                break;
                         }
+                    }
+
+                    //calls enemy update
+                    for (int i = 0; i < enemies.Count; i++)
+                    {
+                        enemies[i].UpdateAnimation(gameTime);
+                        enemies[i].Update(gameTime);
                     }
 
                     // Manage player attacks
@@ -1371,6 +1372,9 @@ namespace TheGame
             player.Position = new Vector2(
                 (GraphicsDevice.Viewport.Width / 2) - 125,
                 (GraphicsDevice.Viewport.Height / 2) - 95);
+
+            // Increase the player score each level
+            score++;
         }
 
         #endregion
