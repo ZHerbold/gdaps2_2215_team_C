@@ -784,9 +784,7 @@ namespace TheGame
                             SpriteEffects.None,
                             1);
                         }
-                    }
-
-                    
+                    }                    
 
                     if (currentState == GameState.EndlessWave)
                     {
@@ -837,7 +835,6 @@ namespace TheGame
                           Color.White);
                     }
 
-
                     //maybe make the menu buttons bob up and down?
                     if (map.DeadEnd)
                     {
@@ -858,10 +855,12 @@ namespace TheGame
                         _spriteBatch.Draw(menuButton, new Vector2(605, 330), null, Color.White, 0f, new Vector2(0, 0), 2f, SpriteEffects.None, 0f);
                     }
 
+                    if (map.CurrentRoom.RoomType == "start")
+                    {
+                        LevelAnnouncer();
+                    }
+
                     break;
-
-
-
 
                     /*
                     switch (currentLevelState)
@@ -996,7 +995,7 @@ namespace TheGame
                         information,
                         String.Format("Press 'H','M' or 'I' to buy upgrades.\n" +
                         "Press 'SPACE' to return to the game\n" + 
-                        "Press 'ENTER' to return to the Main Menu", 
+                        "Press 'ENTER' to QUIT to the Main Menu", 
                         player.Movement),
                         new Vector2(30, 280),
                         Color.White);
@@ -1370,9 +1369,10 @@ namespace TheGame
             // Increase the level counter
             level++;
 
-            // Update player and enemy
+            // Update
             player.Health = maxHealth;
             speed += 0.7f;
+            timer = 0;
 
             // Reset the map
             mapX = 1;
@@ -1381,6 +1381,20 @@ namespace TheGame
             player.Position = new Vector2(
                 (GraphicsDevice.Viewport.Width / 2) - 125,
                 (GraphicsDevice.Viewport.Height / 2) - 95);
+        }
+
+        private void LevelAnnouncer()
+        {
+            if (timer < 3f)
+            {
+                _spriteBatch.DrawString(
+                    debug,
+                    String.Format("LEVEL {0}", level),
+                    new Vector2(
+                        _graphics.GraphicsDevice.Viewport.Width / 2 - 250,
+                        _graphics.GraphicsDevice.Viewport.Height / 2 - 50),
+                    Color.White);
+            }
         }
 
         #endregion
