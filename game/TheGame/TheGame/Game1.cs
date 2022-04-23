@@ -21,7 +21,7 @@ namespace TheGame
         }
 
         /*
-        enum LevelState
+        enum LevelStateaaaaaaaa
         {
             level1,
             level2
@@ -708,7 +708,7 @@ namespace TheGame
                     _spriteBatch.DrawString(
                         information,
                         String.Format("" +
-                        "Welcome to GAME TITLE\n" +
+                        "Welcome to MOURNBLADE\n" +
                         "Press 'Enter' to play\n" +
                         "Press 'L' to load or 'S' to save\n" +
                         "use 'wasd' to move and 'mouse1' to attack"),
@@ -830,10 +830,6 @@ namespace TheGame
                           String.Format("Rooms left: {0}", map.UnvSquares),
                           new Vector2(10, 230),
                           Color.White);
-
-
-
-
                     }
 
 
@@ -1347,6 +1343,7 @@ namespace TheGame
 
         private void NextLevel()
         {
+            player.Health = maxHealth;
             speed += 0.7f;
             mapX = 1;
             mapY = 1;
