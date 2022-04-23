@@ -1364,22 +1364,26 @@ namespace TheGame
             mapY = 1;
             area = 3;
             difficulty = 0;
+            map.Diff = 0;
             map.SetUpMap(area, roomList);
         }
 
         private void NextLevel()
         {
+            // Increase the player score each level
+            level++;
+
+            // Update player and enemy
             player.Health = maxHealth;
             speed += 0.7f;
+
+            // Reset the map
             mapX = 1;
             mapY = 1;
             map.SetUpMap(area, roomList);
             player.Position = new Vector2(
                 (GraphicsDevice.Viewport.Width / 2) - 125,
                 (GraphicsDevice.Viewport.Height / 2) - 95);
-
-            // Increase the player score each level
-            level++;
         }
 
         #endregion
