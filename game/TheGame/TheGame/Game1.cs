@@ -12,7 +12,6 @@ namespace TheGame
         enum GameState
         {
             MainMenu,
-            Settings,
             GameOver,
             EndlessWave,
             Shop,        // For NPC
@@ -257,7 +256,7 @@ namespace TheGame
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
                         SoftReset();
-                        MapReset();
+                        LevelReset();
 
                         currentState = GameState.EndlessWave;
                         //currentLevelState = LevelState.level1;
@@ -275,15 +274,15 @@ namespace TheGame
                         SaveGame(fileName);
                     }
 
-                    // (FOR TESTING)
-                    else if (SingleKeyPress(Keys.P, currentKbState))
-                    {
-                        currentState = GameState.Shop;                        
-                    }
-                    else if (SingleKeyPress(Keys.O, currentKbState))
-                    {
-                        currentState = GameState.GameOver;
-                    }
+                    //// (FOR TESTING)
+                    //else if (SingleKeyPress(Keys.P, currentKbState))
+                    //{
+                    //    currentState = GameState.Shop;                        
+                    //}
+                    //else if (SingleKeyPress(Keys.O, currentKbState))
+                    //{
+                    //    currentState = GameState.GameOver;
+                    //}
 
                     break;
 
@@ -295,7 +294,7 @@ namespace TheGame
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
                         SoftReset();
-                        MapReset();
+                        LevelReset();
                         currentState = GameState.MainMenu;
                     }
 
@@ -319,11 +318,11 @@ namespace TheGame
                         NextLevel();
                     }
 
-                    // (FOR TESTING)
-                    else if (SingleKeyPress(Keys.O, currentKbState))
-                    {
-                        currentState = GameState.GameOver;
-                    }
+                    //// (FOR TESTING)
+                    //else if (SingleKeyPress(Keys.O, currentKbState))
+                    //{
+                    //    currentState = GameState.GameOver;
+                    //}
 
                     // Construct player hitbox
                     playerHitbox = new Rectangle(
@@ -568,11 +567,11 @@ namespace TheGame
                         currentState = GameState.MainMenu;
                     }
 
-                    // Free Gold (FOR TESTING)
-                    if (SingleKeyPress(Keys.P, currentKbState))
-                    {
-                        player.Gold += 100;
-                    }
+                    //// Free Gold (FOR TESTING)
+                    //if (SingleKeyPress(Keys.P, currentKbState))
+                    //{
+                    //    player.Gold += 100;
+                    //}
 
                     // Purchase Extra Health
                     //if (player.Health < 6)
@@ -718,9 +717,6 @@ namespace TheGame
                         "use 'wasd' to move and 'mouse1' or 'K' to attack"),
                         new Vector2(500, 500),
                         Color.White);
-                    break;
-
-                case GameState.Settings:
                     break;
 
                 // --- GAME OVER ---
@@ -1352,7 +1348,7 @@ namespace TheGame
         /// <summary>
         /// Resets map position, difficulty, and enemy speed
         /// </summary>
-        private void MapReset()
+        private void LevelReset()
         {
             // Resets Game Over Details
             player.Score = 0;
