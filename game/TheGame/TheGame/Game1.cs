@@ -717,7 +717,7 @@ namespace TheGame
                         "Welcome to MOURNBLADE\n" +
                         "Press 'Enter' to play\n" +
                         "Press 'L' to load or 'S' to save\n" +
-                        "use 'wasd' to move and 'mouse1' to attack"),
+                        "use 'wasd' to move and 'mouse1' or 'K' to attack"),
                         new Vector2(500, 500),
                         Color.White);
                     break;

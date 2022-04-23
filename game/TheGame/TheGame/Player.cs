@@ -136,10 +136,19 @@ namespace TheGame
 
             // Click to attack, holding m1 does nothing
             // Clicking while attacking does nothing
-            if (prevMState.LeftButton != ButtonState.Pressed && 
-                mState.LeftButton == ButtonState.Pressed && 
-                state != PlayerState.AttackRight && 
-                state != PlayerState.AttackLeft)
+            if (
+                (
+                (prevMState.LeftButton != ButtonState.Pressed && mState.LeftButton == ButtonState.Pressed) 
+                
+                ||                
+
+                (kbState.IsKeyDown(Keys.K) && !prevKBstate.IsKeyDown(Keys.K)
+                ) 
+                
+                &&
+
+                (state != PlayerState.AttackRight && 
+                state != PlayerState.AttackLeft)))
             {
                 // set initial animation marker
                 frame = 0;
