@@ -127,6 +127,8 @@ namespace TheGame
 
         // File IO
         private const string fileName = "savedata.txt";
+        private bool displaySave;
+        private bool displayLoad;
 
         // Game Over Details
         private int level;
@@ -161,6 +163,9 @@ namespace TheGame
             enemyHealth = 1;
             timer = 0;
             level = 1;
+
+            displaySave = false;
+            displayLoad = false;
 
             base.Initialize();
         }
@@ -257,7 +262,8 @@ namespace TheGame
                     {
                         SoftReset();
                         LevelReset();
-
+                        displayLoad = false;
+                        displaySave = false;
                         currentState = GameState.EndlessWave;
                         //currentLevelState = LevelState.level1;
                     }                   
@@ -265,13 +271,28 @@ namespace TheGame
                     // Load Game
                     else if (SingleKeyPress(Keys.L, currentKbState))
                     {
+                        timer = 0;
+                        displaySave = false;
+                        displayLoad = true;
                         LoadStats(fileName);
                     }
 
                     // Save Game
                     else if (SingleKeyPress(Keys.S, currentKbState))
                     {
+                        timer = 0;
+                        displayLoad = false;
+                        displaySave = true;
                         SaveGame(fileName);
+                    }
+
+                    // Hide save/load messages
+                    timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    if (timer > 1)
+                    {
+                        timer = 0;
+                        displayLoad = false;
+                        displaySave = false;
                     }
 
                     //// (FOR TESTING)
@@ -283,7 +304,6 @@ namespace TheGame
                     //{
                     //    currentState = GameState.GameOver;
                     //}
-
                     break;
 
                 // Gameover GameState
@@ -708,6 +728,7 @@ namespace TheGame
             {
                 // --- MAIN MENU ---
                 case GameState.MainMenu:
+
                     _spriteBatch.DrawString(
                         information,
                         String.Format("" +
@@ -717,6 +738,37 @@ namespace TheGame
                         "use 'wasd' to move and 'mouse1' or 'K' to attack"),
                         new Vector2(500, 500),
                         Color.White);
+
+                    //_spriteBatch.Draw(shrine, new Vector2(450, 300), Color.White);
+                    _spriteBatch.Draw(
+                        shrine,
+                        new Vector2(400, 100),
+                        default,
+                        Color.White,
+                        0,
+                        Vector2.Zero,
+                        2.5f,
+                        SpriteEffects.None,
+                        0);
+
+                    // Show when the game is being saved or loaded
+                    if (displaySave)
+                    {
+                        _spriteBatch.DrawString(
+                            shopMessage,
+                            String.Format("SAVING..."),
+                            new Vector2(535, 80),
+                            Color.LightBlue);
+                    }
+                    else if (displayLoad)
+                    {
+                        _spriteBatch.DrawString(
+                            shopMessage,
+                            String.Format("LOADING..."),
+                            new Vector2(535, 80),
+                            Color.LightBlue);
+                    }
+
                     break;
 
                 // --- GAME OVER ---
