@@ -762,19 +762,12 @@ namespace TheGame
 
                     player.Draw(_spriteBatch);
 
-                    
-                    
-                    
-
-                    if (timer > 3f)
+                    //drawing for the enemy
+                    foreach (Enemy e in enemies)
                     {
-                        //drawing for the enemy
-                        foreach (Enemy e in enemies)
+                        if (e.Active)
                         {
-                            if (e.Active)
-                            {
-                                e.Draw(_spriteBatch);
-                            }
+                            e.Draw(_spriteBatch);
                         }
                     }
 
