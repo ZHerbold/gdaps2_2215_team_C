@@ -15,9 +15,7 @@ namespace TheGame
             Settings,
             GameOver,
             EndlessWave,
-            DialogueBox, // For NPC
             Shop,        // For NPC
-            Victory
         }
 
         /*
@@ -117,9 +115,9 @@ namespace TheGame
         private const int windowHeight = 720;
 
         // Costs of Upgrades
-        private const int healthCost = 10;
-        private const int moveCost = 15;
-        private const int invulCost = 20;
+        private int healthCost = 10;
+        private int moveCost = 15;
+        private int invulCost = 20;
 
         // Cost of Skills
         private const int potionCost = 30;
@@ -255,9 +253,7 @@ namespace TheGame
 
                         currentState = GameState.EndlessWave;
                         //currentLevelState = LevelState.level1;
-                    }
-
-                   
+                    }                   
 
                     // Load Game
                     else if (SingleKeyPress(Keys.L, currentKbState))
@@ -536,10 +532,6 @@ namespace TheGame
                     */
                     break;
 
-                // Dialogue Box Gamestate (Not coded yet)
-                case GameState.DialogueBox:
-                    break;
-
                 // ----- Purchase Weapons/Upgrades -----
                 case GameState.Shop:
 
@@ -562,88 +554,91 @@ namespace TheGame
                     }
 
                     // Purchase Extra Health
-                    if (player.Health < 6)
-                    {
+                    //if (player.Health < 6)
+                    //{
                         if (player.Gold >= healthCost)
                         {
                             if (SingleKeyPress(Keys.H, currentKbState))
                             {
                                 player.Health++;
                                 player.Gold -= healthCost;
+                                healthCost += 5;
                             }
                         }
-                    }
-                    // Purchase Health potion ability
-                    else
-                    {
-                        if (player.Ability == false)
-                        {
-                            if (player.Gold >= potionCost)
-                            {
-                                if (SingleKeyPress(Keys.H, currentKbState))
-                                {
-                                    player.Ability = true;
-                                    player.TypeOfAbility = 0;
-                                }
-                            }
-                        }
-                    }
+                    //}
+                    //// Purchase Health potion ability
+                    //else
+                    //{
+                    //    if (player.Ability == false)
+                    //    {
+                    //        if (player.Gold >= potionCost)
+                    //        {
+                    //            if (SingleKeyPress(Keys.H, currentKbState))
+                    //            {
+                    //                player.Ability = true;
+                    //                player.TypeOfAbility = 0;
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
                     // Purchase Extra Movement Speed
-                    if (player.Movement <= 9)
-                    {
+                    //if (player.Movement <= 9)
+                    //{
                         if (player.Gold >= moveCost)
                         {
                             if (SingleKeyPress(Keys.M, currentKbState))
                             {
                                 player.Movement++;
                                 player.Gold -= moveCost;
+                                moveCost += 5;
                             }
                         }
-                    }
-                    // Purchase Dodge Ability
-                    else
-                    {
-                        if (player.Ability == false)
-                        {
-                            if (player.Gold >= dodgeCost)
-                            {
-                                if (SingleKeyPress(Keys.M, currentKbState))
-                                {
-                                    player.Ability = true;
-                                    player.TypeOfAbility = 1;
-                                }
-                            }
-                        }
-                    }
+                    //}
+                    //// Purchase Dodge Ability
+                    //else
+                    //{
+                    //    if (player.Ability == false)
+                    //    {
+                    //        if (player.Gold >= dodgeCost)
+                    //        {
+                    //            if (SingleKeyPress(Keys.M, currentKbState))
+                    //            {
+                    //                player.Ability = true;
+                    //                player.TypeOfAbility = 1;
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
                     // Purchase Extra iFrames
-                    if (endIFrame <= 3)
-                    {
+                    //if (endIFrame <= 3)
+                    //{
                         if (player.Gold >= invulCost)
                         {
                             if (SingleKeyPress(Keys.I, currentKbState))
                             {
                                 endIFrame += 0.2;
                                 player.Gold -= invulCost;
+                                invulCost += 5;
                             }
                         }
-                    }
-                    // Purchase Shield Ability
-                    else
-                    {
-                        if (player.Ability == false)
-                        {
-                            if (player.Gold >= shieldCost)
-                            {
-                                if (SingleKeyPress(Keys.I, currentKbState))
-                                {
-                                    player.Ability = true;
-                                    player.TypeOfAbility = 2;
-                                }
-                            }
-                        }
-                    }
+                    //}
+                    //// Purchase Shield Ability
+                    //else
+                    //{
+                    //    if (player.Ability == false)
+                    //    {
+                    //        if (player.Gold >= shieldCost)
+                    //        {
+                    //            if (SingleKeyPress(Keys.I, currentKbState))
+                    //            {
+                    //                player.Ability = true;
+                    //                player.TypeOfAbility = 2;
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
                     // free gold (for testing)
                     /*
@@ -653,11 +648,6 @@ namespace TheGame
                     }
                     */
                     break;
-
-                case GameState.Victory:
-
-                    break;
-
 
                 default:
                     break;
@@ -926,9 +916,6 @@ namespace TheGame
                     
                     break;
                     */
-
-                case GameState.DialogueBox:
-                    break;
 
                 case GameState.Shop:
 
@@ -1351,7 +1338,6 @@ namespace TheGame
             player.Position = new Vector2(
                 (GraphicsDevice.Viewport.Width / 2) - 125,
                 (GraphicsDevice.Viewport.Height / 2) - 95);
-
         }
 
         #endregion
