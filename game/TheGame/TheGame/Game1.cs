@@ -131,7 +131,6 @@ namespace TheGame
 
         // Game Over Details
         private int level;
-        private int score;
 
         #endregion
         
@@ -162,7 +161,6 @@ namespace TheGame
             currentWave = 0;
             enemyHealth = 1;
             timer = 0;
-            score = 0;
             level = 1;
 
             base.Initialize();
@@ -741,7 +739,7 @@ namespace TheGame
                         goldText, 
                         String.Format("You made it to level - {0}" +
                                       "\n     Score: {1}", 
-                                      level, score), 
+                                      level, player.Score), 
                         new Vector2(300, 300), Color.Gold);
 
                     break;
@@ -1159,7 +1157,6 @@ namespace TheGame
                     if (playerHitbox.Intersects(enemyHitbox[i]))
                     {
                         enemies[i].Die();
-                        score += 10;
                     }
                 }
             }
@@ -1347,7 +1344,7 @@ namespace TheGame
             currentWave = 0;
 
             // Resets Game Over Details
-            score = 0;
+            player.Score = 0;
             level = 1;
         }
 
@@ -1370,7 +1367,7 @@ namespace TheGame
 
         private void NextLevel()
         {
-            // Increase the player score each level
+            // Increase the level counter
             level++;
 
             // Update player and enemy

@@ -22,6 +22,7 @@ namespace TheGame
     {
         // Fields--------------------------------------------------------------
         private int gold;
+        private int score;
         private bool ability;
         private Dictionary<int, string> abilityDict;
         private int typeOfAbility;
@@ -71,6 +72,12 @@ namespace TheGame
         {
             get { return gold; }
             set { gold = value; }
+        }
+
+        public int Score
+        {
+            get { return score; }
+            set { score = value; }
         }
 
         public bool Ability

@@ -191,6 +191,7 @@ namespace TheGame
                 state == EnemyState.DyingRight))
             {
                 player.Gold++;
+                player.Score += 10;
             }
             previousState = state;
         }
