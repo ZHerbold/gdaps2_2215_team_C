@@ -129,7 +129,8 @@ namespace TheGame
         // File IO
         private const string fileName = "savedata.txt";
 
-        // Score
+        // Game Over Details
+        private int level;
         private int score;
 
         #endregion
@@ -162,6 +163,7 @@ namespace TheGame
             enemyHealth = 1;
             timer = 0;
             score = 0;
+            level = 1;
 
             base.Initialize();
         }
@@ -275,28 +277,27 @@ namespace TheGame
                         SaveGame(fileName);
                     }
 
-                    // Shop (FOR TESTING)
+                    // (FOR TESTING)
                     else if (SingleKeyPress(Keys.P, currentKbState))
                     {
                         currentState = GameState.Shop;                        
                     }
+                    else if (SingleKeyPress(Keys.O, currentKbState))
+                    {
+                        currentState = GameState.GameOver;
+                    }
 
-                    break;
-
-                // Settings (Not created yet)
-                case GameState.Settings:
                     break;
 
                 // Gameover GameState
                 case GameState.GameOver:
 
                     currentKbState = Keyboard.GetState();
-
-                    SoftReset();
-                    MapReset();
                     
                     if (SingleKeyPress(Keys.Enter, currentKbState))
                     {
+                        SoftReset();
+                        MapReset();
                         currentState = GameState.MainMenu;
                     }
 
@@ -318,6 +319,12 @@ namespace TheGame
                     else if (SingleKeyPress(Keys.X, currentKbState) && map.CurrentRoom.RoomType == "exit" && map.UnvSquares <= 0)
                     {
                         NextLevel();
+                    }
+
+                    // (FOR TESTING)
+                    else if (SingleKeyPress(Keys.O, currentKbState))
+                    {
+                        currentState = GameState.GameOver;
                     }
 
                     // Construct player hitbox
@@ -656,14 +663,6 @@ namespace TheGame
                     //        }
                     //    }
                     //}
-
-                    // free gold (for testing)
-                    /*
-                    if (SingleKeyPress(Keys.P, currentKbState))
-                    {
-                        player.Gold += 10;
-                    }
-                    */
                     break;
 
                 default:
@@ -728,6 +727,7 @@ namespace TheGame
 
                 // --- GAME OVER ---
                 case GameState.GameOver:
+
                     _spriteBatch.DrawString(
                         information,
                         String.Format("" +
@@ -735,12 +735,19 @@ namespace TheGame
                         "Press 'ENTER' to return to the main menu"),
                         new Vector2(500, 500),
                         Color.White);
+
+                    // Display Score
+                    _spriteBatch.DrawString(
+                        goldText, 
+                        String.Format("You made it to level - {0}" +
+                                      "\n     Score: {1}", 
+                                      level, score), 
+                        new Vector2(300, 300), Color.Gold);
+
                     break;
 
                 // --- GAME LOOP ---
-                case GameState.EndlessWave:
-                    
-                    
+                case GameState.EndlessWave:                  
 
                     map.Draw(_spriteBatch, displayMessage);
                     if (!map.CurrentRoom.AllDead)
@@ -1159,6 +1166,7 @@ namespace TheGame
                     if (playerHitbox.Intersects(enemyHitbox[i]))
                     {
                         enemies[i].Die();
+                        score += 10;
                     }
                 }
             }
@@ -1344,6 +1352,10 @@ namespace TheGame
             player.IFrame = false;
             timer = 0;
             currentWave = 0;
+
+            // Resets Game Over Details
+            score = 0;
+            level = 1;
         }
 
         /// <summary>
@@ -1374,7 +1386,7 @@ namespace TheGame
                 (GraphicsDevice.Viewport.Height / 2) - 95);
 
             // Increase the player score each level
-            score++;
+            level++;
         }
 
         #endregion
