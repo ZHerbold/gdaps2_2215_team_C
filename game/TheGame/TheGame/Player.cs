@@ -142,7 +142,7 @@ namespace TheGame
                 
                 ||                
 
-                (kbState.IsKeyDown(Keys.K) && !prevKBstate.IsKeyDown(Keys.K)
+                (kbState.IsKeyDown(Keys.L) && !prevKBstate.IsKeyDown(Keys.L)
                 ) 
                 
                 &&
