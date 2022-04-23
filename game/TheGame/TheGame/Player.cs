@@ -144,13 +144,13 @@ namespace TheGame
             // Click to attack, holding m1 does nothing
             // Clicking while attacking does nothing
             if (
-                (
+                ((
                 (prevMState.LeftButton != ButtonState.Pressed && mState.LeftButton == ButtonState.Pressed) 
                 
                 ||                
 
                 (kbState.IsKeyDown(Keys.K) && !prevKBstate.IsKeyDown(Keys.K)
-                ) 
+                )) 
                 
                 &&
 
