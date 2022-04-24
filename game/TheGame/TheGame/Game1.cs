@@ -588,11 +588,11 @@ namespace TheGame
                     }
 
                     
-                    //Free Gold (FOR TESTING)
-                    if (SingleKeyPress(Keys.P, currentKbState))
-                    {
-                        player.Gold += 100;
-                    }
+                    ////Free Gold (FOR TESTING)
+                    //if (SingleKeyPress(Keys.P, currentKbState))
+                    //{
+                    //    player.Gold += 100;
+                    //}
                     
 
                     // Purchase Extra Health
