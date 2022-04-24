@@ -587,18 +587,18 @@ namespace TheGame
                         currentState = GameState.MainMenu;
                     }
 
-                    
+
                     ////Free Gold (FOR TESTING)
                     //if (SingleKeyPress(Keys.P, currentKbState))
                     //{
                     //    player.Gold += 100;
                     //}
-                    
+
 
                     // Purchase Extra Health
                     //if (player.Health < 6)
                     //{
-                        if (player.Gold >= healthCost)
+                    if (player.Gold >= healthCost)
                         {
                             if (SingleKeyPress(Keys.H, currentKbState))
                             {
@@ -1304,7 +1304,7 @@ namespace TheGame
         {
             StreamReader reader = null;
             string line;
-            string[] stats = new string[4];
+            string[] stats = new string[7];
 
             try
             {
@@ -1321,6 +1321,9 @@ namespace TheGame
                 player.Movement = int.Parse(stats[1]);
                 endIFrame = double.Parse(stats[2]);
                 player.Gold = int.Parse(stats[3]);
+                healthCost = int.Parse(stats[4]);
+                moveCost = int.Parse(stats[5]);
+                invulCost = int.Parse(stats[6]);
             }
 
             // Writes exceptions to the Output window
@@ -1356,11 +1359,14 @@ namespace TheGame
 
                 // Write the current stats to the file
                 writer.WriteLine(
-                    "{0}|{1}|{2}|{3}", 
+                    "{0}|{1}|{2}|{3}|{4}|{5}|{6}", 
                     maxHealth, 
                     player.Movement, 
                     endIFrame,
-                    player.Gold);
+                    player.Gold,
+                    healthCost,
+                    moveCost,
+                    invulCost);
             }
 
             // Writes exceptions to the Output window
