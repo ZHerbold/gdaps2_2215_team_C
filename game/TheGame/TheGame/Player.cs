@@ -42,6 +42,8 @@ namespace TheGame
         // Animation
         private const int SpriteSheetWidth = 7;
         private const int AttackFrameCount = 7;
+        private const int RollFrameCount = 10;
+        private const int ShieldFrameCount = 7;
         private const int PlayerWalkOffsetY = 55;
         private const int PlayerAttackOffsetY = 165;
         private const int PlayerRollOffestY = 465;
@@ -257,9 +259,13 @@ namespace TheGame
             }
             #endregion
 
-            // Must finish an attack before moving again
+            // Must finish an attack or ability before moving again
             if (state != PlayerState.AttackRight && 
-                state != PlayerState.AttackLeft)
+                state != PlayerState.AttackLeft &&
+                state != PlayerState.RightRoll &&
+                state != PlayerState.LeftRoll &&
+                state != PlayerState.RightShield &&
+                state != PlayerState.LeftShield)
             {
                 // ---- MOVE RIGHT ----
                 if (kbState.IsKeyDown(Keys.D))
@@ -366,6 +372,7 @@ namespace TheGame
             // End attack animations on the last frame of them
             switch (state)
             {
+                #region Attack
                 case PlayerState.AttackRight:
 
                     // Stop attack animations
@@ -383,6 +390,47 @@ namespace TheGame
                         state = PlayerState.FaceLeft;
                     }
                     break;
+                #endregion
+
+                #region Roll
+                case PlayerState.RightRoll:
+
+                    // Stop attack animations
+                    if (frame == RollFrameCount)
+                    {
+                        state = PlayerState.FaceRight;
+                    }
+                    break;
+
+                case PlayerState.LeftRoll:
+
+                    // Stop attack animations
+                    if (frame == RollFrameCount)
+                    {
+                        state = PlayerState.FaceLeft;
+                    }
+                    break;
+                #endregion
+
+                #region Shield
+                case PlayerState.RightShield:
+
+                    // Stop attack animations
+                    if (frame == ShieldFrameCount)
+                    {
+                        state = PlayerState.FaceRight;
+                    }
+                    break;
+
+                case PlayerState.LeftShield:
+
+                    // Stop attack animations
+                    if (frame == ShieldFrameCount)
+                    {
+                        state = PlayerState.FaceLeft;
+                    }
+                    break;
+                #endregion
             }
 
             // Visual representation of active iFrames
