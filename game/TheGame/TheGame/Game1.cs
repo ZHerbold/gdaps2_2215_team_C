@@ -834,6 +834,7 @@ namespace TheGame
                         }
                     }                    
 
+                    // Debugger
                     if (currentState == GameState.EndlessWave)
                     {
                         _spriteBatch.DrawString(

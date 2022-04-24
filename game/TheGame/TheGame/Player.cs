@@ -55,6 +55,8 @@ namespace TheGame
         private double timePerFrame;
 
         private bool iFrame;
+        private bool shieldIFrame;
+        private bool rollIFrame;
         private Color color;
 
         // Properties ---------------------------------------------------------
