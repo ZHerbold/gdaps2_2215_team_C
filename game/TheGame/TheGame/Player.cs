@@ -14,11 +14,11 @@ namespace TheGame
         WalkRight,
         WalkLeft,
         AttackRight,
-        AttackLeft,
+        AttackLeft/*,
         RightRoll,
         LeftRoll,
         RightShield,
-        LeftShield
+        LeftShield*/
     }
 
     class Player : GameObject
@@ -26,9 +26,9 @@ namespace TheGame
         // Fields--------------------------------------------------------------
         private int gold;
         private int score;
-        private bool ability;
-        private Dictionary<int, string> abilityDict;
-        private int typeOfAbility;
+        //private bool ability;
+        //private Dictionary<int, string> abilityDict;
+        //private int typeOfAbility;
         PlayerState state;
         private KeyboardState prevKBstate;
         private MouseState prevMState;
@@ -42,12 +42,12 @@ namespace TheGame
         // Animation
         private const int SpriteSheetWidth = 7;
         private const int AttackFrameCount = 7;
-        private const int RollFrameCount = 10;
-        private const int ShieldFrameCount = 7;
+        //private const int RollFrameCount = 10;
+        //private const int ShieldFrameCount = 7;
         private const int PlayerWalkOffsetY = 55;
         private const int PlayerAttackOffsetY = 165;
-        private const int PlayerRollOffestY = 465;
-        private const int PlayerShieldOffsetY = 400;
+        //private const int PlayerRollOffestY = 465;
+        //private const int PlayerShieldOffsetY = 400;
 
         private int frame;
         private double timeCounter;
@@ -55,8 +55,8 @@ namespace TheGame
         private double timePerFrame;
 
         private bool iFrame;
-        private bool shieldIFrame;
-        private bool rollIFrame;
+        //private bool shieldIFrame;
+        //private bool rollIFrame;
         private Color color;
 
         // Properties ---------------------------------------------------------
@@ -89,12 +89,13 @@ namespace TheGame
             set { score = value; }
         }
 
+        /*
         public bool Ability
         {
             get { return ability; }
             set { ability = value; }
         }
-
+        */
         // Can be modified at the shop
         public int Movement
         {
@@ -102,25 +103,26 @@ namespace TheGame
             set { movement = value; }
         }
 
+        /*
         public int TypeOfAbility
         {
             get { return typeOfAbility; }
             set { typeOfAbility = value; }
-        }
+        }*/
 
         // Constructor --------------------------------------------------------
         public Player(int health, Vector2 position, Texture2D image, int gold, 
             PlayerState startingState) : 
             base(health, position, image)
         {
-
+            /*
             abilityDict = new Dictionary<int, string>();
             // Abilities
             abilityDict.Add(1, "dodge");
             abilityDict.Add(0, "potion");
             abilityDict.Add(2, "shield");
             ability = false;
-
+            */
             this.gold = gold;
             
             this.state = startingState;
@@ -188,6 +190,7 @@ namespace TheGame
             #endregion
 
             #region Abilites
+            /*
             //does the same thing as Attack but for the abilities
             if (ability) 
             {
@@ -258,16 +261,16 @@ namespace TheGame
                     }
                 }
                 #endregion
-            }
+            }*/
             #endregion
 
             // Must finish an attack or ability before moving again
             if (state != PlayerState.AttackRight && 
-                state != PlayerState.AttackLeft &&
+                state != PlayerState.AttackLeft /*&&
                 state != PlayerState.RightRoll &&
                 state != PlayerState.LeftRoll &&
                 state != PlayerState.RightShield &&
-                state != PlayerState.LeftShield)
+                state != PlayerState.LeftShield*/)
             {
                 // ---- MOVE RIGHT ----
                 if (kbState.IsKeyDown(Keys.D))
@@ -394,7 +397,9 @@ namespace TheGame
                     break;
                 #endregion
 
+
                 #region Roll
+                    /*
                 case PlayerState.RightRoll:
 
                     // Stop attack animations
@@ -412,9 +417,11 @@ namespace TheGame
                         state = PlayerState.FaceLeft;
                     }
                     break;
+                    */
                 #endregion
 
                 #region Shield
+                    /*
                 case PlayerState.RightShield:
 
                     // Stop attack animations
@@ -431,7 +438,7 @@ namespace TheGame
                     {
                         state = PlayerState.FaceLeft;
                     }
-                    break;
+                    break;*/
                 #endregion
             }
 
@@ -571,6 +578,7 @@ namespace TheGame
                 0);
         }
 
+        #region Draw Abilities
         /*
         // Draw Roll
         public void DrawRoll(SpriteEffect flipSprite, SpriteBatch spriteBatch)
@@ -610,5 +618,6 @@ namespace TheGame
                 0);
         }
         */
+        #endregion
     }
 }

@@ -587,11 +587,13 @@ namespace TheGame
                         currentState = GameState.MainMenu;
                     }
 
-                    //// Free Gold (FOR TESTING)
-                    //if (SingleKeyPress(Keys.P, currentKbState))
-                    //{
-                    //    player.Gold += 100;
-                    //}
+                    
+                    //Free Gold (FOR TESTING)
+                    if (SingleKeyPress(Keys.P, currentKbState))
+                    {
+                        player.Gold += 100;
+                    }
+                    
 
                     // Purchase Extra Health
                     //if (player.Health < 6)
@@ -1018,12 +1020,13 @@ namespace TheGame
                         Color.White);
 
                     // Display current invulnerability
+                    
                     _spriteBatch.DrawString(
-                        information,
-                        String.Format("Invulnerability - {0:F1}", endIFrame),
-                        new Vector2(30, 220),
-                        Color.White);
-
+                                information,
+                                String.Format("Invulnerability - {0:F1}", endIFrame),
+                                new Vector2(30, 220),
+                                Color.White);
+                    
                     // Display price of more health
                     _spriteBatch.DrawString(
                         goldText,
