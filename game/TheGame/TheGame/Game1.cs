@@ -837,59 +837,59 @@ namespace TheGame
                     }                    
 
                     // Debugger
-                    if (currentState == GameState.EndlessWave)
-                    {
-                        _spriteBatch.DrawString(
-                            information,
-                            String.Format("Gold: {0}", player.Gold),
-                            new Vector2(10, 50),
-                            Color.White);
-                        _spriteBatch.DrawString(
-                            information,
-                            String.Format("Wave count: {0}\nMax Waves: {1}", currentWave, map.CurrentRoom.WaveCount),
-                            new Vector2(10, 90),
-                            Color.White);
-                        _spriteBatch.DrawString(
-                            information,
-                            String.Format("Pos: {0},{1}", player.Position.X, player.Position.Y),
-                            new Vector2(10, 70),
-                            Color.White);
-                        _spriteBatch.DrawString(
-                            information,
-                            String.Format("Room Pos: {0},{1}", map.X, map.Y),
-                            new Vector2(10, 130),
-                            Color.White);
-                        _spriteBatch.DrawString(
-                            information,
-                            String.Format("Program Pos: {0},{1}", mapX, mapY),
-                            new Vector2(10, 150),
-                            Color.White);
-                        _spriteBatch.DrawString(
-                           information,
-                           String.Format("Num Tiles: {0}", map.NumTiles),
-                           new Vector2(10, 170),
-                           Color.White);
-                        _spriteBatch.DrawString(
-                           information,
-                           String.Format("Difficulty: {0}", map.Diff),
-                           new Vector2(10, 190),
-                           Color.White);
-                        _spriteBatch.DrawString(
-                          information,
-                          String.Format("Deadend: {0}", map.DeadEnd),
-                          new Vector2(10, 210),
-                          Color.White);
-                        _spriteBatch.DrawString(
-                          information,
-                          String.Format("Rooms left: {0}", map.UnvSquares),
-                          new Vector2(10, 230),
-                          Color.White);
-                        _spriteBatch.DrawString(
-                          information,
-                          String.Format("Level: {0}", level),
-                          new Vector2(10, 250),
-                          Color.White);
-                    }
+                    //if (currentState == GameState.EndlessWave)
+                    //{
+                    //    _spriteBatch.DrawString(
+                    //        information,
+                    //        String.Format("Gold: {0}", player.Gold),
+                    //        new Vector2(10, 50),
+                    //        Color.White);
+                    //    _spriteBatch.DrawString(
+                    //        information,
+                    //        String.Format("Wave count: {0}\nMax Waves: {1}", currentWave, map.CurrentRoom.WaveCount),
+                    //        new Vector2(10, 90),
+                    //        Color.White);
+                    //    _spriteBatch.DrawString(
+                    //        information,
+                    //        String.Format("Pos: {0},{1}", player.Position.X, player.Position.Y),
+                    //        new Vector2(10, 70),
+                    //        Color.White);
+                    //    _spriteBatch.DrawString(
+                    //        information,
+                    //        String.Format("Room Pos: {0},{1}", map.X, map.Y),
+                    //        new Vector2(10, 130),
+                    //        Color.White);
+                    //    _spriteBatch.DrawString(
+                    //        information,
+                    //        String.Format("Program Pos: {0},{1}", mapX, mapY),
+                    //        new Vector2(10, 150),
+                    //        Color.White);
+                    //    _spriteBatch.DrawString(
+                    //       information,
+                    //       String.Format("Num Tiles: {0}", map.NumTiles),
+                    //       new Vector2(10, 170),
+                    //       Color.White);
+                    //    _spriteBatch.DrawString(
+                    //       information,
+                    //       String.Format("Difficulty: {0}", map.Diff),
+                    //       new Vector2(10, 190),
+                    //       Color.White);
+                    //    _spriteBatch.DrawString(
+                    //      information,
+                    //      String.Format("Deadend: {0}", map.DeadEnd),
+                    //      new Vector2(10, 210),
+                    //      Color.White);
+                    //    _spriteBatch.DrawString(
+                    //      information,
+                    //      String.Format("Rooms left: {0}", map.UnvSquares),
+                    //      new Vector2(10, 230),
+                    //      Color.White);
+                    //    _spriteBatch.DrawString(
+                    //      information,
+                    //      String.Format("Level: {0}", level),
+                    //      new Vector2(10, 250),
+                    //      Color.White);
+                    //}
 
                     //maybe make the menu buttons bob up and down?
                     if (map.DeadEnd)
